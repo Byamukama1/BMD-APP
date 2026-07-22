@@ -1107,11 +1107,13 @@
         const auth = firebase.auth();
 
         // ================================================================
-        //  CLOUDINARY
+    // ================================================================
+        //  CLOUDINARY — UPDATED WITH YOUR CREDENTIALS
         // ================================================================
         const CLOUD_NAME = 'dp81zzxlh';
-        const UPLOAD_PRESET = 'dp81zzxlh';
+        const UPLOAD_PRESET = 'Unsigned upload';  // <-- changed to match your preset name
         const CLOUDINARY_URL = `https://api.cloudinary.com/v1_1/${CLOUD_NAME}/upload`;
+        
 
         // ================================================================
         //  DOM REFS
