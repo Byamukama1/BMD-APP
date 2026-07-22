@@ -1,0 +1,1010 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>Register – BMD</title>
+
+    <!-- ===== FIREBASE SDK ===== -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js">
+    </script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js">
+    </script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js">
+    </script>
+
+    <!-- ===== FONTS & ICONS ===== -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap" rel="stylesheet" />
+
+    <style>
+        /* ===== BMD COLOR PALETTE ===== */
+        :root {
+            --bmd-dark: #0f261b;
+            --bmd-primary: #1a3c2a;
+            --bmd-primary-light: #2a5a3e;
+            --bmd-gold: #d4a743;
+            --bmd-gold-light: #f0d080;
+            --bmd-cream: #faf6ed;
+            --bmd-text: #1e1e1e;
+            --bmd-shadow: 0 4px 20px rgba(0, 0, 0, 0.12);
+            --bmd-radius: 16px;
+            --bmd-radius-sm: 10px;
+            --bmd-nav-height: 70px;
+            --bmd-header-height: 72px;
+            --bmd-ad-height: 36px;
+        }
+
+        /* ===== RESET ===== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bmd-cream);
+            color: var(--bmd-text);
+            padding-bottom: calc(var(--bmd-nav-height) + 24px);
+            padding-top: calc(var(--bmd-header-height) + var(--bmd-ad-height) + 12px);
+            min-height: 100vh;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        /* ===== HEADER ===== */
+        .app-header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            background: linear-gradient(145deg, var(--bmd-dark), var(--bmd-primary));
+            color: #fff;
+            padding: 10px 16px 8px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: var(--bmd-header-height);
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.25);
+            border-bottom: 2px solid var(--bmd-gold);
+        }
+
+        .app-header .brand {
+            display: flex;
+            flex-direction: column;
+            line-height: 1.1;
+            flex: 1;
+            min-width: 0;
+        }
+
+        .app-header .brand h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.15rem;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            color: var(--bmd-gold-light);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .app-header .brand .sub {
+            font-size: 0.6rem;
+            font-weight: 400;
+            opacity: 0.85;
+            letter-spacing: 0.3px;
+            font-style: italic;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .app-header .back-btn {
+            background: none;
+            border: none;
+            color: var(--bmd-gold-light);
+            font-size: 1.3rem;
+            cursor: pointer;
+            padding: 4px 10px 4px 4px;
+            transition: transform 0.2s;
+            flex-shrink: 0;
+        }
+        .app-header .back-btn:active {
+            transform: scale(0.90);
+        }
+
+        .app-header .sign-in-link {
+            color: var(--bmd-gold-light);
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-decoration: underline;
+            cursor: pointer;
+            padding: 4px 6px;
+        }
+
+        /* ===== MOVING AD ===== */
+        .marquee-ad {
+            position: fixed;
+            top: var(--bmd-header-height);
+            left: 0;
+            right: 0;
+            z-index: 999;
+            height: var(--bmd-ad-height);
+            background: linear-gradient(90deg, #2c1810, #4a2a1a);
+            color: #f0e6d0;
+            font-size: 0.7rem;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            overflow: hidden;
+            border-bottom: 1px solid var(--bmd-gold);
+            box-shadow: 0 1px 6px rgba(0, 0, 0, 0.15);
+        }
+
+        .marquee-ad .marquee-track {
+            display: flex;
+            white-space: nowrap;
+            animation: marqueeScroll 18s linear infinite;
+        }
+
+        .marquee-ad .marquee-track span {
+            padding: 0 60px;
+            letter-spacing: 0.5px;
+        }
+
+        .marquee-ad .marquee-track i {
+            color: var(--bmd-gold);
+            margin-right: 6px;
+        }
+
+        @keyframes marqueeScroll {
+            0% {
+                transform: translateX(0%);
+            }
+            100% {
+                transform: translateX(-50%);
+            }
+        }
+
+        /* ===== MAIN CONTAINER ===== */
+        .register-container {
+            max-width: 640px;
+            margin: 0 auto;
+            padding: 8px 16px 20px;
+        }
+
+        /* ===== FORM CARD ===== */
+        .form-card {
+            background: #ffffff;
+            border-radius: var(--bmd-radius);
+            box-shadow: var(--bmd-shadow);
+            padding: 20px 18px 24px;
+            border: 1px solid rgba(0, 0, 0, 0.04);
+            margin-top: 12px;
+        }
+
+        .page-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--bmd-primary);
+            margin-bottom: 4px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .page-title i {
+            color: var(--bmd-gold);
+        }
+        .page-sub {
+            font-size: 0.85rem;
+            color: #888;
+            margin-bottom: 18px;
+        }
+
+        .form-group {
+            margin-bottom: 14px;
+        }
+
+        .form-group label {
+            display: block;
+            font-weight: 600;
+            font-size: 0.8rem;
+            color: var(--bmd-primary);
+            margin-bottom: 3px;
+        }
+
+        .form-group label .required {
+            color: #e74c3c;
+            margin-left: 2px;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 10px 12px;
+            border: 2px solid #e8e0d4;
+            border-radius: var(--bmd-radius-sm);
+            font-size: 0.95rem;
+            font-family: inherit;
+            outline: none;
+            background: #fcfcf9;
+            transition: border 0.25s, box-shadow 0.25s;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            border-color: var(--bmd-gold);
+            box-shadow: 0 0 0 4px rgba(212, 167, 67, 0.12);
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 60px;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        .form-row .form-group {
+            margin-bottom: 0;
+        }
+  /* ===== IMAGE UPLOAD ===== */
+        .image-upload-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-top: 4px;
+        }
+
+        .image-preview {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: #e8e0d4;
+            border: 3px solid var(--bmd-gold);
+            overflow: hidden;
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            color: #bbb;
+            object-fit: cover;
+        }
+
+        .image-preview img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .image-upload-btn {
+            background: var(--bmd-primary);
+            color: #fff;
+            border: none;
+            padding: 8px 18px;
+            border-radius: var(--bmd-radius-sm);
+            font-weight: 600;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: background 0.2s;
+            font-family: inherit;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .image-upload-btn:active {
+            background: var(--bmd-primary-light);
+        }
+
+        .image-upload-btn .file-name {
+            max-width: 120px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            font-weight: 400;
+        }
+
+        .hidden-input {
+            display: none;
+        }
+
+        /* ===== SUBMIT ===== */
+        .submit-area {
+            margin-top: 18px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .submit-btn {
+            background: linear-gradient(145deg, var(--bmd-primary), var(--bmd-primary-light));
+            color: #fff;
+            border: none;
+            padding: 16px 24px;
+            border-radius: var(--bmd-radius-sm);
+            font-size: 1.05rem;
+            font-weight: 700;
+            font-family: 'Playfair Display', serif;
+            letter-spacing: 0.5px;
+            cursor: pointer;
+            transition: all 0.25s;
+            box-shadow: 0 4px 16px rgba(26, 60, 42, 0.25);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+        }
+
+        .submit-btn:active {
+            transform: scale(0.97);
+            box-shadow: 0 2px 8px rgba(26, 60, 42, 0.15);
+        }
+
+        .submit-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .submit-btn i {
+            font-size: 1.1rem;
+        }
+
+        .submit-status {
+            font-size: 0.8rem;
+            color: #888;
+            text-align: center;
+            padding: 4px 0;
+            min-height: 24px;
+        }
+
+        .submit-status.error {
+            color: #e74c3c;
+        }
+        .submit-status.success {
+            color: #27ae60;
+        }
+
+        /* ===== BOTTOM NAV ===== */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            height: var(--bmd-nav-height);
+            background: rgba(255, 255, 255, 0.96);
+            backdrop-filter: blur(12px);
+            border-top: 1px solid rgba(0, 0, 0, 0.08);
+            box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.06);
+            display: flex;
+            align-items: stretch;
+            justify-content: space-around;
+            padding: 0 4px;
+        }
+
+        .bottom-nav .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            flex: 1;
+            gap: 1px;
+            font-size: 0.5rem;
+            font-weight: 500;
+            color: #888;
+            cursor: pointer;
+            transition: color 0.15s;
+            padding: 4px 0;
+            border: none;
+            background: none;
+            font-family: inherit;
+            position: relative;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .bottom-nav .nav-item i {
+            font-size: 1.3rem;
+            transition: transform 0.2s;
+        }
+
+        .bottom-nav .nav-item:active i {
+            transform: scale(0.88);
+        }
+
+        .bottom-nav .nav-item.active {
+            color: var(--bmd-primary);
+        }
+        .bottom-nav .nav-item.active i {
+            color: var(--bmd-gold);
+        }
+
+        .bottom-nav .nav-item .label {
+            font-size: 0.5rem;
+            letter-spacing: 0.2px;
+            text-transform: uppercase;
+        }
+
+        .bottom-nav .nav-item.post-btn i {
+            font-size: 2rem;
+            color: var(--bmd-gold);
+            background: var(--bmd-primary);
+            width: 46px;
+            height: 46px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            box-shadow: 0 4px 16px rgba(26, 60, 42, 0.3);
+            margin-top: -16px;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .bottom-nav .nav-item.post-btn:active i {
+            transform: scale(0.92);
+            box-shadow: 0 2px 8px rgba(26, 60, 42, 0.25);
+        }
+
+        .bottom-nav .nav-item.post-btn .label {
+            margin-top: 2px;
+        }
+
+        /* ===== TOAST ===== */
+        .toast {
+            position: fixed;
+            bottom: 90px;
+            left: 50%;
+            transform: translateX(-50%) translateY(20px);
+            background: #1e1e1e;
+            color: #fff;
+            padding: 10px 24px;
+            border-radius: 30px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s, transform 0.3s;
+            z-index: 5000;
+            max-width: 90%;
+            text-align: center;
+        }
+        .toast.show {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+        }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 480px) {
+            .app-header .brand h1 {
+                font-size: 1rem;
+            }
+            .app-header .brand .sub {
+                font-size: 0.5rem;
+            }
+            .register-container {
+                padding: 6px 10px 12px;
+            }
+            .form-card {
+                padding: 14px 12px 18px;
+            }
+            .form-row {
+                grid-template-columns: 1fr;
+                gap: 0;
+            }
+            .form-row .form-group {
+                margin-bottom: 14px;
+            }
+            .page-title {
+                font-size: 1.2rem;
+            }
+            .image-upload-wrapper {
+                flex-wrap: wrap;
+            }
+            .bottom-nav .nav-item i {
+                font-size: 1.1rem;
+            }
+            .bottom-nav .nav-item.post-btn i {
+                width: 40px;
+                height: 40px;
+                font-size: 1.6rem;
+                margin-top: -12px;
+            }
+        }
+
+        @media (min-width: 768px) {
+            .register-container {
+                padding: 12px 24px 30px;
+            }
+        }
+
+        /* ===== SCROLLBAR ===== */
+        ::-webkit-scrollbar {
+            width: 4px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f0ebe4;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: var(--bmd-primary-light);
+            border-radius: 10px;
+        }
+
+        /* ===== SPINNER ===== */
+        .spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: #fff;
+            animation: spin 0.8s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* ===== PASSWORD HINT ===== */
+        .password-hint {
+            font-size: 0.7rem;
+            color: #999;
+            margin-top: 2px;
+        }
+    </style>
+</head>
+<body>
+
+   <!-- ===== HEADER ===== -->
+    <header class="app-header">
+        <button class="back-btn" id="backBtn" aria-label="Go back">
+            <i class="fas fa-arrow-left"></i>
+        </button>
+        <div class="brand">
+            <h1>BUHWEJU MUST DEVELOP</h1>
+            <div class="sub">Eiraka ryabantu baburijo.</div>
+        </div>
+        <span class="sign-in-link" id="signInLink">Sign In</span>
+    </header>
+
+    <!-- ===== MOVING AD ===== -->
+    <div class="marquee-ad">
+        <div class="marquee-track">
+            <span><i class="fas fa-microphone-alt"></i> App designed by Dr Byamukama Mentor, expert in ICT.</span>
+            <span><i class="fas fa-microphone-alt"></i> App designed by Dr Byamukama Mentor, expert in ICT.</span>
+            <span><i class="fas fa-microphone-alt"></i> App designed by Dr Byamukama Mentor, expert in ICT.</span>
+            <span><i class="fas fa-microphone-alt"></i> App designed by Dr Byamukama Mentor, expert in ICT.</span>
+        </div>
+    </div>
+
+    <!-- ===== MAIN ===== -->
+    <main class="register-container">
+        <div class="form-card">
+            <div class="page-title">
+                <i class="fas fa-user-plus"></i> Create Account
+            </div>
+            <div class="page-sub">Join the BMD community – share your voice and connect with others.</div>
+
+            <form id="registerForm" novalidate>
+                <!-- Full Name -->
+                <div class="form-group">
+                    <label for="fullName">Full Name <span class="required">*</span></label>
+                    <input type="text" id="fullName" placeholder="e.g. John Mukasa" required />
+                </div>
+
+                <!-- District, Subcounty, Parish, Village -->
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="district">District <span class="required">*</span></label>
+                        <input type="text" id="district" placeholder="e.g. Buhweju" required />
+                    </div>
+                    <div class="form-group">
+                        <label for="subcounty">Subcounty <span class="required">*</span></label>
+                        <input type="text" id="subcounty" placeholder="e.g. Nyakashaka" required />
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="parish">Parish <span class="required">*</span></label>
+                        <input type="text" id="parish" placeholder="e.g. Rubengye" required />
+                    </div>
+                    <div class="form-group">
+                        <label for="village">Village <span class="required">*</span></label>
+                        <input type="text" id="village" placeholder="e.g. Kiziiba" required />
+                    </div>
+                </div>
+
+                <!-- Occupation -->
+                <div class="form-group">
+                    <label for="occupation">Occupation</label>
+                    <input type="text" id="occupation" placeholder="e.g. Farmer, Teacher, Business" />
+                </div>
+
+                <!-- Phone Numbers -->
+                <div class="form-group">
+                    <label for="phone1">Primary Phone <span class="required">*</span></label>
+                    <input type="tel" id="phone1" placeholder="e.g. +256 700 123 456" required />
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="phone2">Phone 2 (optional)</label>
+                        <input type="tel" id="phone2" placeholder="e.g. +256 700 123 457" />
+                    </div>
+                    <div class="form-group">
+                        <label for="phone3">Phone 3 (optional)</label>
+                        <input type="tel" id="phone3" placeholder="e.g. +256 700 123 458" />
+                    </div>
+                </div>
+
+                <!-- Role in community -->
+                <div class="form-group">
+                    <label for="role">Role in Community</label>
+                    <input type="text" id="role" placeholder="e.g. Chairman LC1, Church Leader" />
+                </div>
+
+                <!-- Education Level -->
+                <div class="form-group">
+                    <label for="education">Education Level</label>
+                    <select id="education">
+                        <option value="">Select...</option>
+                        <option value="none">No formal education</option>
+                        <option value="primary">Primary</option>
+                        <option value="secondary">Secondary</option>
+                        <option value="tertiary">Tertiary / College</option>
+                        <option value="university">University</option>
+                        <option value="postgraduate">Postgraduate</option>
+                    </select>
+                </div>
+
+                <!-- Profile Image -->
+                <div class="form-group">
+                    <label>Profile Picture</label>
+                    <div class="image-upload-wrapper">
+                        <div class="image-preview" id="imagePreview">
+                            <i class="fas fa-user"></i>
+                        </div>
+                        <button type="button" class="image-upload-btn" id="imageUploadBtn">
+                            <i class="fas fa-camera"></i>
+                            <span class="file-name" id="imageFileName">Choose Image</span>
+                        </button>
+                        <input type="file" id="imageInput" class="hidden-input" accept="image/*" />
+                    </div>
+                </div>
+
+                <!-- Password & Confirm -->
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="password">Password <span class="required">*</span></label>
+                        <input type="password" id="password" placeholder="Min 6 characters" required minlength="6" />
+                        <div class="password-hint">At least 6 characters</div>
+                    </div>
+                    <div class="form-group">
+                        <label for="confirmPassword">Confirm Password <span class="required">*</span></label>
+                        <input type="password" id="confirmPassword" placeholder="Re-enter password" required />
+                    </div>
+                </div>
+
+                <!-- Submit -->
+                <div class="submit-area">
+                    <button type="submit" class="submit-btn" id="registerBtn">
+                        <i class="fas fa-user-plus"></i> Register
+                    </button>
+                    <div class="submit-status" id="registerStatus"></div>
+                </div>
+            </form>
+        </div>
+    </main>
+
+    <!-- ===== BOTTOM NAV ===== -->
+    <nav class="bottom-nav">
+        <button class="nav-item" data-tab="home" id="navHome">
+            <i class="fas fa-home"></i>
+            <span class="label">Home</span>
+        </button>
+        <button class="nav-item" data-tab="register" id="navRegister">
+            <i class="fas fa-user-plus"></i>
+            <span class="label">Register</span>
+        </button>
+        <button class="nav-item" data-tab="activities" id="navActivities">
+            <i class="fas fa-calendar-alt"></i>
+            <span class="label">Activities</span>
+        </button>
+        <button class="nav-item post-btn" data-tab="post" id="navPost">
+            <i class="fas fa-plus"></i>
+            <span class="label">Post</span>
+        </button>
+        <button class="nav-item" data-tab="account" id="navAccount">
+            <i class="fas fa-user-circle"></i>
+            <span class="label">Account</span>
+        </button>
+    </nav>
+
+    <!-- ===== TOAST ===== -->
+    <div class="toast" id="toast"></div>
+
+    <!-- ============================================================ -->
+    <!-- ===== FIREBASE + APP LOGIC ===== -->
+    <!-- ============================================================ -->
+    <script>
+        // ================================================================
+        //  FIREBASE CONFIG
+        // ================================================================
+        const firebaseConfig = {
+            apiKey: "AIzaSyC-PINF2AJcETYIMINiCfT0gSxLxw70vSE",
+            authDomain: "bmd-app-1aec8.firebaseapp.com",
+            projectId: "bmd-app-1aec8",
+            storageBucket: "bmd-app-1aec8.firebasestorage.app",
+            messagingSenderId: "722780031230",
+            appId: "1:722780031230:web:cd19a98e24e4d9d80dfdaf",
+            measurementId: "G-WPEG8SQSW7"
+        };
+
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+        const auth = firebase.auth();
+
+        // ================================================================
+        //  CLOUDINARY CONFIG
+        // ================================================================
+        const CLOUD_NAME = 'dp81zzxlh';
+        const UPLOAD_PRESET = 'Unsigned upload';
+        const CLOUDINARY_URL = `https://api.cloudinary.com/v1_1/${CLOUD_NAME}/upload`;
+
+        // ================================================================
+        //  DOM REFS
+        // ================================================================
+        const form = document.getElementById('registerForm');
+        const statusEl = document.getElementById('registerStatus');
+        const submitBtn = document.getElementById('registerBtn');
+        const toast = document.getElementById('toast');
+
+        const imageInput = document.getElementById('imageInput');
+        const imagePreview = document.getElementById('imagePreview');
+        const imageFileName = document.getElementById('imageFileName');
+
+        // ================================================================
+        //  TOAST
+        // ================================================================
+        let toastTimer = null;
+
+        function showToast(msg, duration = 3000) {
+            toast.textContent = msg;
+            toast.classList.add('show');
+            clearTimeout(toastTimer);
+            toastTimer = setTimeout(() => toast.classList.remove('show'), duration);
+        }
+
+        // ================================================================
+        //  IMAGE UPLOAD HANDLING
+        // ================================================================
+        let uploadedImageUrl = null;
+
+        document.getElementById('imageUploadBtn').addEventListener('click', () => {
+            imageInput.click();
+        });
+
+        imageInput.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            // Show preview
+            const reader = new FileReader();
+            reader.onload = (event) => {
+                imagePreview.innerHTML = `<img src="${event.target.result}" alt="Preview" />`;
+            };
+            reader.readAsDataURL(file);
+
+            imageFileName.textContent = file.name;
+
+            // Upload to Cloudinary immediately
+            uploadImageToCloudinary(file);
+        });
+
+        async function uploadImageToCloudinary(file) {
+            const formData = new FormData();
+            formData.append('file', file);
+            formData.append('upload_preset', UPLOAD_PRESET);
+
+            try {
+                const response = await fetch(CLOUDINARY_URL, {
+                    method: 'POST',
+                    body: formData
+                });
+
+                if (!response.ok) {
+                    const err = await response.json();
+                    throw new Error(err.error?.message || 'Upload failed');
+                }
+
+                const data = await response.json();
+                uploadedImageUrl = data.secure_url;
+                showToast('✅ Profile picture uploaded successfully!', 2000);
+            } catch (err) {
+                console.error('Cloudinary upload error:', err);
+                showToast('❌ Image upload failed: ' + err.message);
+                uploadedImageUrl = null;
+                // Reset preview
+                imagePreview.innerHTML = `<i class="fas fa-user"></i>`;
+                imageFileName.textContent = 'Choose Image';
+                imageInput.value = '';
+            }
+        }
+
+        // ================================================================
+        //  REGISTER FORM SUBMIT
+        // ================================================================
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            // Gather data
+            const fullName = document.getElementById('fullName').value.trim();
+            const district = document.getElementById('district').value.trim();
+            const subcounty = document.getElementById('subcounty').value.trim();
+            const parish = document.getElementById('parish').value.trim();
+            const village = document.getElementById('village').value.trim();
+            const occupation = document.getElementById('occupation').value.trim();
+            const phone1 = document.getElementById('phone1').value.trim();
+            const phone2 = document.getElementById('phone2').value.trim();
+            const phone3 = document.getElementById('phone3').value.trim();
+            const role = document.getElementById('role').value.trim();
+            const education = document.getElementById('education').value;
+            const password = document.getElementById('password').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+
+            // Validation
+            if (!fullName || !district || !subcounty || !parish || !village || !phone1) {
+                statusEl.textContent = '⚠️ Please fill all required fields.';
+                statusEl.className = 'submit-status error';
+                return;
+            }
+
+            if (password.length < 6) {
+                statusEl.textContent = '⚠️ Password must be at least 6 characters.';
+                statusEl.className = 'submit-status error';
+                return;
+            }
+
+            if (password !== confirmPassword) {
+                statusEl.textContent = '⚠️ Passwords do not match.';
+                statusEl.className = 'submit-status error';
+                return;
+            }
+
+            // Convert phone1 to email: remove non-digits, append @bmd.app
+            const phoneDigits = phone1.replace(/\D/g, '');
+            if (phoneDigits.length < 6) {
+                statusEl.textContent = '⚠️ Please enter a valid phone number.';
+                statusEl.className = 'submit-status error';
+                return;
+            }
+            const email = phoneDigits + '@bmd.app';
+
+            // Disable button
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<span class="spinner"></span> Creating account…';
+            statusEl.textContent = '';
+            statusEl.className = 'submit-status';
+
+            try {
+                // 1. Create auth user
+                const userCredential = await auth.createUserWithEmailAndPassword(email, password);
+                const user = userCredential.user;
+
+                // 2. Update auth profile with name and photo
+                const updateData = { displayName: fullName };
+                if (uploadedImageUrl) {
+                    updateData.photoURL = uploadedImageUrl;
+                }
+                await user.updateProfile(updateData);
+
+                // 3. Save user data to Firestore
+                const userDoc = {
+                    uid: user.uid,
+                    displayName: fullName,
+                    district: district,
+                    subcounty: subcounty,
+                    parish: parish,
+                    village: village,
+                    occupation: occupation || '',
+                    phone: phone1,
+                    phone2: phone2 || '',
+                    phone3: phone3 || '',
+                    role: role || '',
+                    education: education || '',
+                    photoURL: uploadedImageUrl || user.photoURL || null,
+                    email: email,
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                    updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+                };
+
+                await db.collection('users').doc(user.uid).set(userDoc);
+
+                // Success
+                statusEl.textContent = '✅ Registration successful! Redirecting…';
+                statusEl.className = 'submit-status success';
+                showToast('🎉 Welcome to BMD, ' + fullName + '!', 3000);
+
+                // Redirect to account page after short delay
+                setTimeout(() => {
+                    window.location.href = 'account.html';
+                }, 2000);
+
+            } catch (err) {
+                console.error('Registration error:', err);
+                let errorMsg = err.message;
+                if (err.code === 'auth/email-already-in-use') {
+                    errorMsg = 'This phone number is already registered. Please sign in.';
+                }
+                statusEl.textContent = '❌ ' + errorMsg;
+                statusEl.className = 'submit-status error';
+                showToast('Registration failed: ' + errorMsg, 4000);
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = '<i class="fas fa-user-plus"></i> Register';
+            }
+        });
+
+        // ================================================================
+        //  NAVIGATION
+        // ================================================================
+        document.querySelectorAll('.bottom-nav .nav-item').forEach(item => {
+            item.addEventListener('click', () => {
+                const tab = item.dataset.tab;
+                document.querySelectorAll('.bottom-nav .nav-item').forEach(n => n.classList.remove('active'));
+                item.classList.add('active');
+
+                switch (tab) {
+                    case 'home':
+                        window.location.href = 'index.html';
+                        break;
+                    case 'register':
+                        // Already here
+                        break;
+                    case 'activities':
+                        showToast('📅 Activities page coming soon!');
+                        break;
+                    case 'post':
+                        window.location.href = 'post.html';
+                        break;
+                    case 'account':
+                        window.location.href = 'account.html';
+                        break;
+                    default:
+                        break;
+                }
+            });
+        });
+
+        // ================================================================
+        //  BACK & SIGN IN LINKS
+        // ================================================================
+        document.getElementById('backBtn').addEventListener('click', () => {
+            window.location.href = 'index.html';
+        });
+
+        document.getElementById('signInLink').addEventListener('click', () => {
+            window.location.href = 'account.html';
+        });
+
+        // ================================================================
+        //  INIT
+        // ================================================================
+        console.log('📝 BMD Registration page loaded.');
+        console.log('☁️ Cloudinary preset:', UPLOAD_PRESET);
+        console.log('📁 User data will be stored in Firestore "users" collection.');
+
+        // Auto-focus on first field
+        document.getElementById('fullName').focus();
+    </script>
+</body>
+</html>
