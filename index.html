@@ -1,0 +1,1564 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>Buhweju Must Develop – BMD</title>
+
+    <!-- ===== OPEN GRAPH (for WhatsApp / social previews) ===== -->
+    <!-- These are the defaults; they'll be updated dynamically via JS when a post is shared -->
+    <meta property="og:title" content="Buhweju Must Develop (BMD)" />
+    <meta property="og:description" content="Eiraka ryabantu baburijo. – People's Voice" />
+    <meta property="og:image" content="https://res.cloudinary.com/dp81zzxlh/image/upload/v1/bmd-og-default.jpg" />
+    <meta property="og:url" content="https://bmd-app-1aec8.web.app/" />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Buhweju Must Develop" />
+
+    <!-- ===== FIREBASE SDK ===== -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js">
+    </script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js">
+    </script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-storage-compat.js">
+    </script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js">
+    </script>
+
+    <!-- ===== FONTS & ICONS ===== -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap" rel="stylesheet" />
+
+    <style>
+        /* ===== RESET & BASE ===== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #1a3c2a;
+            --primary-light: #2a5a3e;
+            --primary-dark: #0f261b;
+            --gold: #d4a743;
+            --gold-light: #f0d080;
+            --cream: #faf6ed;
+            --text-dark: #1e1e1e;
+            --text-light: #f5f5f5;
+            --shadow: 0 4px 20px rgba(0, 0, 0, 0.10);
+            --radius: 16px;
+            --radius-sm: 10px;
+            --nav-height: 70px;
+            --header-height: 72px;
+            --ad-height: 36px;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--cream);
+            color: var(--text-dark);
+            padding-bottom: calc(var(--nav-height) + 20px);
+            padding-top: calc(var(--header-height) + var(--ad-height) + 8px);
+            min-height: 100vh;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+        img {
+            display: block;
+            max-width: 100%;
+        }
+
+        /* ===== HEADER ===== */
+        .app-header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            background: linear-gradient(145deg, var(--primary-dark), var(--primary));
+            color: #fff;
+            padding: 10px 16px 8px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: var(--header-height);
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.25);
+            border-bottom: 2px solid var(--gold);
+        }
+
+        .app-header .brand {
+            display: flex;
+            flex-direction: column;
+            line-height: 1.1;
+            flex: 1;
+            min-width: 0;
+        }
+
+        .app-header .brand h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.25rem;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            color: var(--gold-light);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .app-header .brand .sub {
+            font-size: 0.65rem;
+            font-weight: 400;
+            opacity: 0.85;
+            letter-spacing: 0.3px;
+            font-style: italic;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .app-header .actions {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            flex-shrink: 0;
+            margin-left: 8px;
+        }
+
+        .app-header .actions i {
+            font-size: 1.3rem;
+            color: var(--gold-light);
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        .app-header .actions i:active {
+            transform: scale(0.90);
+        }
+
+        /* ===== MOVING AD ===== */
+        .marquee-ad {
+            position: fixed;
+            top: var(--header-height);
+            left: 0;
+            right: 0;
+            z-index: 999;
+            height: var(--ad-height);
+            background: linear-gradient(90deg, #2c1810, #4a2a1a);
+            color: #f0e6d0;
+            font-size: 0.75rem;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            overflow: hidden;
+            border-bottom: 1px solid var(--gold);
+            box-shadow: 0 1px 6px rgba(0, 0, 0, 0.15);
+        }
+
+        .marquee-ad .marquee-track {
+            display: flex;
+            white-space: nowrap;
+            animation: marqueeScroll 18s linear infinite;
+        }
+
+        .marquee-ad .marquee-track span {
+            padding: 0 60px;
+            letter-spacing: 0.5px;
+        }
+
+        .marquee-ad .marquee-track i {
+            color: var(--gold);
+            margin-right: 6px;
+        }
+
+        @keyframes marqueeScroll {
+            0% {
+                transform: translateX(0%);
+            }
+            100% {
+                transform: translateX(-50%);
+            }
+        }
+
+        /* ===== SEARCH OVERLAY ===== */
+        .search-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            z-index: 2000;
+            background: rgba(0, 0, 0, 0.75);
+            backdrop-filter: blur(6px);
+            display: none;
+            align-items: flex-start;
+            justify-content: center;
+            padding: 80px 20px 30px;
+        }
+
+        .search-overlay.active {
+            display: flex;
+        }
+
+        .search-overlay .search-box {
+            width: 100%;
+            max-width: 480px;
+            background: #fff;
+            border-radius: var(--radius);
+            padding: 16px 20px 20px;
+            box-shadow: 0 12px 48px rgba(0, 0, 0, 0.4);
+            animation: slideUp 0.3s ease;
+        }
+
+        @keyframes slideUp {
+            0% {
+                opacity: 0;
+                transform: translateY(30px) scale(0.96);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        .search-overlay .search-box .close-btn {
+            text-align: right;
+            font-size: 1.5rem;
+            color: #888;
+            cursor: pointer;
+            margin-bottom: 4px;
+        }
+        .search-overlay .search-box .close-btn:active {
+            color: #333;
+        }
+
+        .search-overlay .search-box input {
+            width: 100%;
+            padding: 12px 16px;
+            font-size: 1rem;
+            border: 2px solid #ddd;
+            border-radius: var(--radius-sm);
+            outline: none;
+            transition: border 0.2s;
+            font-family: inherit;
+        }
+        .search-overlay .search-box input:focus {
+            border-color: var(--primary);
+        }
+
+        .search-overlay .search-box .results {
+            margin-top: 14px;
+            max-height: 50vh;
+            overflow-y: auto;
+        }
+
+        .search-overlay .search-box .results .result-item {
+            padding: 10px 12px;
+            border-radius: var(--radius-sm);
+            background: #f5f0e8;
+            margin-bottom: 6px;
+            cursor: pointer;
+            transition: background 0.15s;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .search-overlay .search-box .results .result-item:active {
+            background: #e8e0d4;
+        }
+        .search-overlay .search-box .results .result-item img {
+            width: 44px;
+            height: 44px;
+            object-fit: cover;
+            border-radius: 8px;
+            background: #ddd;
+            flex-shrink: 0;
+        }
+        .search-overlay .search-box .results .result-item .info {
+            flex: 1;
+            min-width: 0;
+        }
+        .search-overlay .search-box .results .result-item .info .title {
+            font-weight: 600;
+            font-size: 0.9rem;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .search-overlay .search-box .results .result-item .info .preview {
+            font-size: 0.75rem;
+            color: #666;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .search-overlay .search-box .results .empty {
+            text-align: center;
+            color: #888;
+            padding: 30px 0;
+            font-size: 0.9rem;
+        }
+
+        /* ===== POSTS FEED ===== */
+        .feed {
+            max-width: 640px;
+            margin: 0 auto;
+            padding: 6px 14px 20px;
+        }
+
+        /* ===== POST CARD ===== */
+        .post-card {
+            background: #ffffff;
+            border-radius: var(--radius);
+            margin-bottom: 20px;
+            box-shadow: var(--shadow);
+            overflow: hidden;
+            transition: transform 0.15s, box-shadow 0.2s;
+            cursor: pointer;
+            border: 1px solid rgba(0, 0, 0, 0.04);
+        }
+
+        .post-card:active {
+            transform: scale(0.985);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        }
+
+        .post-card .card-media {
+            position: relative;
+            background: #e8e0d4;
+            min-height: 180px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .post-card .card-media img {
+            width: 100%;
+            height: 220px;
+            object-fit: cover;
+            background: #d5cdc0;
+            transition: transform 0.3s;
+        }
+
+        .post-card .card-media .media-badge {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: rgba(0, 0, 0, 0.7);
+            color: #fff;
+            padding: 3px 10px;
+            border-radius: 20px;
+            font-size: 0.65rem;
+            font-weight: 600;
+            letter-spacing: 0.3px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            backdrop-filter: blur(4px);
+        }
+
+        .post-card .card-body {
+            padding: 14px 16px 12px;
+        }
+
+        .post-card .card-body .post-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--primary-dark);
+            margin-bottom: 4px;
+            line-height: 1.3;
+        }
+
+        .post-card .card-body .post-meta {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 0.7rem;
+            color: #777;
+            margin-bottom: 8px;
+            flex-wrap: wrap;
+        }
+
+        .post-card .card-body .post-meta .author {
+            font-weight: 600;
+            color: var(--primary);
+        }
+        .post-card .card-body .post-meta .date {
+            color: #999;
+        }
+
+        .post-card .card-body .post-preview {
+            font-size: 0.875rem;
+            line-height: 1.5;
+            color: #3d3d3d;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            margin-bottom: 10px;
+        }
+
+        /* audio / video players inside card */
+        .post-card .card-media .media-player {
+            width: 100%;
+            max-height: 200px;
+            background: #1a1a1a;
+        }
+        .post-card .card-media .media-player audio,
+        .post-card .card-media .media-player video {
+            width: 100%;
+            display: block;
+            max-height: 200px;
+        }
+        .post-card .card-media .media-player video {
+            height: auto;
+            max-height: 260px;
+        }
+
+        /* ===== POST ACTIONS ===== */
+        .post-actions {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 8px 16px 14px;
+            border-top: 1px solid #f0ebe4;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+
+        .post-actions .left {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .post-actions .action-btn {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            color: #555;
+            background: none;
+            border: none;
+            padding: 4px 6px;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: background 0.15s, color 0.15s;
+            font-family: inherit;
+        }
+
+        .post-actions .action-btn i {
+            font-size: 1.1rem;
+            transition: transform 0.2s;
+        }
+
+        .post-actions .action-btn:active {
+            transform: scale(0.92);
+        }
+
+        .post-actions .action-btn.liked {
+            color: #e74c3c;
+        }
+        .post-actions .action-btn.liked i {
+            font-weight: 900;
+        }
+
+        .post-actions .action-btn.share-btn {
+            color: #25d366;
+        }
+        .post-actions .action-btn.share-btn i {
+            font-size: 1.15rem;
+        }
+
+        .post-actions .action-btn .count {
+            font-size: 0.7rem;
+            font-weight: 600;
+            color: #777;
+            min-width: 12px;
+        }
+
+        .post-actions .read-more {
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--primary);
+            background: rgba(26, 60, 42, 0.08);
+            padding: 4px 14px;
+            border-radius: 20px;
+            border: none;
+            cursor: pointer;
+            font-family: inherit;
+            transition: background 0.15s;
+        }
+        .post-actions .read-more:active {
+            background: rgba(26, 60, 42, 0.18);
+        }
+
+    /* ===== FULL POST MODAL ===== */
+        .full-post-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            z-index: 3000;
+            background: rgba(0, 0, 0, 0.70);
+            backdrop-filter: blur(8px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 20px 12px 30px;
+            overflow-y: auto;
+        }
+
+        .full-post-overlay.active {
+            display: flex;
+        }
+
+        .full-post-overlay .full-post-content {
+            background: #fff;
+            border-radius: var(--radius);
+            max-width: 640px;
+            width: 100%;
+            max-height: 92vh;
+            overflow-y: auto;
+            padding: 20px 20px 30px;
+            animation: slideUp 0.3s ease;
+            position: relative;
+            box-shadow: 0 24px 64px rgba(0, 0, 0, 0.5);
+        }
+
+        .full-post-overlay .full-post-content .close-full {
+            position: sticky;
+            top: 0;
+            z-index: 1;
+            text-align: right;
+            font-size: 1.6rem;
+            color: #999;
+            cursor: pointer;
+            margin-bottom: 6px;
+            background: #fff;
+            padding: 4px 0 8px;
+            border-bottom: 1px solid #eee;
+        }
+        .full-post-overlay .full-post-content .close-full:active {
+            color: #333;
+        }
+
+        .full-post-overlay .full-post-content .full-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary-dark);
+            margin: 4px 0 6px;
+            line-height: 1.3;
+        }
+
+        .full-post-overlay .full-post-content .full-meta {
+            font-size: 0.75rem;
+            color: #888;
+            margin-bottom: 12px;
+        }
+
+        .full-post-overlay .full-post-content .full-image {
+            width: 100%;
+            border-radius: var(--radius-sm);
+            margin: 8px 0 14px;
+            background: #ddd;
+            max-height: 400px;
+            object-fit: cover;
+        }
+
+        .full-post-overlay .full-post-content .full-text {
+            font-size: 0.95rem;
+            line-height: 1.7;
+            color: #2d2d2d;
+            white-space: pre-wrap;
+            word-break: break-word;
+        }
+
+        .full-post-overlay .full-post-content .full-media {
+            margin: 12px 0;
+            border-radius: var(--radius-sm);
+            overflow: hidden;
+            background: #1a1a1a;
+            width: 100%;
+        }
+        .full-post-overlay .full-post-content .full-media audio,
+        .full-post-overlay .full-post-content .full-media video {
+            width: 100%;
+            display: block;
+            max-height: 360px;
+        }
+
+        .full-post-overlay .full-post-content .full-actions {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            margin-top: 16px;
+            padding-top: 14px;
+            border-top: 1px solid #f0ebe4;
+        }
+
+        /* ===== BOTTOM NAV ===== */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            height: var(--nav-height);
+            background: #ffffff;
+            border-top: 1px solid rgba(0, 0, 0, 0.08);
+            box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.06);
+            display: flex;
+            align-items: stretch;
+            justify-content: space-around;
+            padding: 0 4px;
+            backdrop-filter: blur(12px);
+            background: rgba(255, 255, 255, 0.96);
+        }
+
+        .bottom-nav .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            flex: 1;
+            gap: 1px;
+            font-size: 0.55rem;
+            font-weight: 500;
+            color: #888;
+            cursor: pointer;
+            transition: color 0.15s;
+            padding: 4px 0;
+            border: none;
+            background: none;
+            font-family: inherit;
+            position: relative;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .bottom-nav .nav-item i {
+            font-size: 1.4rem;
+            transition: transform 0.2s;
+        }
+
+        .bottom-nav .nav-item:active i {
+            transform: scale(0.88);
+        }
+
+        .bottom-nav .nav-item.active {
+            color: var(--primary);
+        }
+        .bottom-nav .nav-item.active i {
+            color: var(--gold);
+        }
+
+        .bottom-nav .nav-item .label {
+            font-size: 0.5rem;
+            letter-spacing: 0.2px;
+            text-transform: uppercase;
+        }
+
+        .bottom-nav .nav-item.post-btn i {
+            font-size: 2.2rem;
+            color: var(--gold);
+            background: var(--primary);
+            width: 48px;
+            height: 48px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+               box-shadow: 0 4px 16px rgba(26, 60, 42, 0.3);
+            margin-top: -18px;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .bottom-nav .nav-item.post-btn:active i {
+            transform: scale(0.92);
+            box-shadow: 0 2px 8px rgba(26, 60, 42, 0.25);
+        }
+
+        .bottom-nav .nav-item.post-btn .label {
+            margin-top: 2px;
+        }
+
+        /* ===== TOAST ===== */
+        .toast {
+            position: fixed;
+            bottom: 90px;
+            left: 50%;
+            transform: translateX(-50%) translateY(20px);
+            background: #1e1e1e;
+            color: #fff;
+            padding: 10px 24px;
+            border-radius: 30px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s, transform 0.3s;
+            z-index: 5000;
+            max-width: 90%;
+            text-align: center;
+        }
+        .toast.show {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+        }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 480px) {
+            .app-header .brand h1 {
+                font-size: 1.05rem;
+            }
+            .app-header .brand .sub {
+                font-size: 0.55rem;
+            }
+            .post-card .card-media img {
+                height: 170px;
+            }
+            .full-post-overlay .full-post-content {
+                padding: 14px 14px 24px;
+            }
+            .full-post-overlay .full-post-content .full-title {
+                font-size: 1.25rem;
+            }
+            .bottom-nav .nav-item i {
+                font-size: 1.2rem;
+            }
+            .bottom-nav .nav-item.post-btn i {
+                width: 42px;
+                height: 42px;
+                font-size: 1.8rem;
+                margin-top: -14px;
+            }
+            .feed {
+                padding: 4px 10px 12px;
+            }
+        }
+
+        @media (min-width: 768px) {
+            .feed {
+                padding: 10px 20px 30px;
+            }
+            .post-card .card-media img {
+                height: 280px;
+            }
+        }
+
+        /* ===== SCROLLBAR ===== */
+        ::-webkit-scrollbar {
+            width: 4px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f0ebe4;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: var(--primary-light);
+            border-radius: 10px;
+        }
+
+        /* ===== LOADING SKELETON ===== */
+        .skeleton {
+            background: #e8e0d4;
+            border-radius: var(--radius);
+            padding: 16px;
+            margin-bottom: 20px;
+            animation: pulse 1.5s ease-in-out infinite;
+        }
+        .skeleton .s-image {
+            height: 180px;
+            background: #d5cdc0;
+            border-radius: var(--radius-sm);
+            margin-bottom: 12px;
+        }
+        .skeleton .s-line {
+            height: 14px;
+            background: #d5cdc0;
+            border-radius: 8px;
+            margin-bottom: 8px;
+        }
+        .skeleton .s-line.short {
+            width: 60%;
+        }
+        .skeleton .s-line.med {
+            width: 80%;
+        }
+
+        @keyframes pulse {
+            0%,
+            100% {
+                opacity: 0.6;
+            }
+            50% {
+                opacity: 1;
+            }
+        }
+
+        /* ===== EMPTY STATE ===== */
+        .empty-state {
+            text-align: center;
+            padding: 50px 20px 30px;
+            color: #888;
+        }
+        .empty-state i {
+            font-size: 3rem;
+            color: #ccc;
+            margin-bottom: 12px;
+        }
+        .empty-state h3 {
+            font-size: 1.1rem;
+            color: #555;
+            margin-bottom: 4px;
+        }
+        .empty-state p {
+            font-size: 0.85rem;
+            color: #999;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ===== HEADER ===== -->
+    <header class="app-header" id="appHeader">
+        <div class="brand">
+            <h1>BUHWEJU MUST DEVELOP</h1>
+            <div class="sub">Eiraka ryabantu baburijo.</div>
+        </div>
+        <div class="actions">
+            <i class="fas fa-search" id="searchToggle" aria-label="Search"></i>
+        </div>
+    </header>
+
+    <!-- ===== MOVING AD ===== -->
+    <div class="marquee-ad">
+        <div class="marquee-track" id="marqueeTrack">
+            <span><i class="fas fa-microphone-alt"></i> App designed by Dr Byamukama Mentor, expert in ICT.</span>
+            <span><i class="fas fa-microphone-alt"></i> App designed by Dr Byamukama Mentor, expert in ICT.</span>
+            <span><i class="fas fa-microphone-alt"></i> App designed by Dr Byamukama Mentor, expert in ICT.</span>
+            <span><i class="fas fa-microphone-alt"></i> App designed by Dr Byamukama Mentor, expert in ICT.</span>
+        </div>
+    </div>
+
+    <!-- ===== SEARCH OVERLAY ===== -->
+    <div class="search-overlay" id="searchOverlay">
+        <div class="search-box">
+            <div class="close-btn" id="searchClose"><i class="fas fa-times"></i></div>
+            <input type="text" id="searchInput" placeholder="Search posts..." autofocus />
+            <div class="results" id="searchResults"></div>
+        </div>
+    </div>
+
+    <!-- ===== FEED ===== -->
+    <main class="feed" id="feedContainer">
+        <!-- Posts will be injected here -->
+        <div id="postsWrapper"></div>
+    </main>
+
+    <!-- ===== FULL POST OVERLAY ===== -->
+    <div class="full-post-overlay" id="fullPostOverlay">
+        <div class="full-post-content" id="fullPostContent">
+            <div class="close-full" id="fullPostClose"><i class="fas fa-times"></i></div>
+            <div id="fullPostBody">
+                <!-- dynamic content -->
+            </div>
+        </div>
+    </div>
+        <!-- ===== BOTTOM NAVIGATION ===== -->
+    <nav class="bottom-nav" id="bottomNav">
+        <button class="nav-item active" data-tab="home" id="navHome">
+            <i class="fas fa-home"></i>
+            <span class="label">Home</span>
+        </button>
+        <button class="nav-item" data-tab="register" id="navRegister">
+            <i class="fas fa-user-plus"></i>
+            <span class="label">Register</span>
+        </button>
+        <button class="nav-item" data-tab="activities" id="navActivities">
+            <i class="fas fa-calendar-alt"></i>
+            <span class="label">Activities</span>
+        </button>
+        <button class="nav-item post-btn" data-tab="post" id="navPost">
+            <i class="fas fa-plus"></i>
+            <span class="label">Post</span>
+        </button>
+        <button class="nav-item" data-tab="account" id="navAccount">
+            <i class="fas fa-user-circle"></i>
+            <span class="label">Account</span>
+        </button>
+    </nav>
+
+    <!-- ===== TOAST ===== -->
+    <div class="toast" id="toast"></div>
+
+    <!-- ============================================================ -->
+    <!-- ===== FIREBASE INIT + APP LOGIC ===== -->
+    <script>
+        // ================================================================
+        //  FIREBASE CONFIG
+        // ================================================================
+        const firebaseConfig = {
+            apiKey: "AIzaSyC-PINF2AJcETYIMINiCfT0gSxLxw70vSE",
+            authDomain: "bmd-app-1aec8.firebaseapp.com",
+            projectId: "bmd-app-1aec8",
+            storageBucket: "bmd-app-1aec8.firebasestorage.app",
+            messagingSenderId: "722780031230",
+            appId: "1:722780031230:web:cd19a98e24e4d9d80dfdaf",
+            measurementId: "G-WPEG8SQSW7"
+        };
+
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+        const auth = firebase.auth();
+
+        // ================================================================
+        //  STATE
+        // ================================================================
+        let allPosts = [];
+        let currentUser = null;
+        let likedPosts = new Set(); // store post IDs that current user has liked
+
+        // ================================================================
+        //  DOM REFS
+        // ================================================================
+        const postsWrapper = document.getElementById('postsWrapper');
+        const feedContainer = document.getElementById('feedContainer');
+        const searchOverlay = document.getElementById('searchOverlay');
+        const searchInput = document.getElementById('searchInput');
+        const searchResults = document.getElementById('searchResults');
+        const searchToggle = document.getElementById('searchToggle');
+        const searchClose = document.getElementById('searchClose');
+        const fullPostOverlay = document.getElementById('fullPostOverlay');
+        const fullPostBody = document.getElementById('fullPostBody');
+        const fullPostClose = document.getElementById('fullPostClose');
+        const toast = document.getElementById('toast');
+
+        // ================================================================
+        //  TOAST
+        // ================================================================
+        let toastTimer = null;
+
+        function showToast(msg, duration = 2500) {
+            toast.textContent = msg;
+            toast.classList.add('show');
+            clearTimeout(toastTimer);
+            toastTimer = setTimeout(() => toast.classList.remove('show'), duration);
+        }
+
+        // ================================================================
+        //  AUTH STATE
+        // ================================================================
+        auth.onAuthStateChanged(user => {
+            currentUser = user;
+            if (user) {
+                // load user's liked posts
+                db.collection('likes')
+                    .where('userId', '==', user.uid)
+                    .get()
+                    .then(snap => {
+                        snap.forEach(doc => likedPosts.add(doc.data().postId));
+                        renderPosts(allPosts);
+                    })
+                    .catch(() => {});
+            } else {
+                likedPosts.clear();
+                renderPosts(allPosts);
+            }
+        });
+
+        // ================================================================
+        //  CLOUDINARY UPLOAD PRESET (unsigned)
+        // ================================================================
+        const CLOUDINARY_PRESET = 'dp81zzxlh'; // unsigned preset
+
+        // ================================================================
+        //  FETCH POSTS (real-time)
+        // ================================================================
+        function listenPosts() {
+            db.collection('posts')
+                .orderBy('createdAt', 'desc')
+                .onSnapshot(snapshot => {
+                    const posts = [];
+                    snapshot.forEach(doc => {
+                        const data = doc.data();
+                        posts.push({
+                            id: doc.id,
+                            ...data,
+                            createdAt: data.createdAt ? data.createdAt.toDate() : new Date()
+                        });
+                    });
+                    allPosts = posts;
+                    renderPosts(posts);
+                }, error => {
+                    console.error('Firestore listen error:', error);
+                    showToast('Error loading posts. Please refresh.');
+                });
+        }
+
+        // ================================================================
+        //  RENDER POSTS
+        // ================================================================
+        function renderPosts(posts) {
+            if (!posts || posts.length === 0) {
+                postsWrapper.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-newspaper"></i>
+                        <h3>No posts yet</h3>
+                        <p>Be the first to share your voice!</p>
+                    </div>
+                `;
+                return;
+            }
+
+            let html = '';
+            posts.forEach(post => {
+                const isLiked = likedPosts.has(post.id);
+                const likeCount = post.likes || 0;
+                const previewText = post.preview || post.content?.slice(0, 150) || '';
+                const authorName = post.authorName || 'Anonymous';
+                const dateStr = post.createdAt ? formatDate(post.createdAt) : '';
+
+                // Image
+                let imageHtml = '';
+                if (post.imageUrl) {
+                    imageHtml = `<img src="${post.imageUrl}" alt="${post.title || 'Post image'}" loading="lazy" />`;
+                } else {
+                    imageHtml =
+                    `<div style="height:160px;background:#d5cdc0;display:flex;align-items:center;justify-content:center;color:#999;font-size:0.85rem;">📷 No image</div>`;
+                }
+
+                // Audio
+                let audioHtml = '';
+                if (post.audioUrl) {
+                    audioHtml = `
+                        <div class="media-player">
+                            <audio controls preload="metadata">
+                                <source src="${post.audioUrl}" type="audio/mpeg" />
+                                Your browser does not support audio.
+                            </audio>
+                        </div>
+                    `;
+                }
+
+                // Video
+                let videoHtml = '';
+                if (post.videoUrl) {
+                    videoHtml = `
+                        <div class="media-player">
+                            <video controls preload="metadata" style="width:100%;max-height:260px;">
+                                <source src="${post.videoUrl}" type="video/mp4" />
+                                Your browser does not support video.
+                            </video>
+                        </div>
+                    `;
+                }
+
+                // Build media section: show image + audio/video if present
+                let mediaHtml = `
+                    <div class="card-media">
+                        ${imageHtml}
+                        ${post.audioUrl ? `<span class="media-badge"><i class="fas fa-music"></i> Audio</span>` : ''}
+                        ${post.videoUrl ? `<span class="media-badge"><i class="fas fa-video"></i> Video</span>` : ''}
+                    </div>
+                    ${audioHtml}
+                    ${videoHtml}
+                `;
+
+                html += `
+                    <div class="post-card" data-postid="${post.id}">
+                        ${mediaHtml}
+                        <div class="card-body">
+                            <div class="post-title">${escapeHtml(post.title || 'Untitled')}</div>
+                            <div class="post-meta">
+                                <span class="author"><i class="fas fa-user-circle"></i> ${escapeHtml(authorName)}</span>
+                                ${dateStr ? `<span class="date"><i class="far fa-clock"></i> ${dateStr}</span>` : ''}
+                            </div>
+                            <div class="post-preview">${escapeHtml(previewText)}</div>
+                        </div>
+                        <div class="post-actions">
+                            <div class="left">
+                                <button class="action-btn like-btn ${isLiked ? 'liked' : ''}" data-postid="${post.id}">
+                                    <i class="${isLiked ? 'fas' : 'far'} fa-heart"></i>
+                                    <span class="count">${likeCount}</span>
+                                </button>
+                                <button class="action-btn share-btn" data-postid="${post.id}">
+                                    <i class="fas fa-share-alt"></i>
+                                </button>
+                            </div>
+                            <button class="read-more" data-postid="${post.id}">Read More →</button>
+                        </div>
+                    </div>
+                `;
+            });
+
+            postsWrapper.innerHTML = html;
+
+            // --- attach event listeners to each card ---
+            document.querySelectorAll('.post-card').forEach(card => {
+                const postId = card.dataset.postid;
+                // Click anywhere on card opens full post (except on interactive elements)
+                card.addEventListener('click', (e) => {
+                    // ignore if click is on a button, audio, video, or inside action bar
+                    const tag = e.target.tagName.toLowerCase();
+                    if (tag === 'button' || tag === 'audio' || tag === 'video' || tag === 'source' ||
+                        e.target.closest('.post-actions') || e.target.closest('.media-player')) {
+                        return;
+                    }
+                    openFullPost(postId);
+                });
+            });
+
+            // --- like buttons ---
+            document.querySelectorAll('.like-btn').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    const postId = btn.dataset.postid;
+                    toggleLike(postId);
+                });
+            });
+
+            // --- share buttons ---
+            document.querySelectorAll('.share-btn').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    const postId = btn.dataset.postid;
+                    sharePost(postId);
+                });
+            });
+
+            // --- read more buttons ---
+            document.querySelectorAll('.read-more').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    const postId = btn.dataset.postid;
+                    openFullPost(postId);
+                });
+            });
+        }
+
+          // ================================================================
+        //  LIKE TOGGLE
+        // ================================================================
+        async function toggleLike(postId) {
+            if (!currentUser) {
+                showToast('Please sign in to like posts.');
+                return;
+            }
+
+            const post = allPosts.find(p => p.id === postId);
+            if (!post) return;
+
+            const isLiked = likedPosts.has(postId);
+            const newLikeCount = isLiked ? (post.likes || 1) - 1 : (post.likes || 0) + 1;
+
+            try {
+                // Update Firestore
+                await db.collection('posts').doc(postId).update({
+                    likes: newLikeCount
+                });
+
+                // Update likes sub-collection
+                if (isLiked) {
+                    // Remove like
+                    const snap = await db.collection('likes')
+                        .where('userId', '==', currentUser.uid)
+                        .where('postId', '==', postId)
+                        .get();
+                    snap.forEach(doc => doc.ref.delete());
+                    likedPosts.delete(postId);
+                } else {
+                    await db.collection('likes').add({
+                        userId: currentUser.uid,
+                        postId: postId,
+                        createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                    });
+                    likedPosts.add(postId);
+                }
+
+                // Update local post data
+                post.likes = newLikeCount;
+                renderPosts(allPosts);
+            } catch (err) {
+                console.error('Like error:', err);
+                showToast('Error updating like. Try again.');
+            }
+        }
+
+              // ================================================================
+        //  SHARE POST (WhatsApp + OG meta update)
+        // ================================================================
+        function sharePost(postId) {
+            const post = allPosts.find(p => p.id === postId);
+            if (!post) {
+                showToast('Post not found.');
+                return;
+            }
+
+            const title = post.title || 'BMD Post';
+            const preview = post.preview || post.content?.slice(0, 120) || '';
+            const imageUrl = post.imageUrl || 'https://res.cloudinary.com/dp81zzxlh/image/upload/v1/bmd-og-default.jpg';
+
+            // Build the share URL with all necessary data in query params
+            // This ensures the link carries everything needed for the preview
+            const baseUrl = window.location.origin + window.location.pathname;
+            const params = new URLSearchParams();
+            params.set('post', postId);
+            params.set('t', encodeURIComponent(title));
+            params.set('p', encodeURIComponent(preview));
+            params.set('i', encodeURIComponent(imageUrl));
+
+            const shareUrl = baseUrl + '?' + params.toString();
+
+            // Build WhatsApp message
+            const message = `📢 *${title}*\n\n${preview}…\n\n🔗 ${shareUrl}\n\n#BMD #BuhwejuMustDevelop`;
+
+            // Encode for WhatsApp
+            const whatsappUrl = `https://api.whatsapp.com/send?text=${encodeURIComponent(message)}`;
+
+            // Update OG meta tags dynamically so if the link is shared, the preview works
+            updateOgMeta(title, preview, imageUrl, shareUrl);
+
+            // Open WhatsApp
+            window.open(whatsappUrl, '_blank');
+
+            showToast('Opening WhatsApp to share…');
+        }
+
+        // ================================================================
+        //  UPDATE OPEN GRAPH META (for share preview)
+        // ================================================================
+        function updateOgMeta(title, description, image, url) {
+            let meta;
+            meta = document.querySelector('meta[property="og:title"]');
+            if (meta) meta.setAttribute('content', title + ' – BMD');
+            else {
+                meta = document.createElement('meta');
+                meta.setAttribute('property', 'og:title');
+                meta.setAttribute('content', title + ' – BMD');
+                document.head.appendChild(meta);
+            }
+
+            meta = document.querySelector('meta[property="og:description"]');
+            if (meta) meta.setAttribute('content', description);
+            else {
+                meta = document.createElement('meta');
+                meta.setAttribute('property', 'og:description');
+                meta.setAttribute('content', description);
+                document.head.appendChild(meta);
+            }
+
+            meta = document.querySelector('meta[property="og:image"]');
+            if (meta) meta.setAttribute('content', image);
+            else {
+                meta = document.createElement('meta');
+                meta.setAttribute('property', 'og:image');
+                meta.setAttribute('content', image);
+                document.head.appendChild(meta);
+            }
+
+            meta = document.querySelector('meta[property="og:url"]');
+            if (meta) meta.setAttribute('content', url);
+            else {
+                meta = document.createElement('meta');
+                meta.setAttribute('property', 'og:url');
+                meta.setAttribute('content', url);
+                document.head.appendChild(meta);
+            }
+        }
+
+        // ================================================================
+        //  OPEN FULL POST
+        // ================================================================
+        function openFullPost(postId) {
+            const post = allPosts.find(p => p.id === postId);
+            if (!post) {
+                showToast('Post not found.');
+                return;
+            }
+
+            const authorName = post.authorName || 'Anonymous';
+            const dateStr = post.createdAt ? formatDate(post.createdAt) : '';
+            const content = post.content || post.preview || '';
+
+            let mediaHtml = '';
+            if (post.imageUrl) {
+                mediaHtml +=
+                    `<img class="full-image" src="${post.imageUrl}" alt="${post.title || 'Post image'}" />`;
+            }
+            if (post.audioUrl) {
+                mediaHtml += `
+                    <div class="full-media">
+                        <audio controls preload="metadata" style="width:100%;">
+                            <source src="${post.audioUrl}" type="audio/mpeg" />
+                        </audio>
+                    </div>
+                `;
+            }
+            if (post.videoUrl) {
+                mediaHtml += `
+                    <div class="full-media">
+                        <video controls preload="metadata" style="width:100%;max-height:360px;">
+                            <source src="${post.videoUrl}" type="video/mp4" />
+                        </video>
+                    </div>
+                `;
+            }
+
+            const isLiked = likedPosts.has(post.id);
+            const likeCount = post.likes || 0;
+
+            fullPostBody.innerHTML = `
+                <div class="full-title">${escapeHtml(post.title || 'Untitled')}</div>
+                <div class="full-meta">
+                    <span><i class="fas fa-user-circle"></i> ${escapeHtml(authorName)}</span>
+                    ${dateStr ? ` <span>•</span> <span><i class="far fa-clock"></i> ${dateStr}</span>` : ''}
+                </div>
+                ${mediaHtml}
+                <div class="full-text">${escapeHtml(content)}</div>
+                <div class="full-actions">
+                    <button class="action-btn like-btn ${isLiked ? 'liked' : ''}" data-postid="${post.id}" style="display:flex;align-items:center;gap:4px;font-size:0.9rem;background:none;border:none;cursor:pointer;font-family:inherit;padding:4px 10px;border-radius:20px;">
+                        <i class="${isLiked ? 'fas' : 'far'} fa-heart"></i>
+                        <span class="count">${likeCount}</span>
+                    </button>
+                    <button class="action-btn share-btn" data-postid="${post.id}" style="display:flex;align-items:center;gap:4px;font-size:0.9rem;background:none;border:none;cursor:pointer;font-family:inherit;padding:4px 10px;border-radius:20px;color:#25d366;">
+                        <i class="fas fa-share-alt"></i> Share
+                    </button>
+                    <button class="action-btn" style="margin-left:auto;background:none;border:none;color:#888;cursor:pointer;font-size:0.8rem;" id="fullPostCloseBtn2">
+                        <i class="fas fa-times"></i> Close
+                    </button>
+                </div>
+            `;
+
+            fullPostOverlay.classList.add('active');
+            document.body.style.overflow = 'hidden';
+
+            // Attach events inside full post
+            fullPostBody.querySelector('.like-btn')?.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const pid = e.currentTarget.dataset.postid;
+                toggleLike(pid);
+                // re-open the full post after like to update UI
+                setTimeout(() => openFullPost(pid), 300);
+            });
+
+            fullPostBody.querySelector('.share-btn')?.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const pid = e.currentTarget.dataset.postid;
+                sharePost(pid);
+            });
+
+            fullPostBody.querySelector('#fullPostCloseBtn2')?.addEventListener('click', closeFullPost);
+        }
+
+        function closeFullPost() {
+            fullPostOverlay.classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        // ================================================================
+        //  SEARCH
+        // ================================================================
+        searchToggle.addEventListener('click', () => {
+            searchOverlay.classList.add('active');
+            searchInput.value = '';
+            searchResults.innerHTML = '';
+            searchInput.focus();
+        });
+
+        searchClose.addEventListener('click', () => {
+            searchOverlay.classList.remove('active');
+        });
+
+        searchOverlay.addEventListener('click', (e) => {
+            if (e.target === searchOverlay) searchOverlay.classList.remove('active');
+        });
+
+        searchInput.addEventListener('input', (e) => {
+            const query = e.target.value.trim().toLowerCase();
+            if (!query) {
+                searchResults.innerHTML = '';
+                return;
+            }
+            const matches = allPosts.filter(p =>
+                (p.title || '').toLowerCase().includes(query) ||
+                (p.content || '').toLowerCase().includes(query) ||
+                (p.preview || '').toLowerCase().includes(query) ||
+                (p.authorName || '').toLowerCase().includes(query)
+            );
+
+            if (matches.length === 0) {
+                searchResults.innerHTML = `<div class="empty">No posts found.</div>`;
+                return;
+            }
+
+            let html = '';
+            matches.slice(0, 12).forEach(p => {
+                const img = p.imageUrl ||
+                'https://res.cloudinary.com/dp81zzxlh/image/upload/v1/bmd-og-default.jpg';
+                html += `
+                    <div class="result-item" data-postid="${p.id}">
+                        <img src="${img}" alt="" />
+                        <div class="info">
+                            <div class="title">${escapeHtml(p.title || 'Untitled')}</div>
+                            <div class="preview">${escapeHtml((p.preview || p.content || '').slice(0, 80))}…</div>
+                        </div>
+                    </div>
+                `;
+            });
+            searchResults.innerHTML = html;
+
+            searchResults.querySelectorAll('.result-item').forEach(el => {
+                el.addEventListener('click', () => {
+                    const pid = el.dataset.postid;
+                    searchOverlay.classList.remove('active');
+                    openFullPost(pid);
+                });
+            });
+        });
+
+        // ================================================================
+        //  FULL POST OVERLAY CLOSE
+        // ================================================================
+        fullPostClose.addEventListener('click', closeFullPost);
+        fullPostOverlay.addEventListener('click', (e) => {
+            if (e.target === fullPostOverlay) closeFullPost();
+        });
+
+        // ================================================================
+        //  BOTTOM NAVIGATION
+        // ================================================================
+        document.querySelectorAll('.bottom-nav .nav-item').forEach(item => {
+            item.addEventListener('click', () => {
+                const tab = item.dataset.tab;
+                document.querySelectorAll('.bottom-nav .nav-item').forEach(n => n.classList.remove('active'));
+                item.classList.add('active');
+
+                switch (tab) {
+                    case 'home':
+                        // scroll to top
+                        window.scrollTo({ top: 0, behavior: 'smooth' });
+                        break;
+                    case 'register':
+                        showToast('📝 Register page coming soon!');
+                        break;
+                    case 'activities':
+                        showToast('📅 Activities page coming soon!');
+                        break;
+                    case 'post':
+                        showToast('📝 Create a new post – feature coming soon!');
+                        break;
+                    case 'account':
+                        if (currentUser) {
+                            showToast(`👋 Signed in as ${currentUser.displayName || currentUser.email || 'User'}`);
+                        } else {
+                            // Simple sign-in with Google (for demo)
+                            const provider = new firebase.auth.GoogleAuthProvider();
+                            auth.signInWithPopup(provider)
+                                .then(() => showToast('✅ Signed in successfully!'))
+                                .catch(err => showToast('❌ Sign-in failed: ' + err.message));
+                        }
+                        break;
+                    default:
+                        break;
+                }
+            });
+        });
+      // ================================================================
+        //  UTILITY FUNCTIONS
+        // ================================================================
+        function escapeHtml(text) {
+            if (!text) return '';
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        function formatDate(date) {
+            if (!date) return '';
+            const now = new Date();
+            const diff = now - date;
+            if (diff < 60000) return 'Just now';
+            if (diff < 3600000) return Math.floor(diff / 60000) + 'm ago';
+            if (diff < 86400000) return Math.floor(diff / 3600000) + 'h ago';
+            if (diff < 172800000) return 'Yesterday';
+            return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+        }
+
+        // ================================================================
+        //  HANDLE URL PARAMETERS (for shared links)
+        // ================================================================
+        function handleUrlParams() {
+            const params = new URLSearchParams(window.location.search);
+            const postId = params.get('post');
+            const title = params.get('t');
+            const preview = params.get('p');
+            const image = params.get('i');
+
+            // If we have a post ID, try to open that post
+            if (postId) {
+                // Wait for posts to load, then open
+                const checkPosts = setInterval(() => {
+                    if (allPosts.length > 0) {
+                        clearInterval(checkPosts);
+                        const post = allPosts.find(p => p.id === postId);
+                        if (post) {
+                            openFullPost(postId);
+                        } else {
+                            showToast('Post not found.');
+                        }
+                    }
+                }, 200);
+
+                // Also update OG meta for the shared link preview
+                if (title && preview && image) {
+                    updateOgMeta(
+                        decodeURIComponent(title),
+                        decodeURIComponent(preview),
+                        decodeURIComponent(image),
+                        window.location.href
+                    );
+                }
+            }
+        }
+
+        // ================================================================
+        //  INIT
+        // ================================================================
+        listenPosts();
+
+        // Handle URL params after a short delay
+        setTimeout(handleUrlParams, 500);
+
+        // Also handle when user navigates back/forward
+        window.addEventListener('popstate', () => {
+            handleUrlParams();
+        });
+
+        // Re-run URL param handling when posts load
+        let urlHandled = false;
+        const checkPostsInterval = setInterval(() => {
+            if (allPosts.length > 0 && !urlHandled) {
+                urlHandled = true;
+                handleUrlParams();
+                clearInterval(checkPostsInterval);
+            }
+        }, 300);
+
+        console.log('🚀 BMD App loaded successfully!');
+        console.log('📱 Designed by Dr Byamukama Mentor, expert in ICT.');
+    </script>
+
+</body>
+</html>
