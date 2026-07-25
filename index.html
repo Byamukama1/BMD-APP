@@ -5,786 +5,767 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
     <title>Buhweju Must Develop – BMD</title>
 
-    <!-- ===== OPEN GRAPH (for social previews) ===== -->
+    <!-- OG meta (will be updated dynamically) -->
     <meta property="og:title" content="Buhweju Must Develop (BMD)" />
     <meta property="og:description" content="Eiraka ryabantu baburijo. – People's Voice" />
-    <meta property="og:image" content="https://res.cloudinary.com/dp81zzxlh/image/upload/v1/bmd-og-default.jpg" />
+    <meta property="og:image" content="https://res.cloudinary.com/dp81zzxlh/image/upload/v1784978097/vhaafrigchmqnqbhehft.jpg" />
     <meta property="og:url" content="https://bmd-app-1aec8.web.app/" />
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content="Buhweju Must Develop" />
 
-    <!-- ===== FIREBASE SDK ===== -->
+    <!-- Firebase -->
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-storage-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
 
-    <!-- ===== FONTS & ICONS ===== -->
+    <!-- Fonts & Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Lora:ital,wght@0,500;0,600;0,700;1,400&family=Playfair+Display:wght@700;800&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet" />
 
     <style>
-        /* ===== RESET & ROOT VARS ===== */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+        * { margin:0; padding:0; box-sizing:border-box; }
 
         :root {
-            --header-bg: #111827; /* Modern dark charcoal background */
-            --header-text: #ffffff;
-            --accent-gold: #d4a743;
-            --accent-gold-hover: #f0d080;
-            --page-bg: #f8f9fa;
-            --card-bg: #ffffff;
-            --text-primary: #1f2937;
-            --text-secondary: #4b5563;
-            --text-muted: #6b7280;
-            --border-color: #e5e7eb;
-            --shadow-sm: 0 2px 8px rgba(0,0,0,0.05);
-            --shadow-md: 0 6px 20px rgba(0,0,0,0.08);
-            --radius-md: 12px;
-            --radius-lg: 18px;
+            --bmd-white: #ffffff;
+            --bmd-black: #111111;
+            --bmd-grey: #f5f5f5;
+            --bmd-grey-dark: #2c2c2c;
+            --bmd-gold: #d4a743;
+            --bmd-gold-light: #f0d080;
+            --bmd-shadow: 0 4px 16px rgba(0,0,0,0.06);
+            --bmd-radius: 20px;
+            --bmd-radius-sm: 12px;
+            --nav-height: 70px;
             --header-height: 68px;
             --ad-height: 34px;
-            --nav-height: 64px;
         }
 
         body {
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-            background: var(--page-bg);
-            color: var(--text-primary);
-            padding-top: calc(var(--header-height) + var(--ad-height));
-            padding-bottom: calc(var(--nav-height) + 24px);
+            background: var(--bmd-grey);
+            color: var(--bmd-black);
+            padding-bottom: calc(var(--nav-height) + 20px);
+            padding-top: calc(var(--header-height) + var(--ad-height) + 8px);
             min-height: 100vh;
             -webkit-tap-highlight-color: transparent;
         }
 
-        a { text-decoration: none; color: inherit; }
-
-        /* ===== INITIAL PAGE PRELOADER ===== */
-        #pagePreloader {
-            position: fixed;
-            inset: 0;
-            background: #ffffff;
-            z-index: 9999;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            transition: opacity 0.4s ease, visibility 0.4s ease;
-        }
-        #pagePreloader.hidden {
-            opacity: 0;
-            visibility: hidden;
-            pointer-events: none;
-        }
-        .preloader-logo {
-            width: 80px;
-            height: 80px;
-            border-radius: 50%;
-            object-fit: cover;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
-            margin-bottom: 16px;
-            animation: pulseLogo 1.8s infinite ease-in-out;
-        }
-        .preloader-text {
-            font-family: 'Inter', sans-serif;
-            font-weight: 600;
-            font-size: 0.95rem;
-            color: var(--text-primary);
-            letter-spacing: 0.2px;
-        }
-        .preloader-subtext {
-            font-size: 0.75rem;
-            color: var(--text-muted);
-            margin-top: 4px;
-        }
-        @keyframes pulseLogo {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.06); }
-        }
-
-        /* ===== HEADER ===== */
+        /* ----- HEADER (black/white/gold) ----- */
         .app-header {
             position: fixed;
-            top: 0; left: 0; right: 0;
+            top: 0;
+            left: 0;
+            right: 0;
             z-index: 1000;
+            background: #ffffff;
+            border-bottom: 1px solid rgba(0,0,0,0.06);
             height: var(--header-height);
-            background: var(--header-bg);
-            color: var(--header-text);
             display: flex;
             align-items: center;
             justify-content: space-between;
             padding: 0 16px;
-            border-bottom: 2px solid var(--accent-gold);
-            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+            box-shadow: 0 2px 12px rgba(0,0,0,0.04);
         }
 
-        .header-left {
+        .app-header .left {
             display: flex;
             align-items: center;
             gap: 10px;
-            min-width: 0;
-            flex: 1;
         }
 
-        .header-logo {
-            width: 42px;
-            height: 42px;
-            border-radius: 50%;
-            object-fit: cover;
-            border: 1.5px solid var(--accent-gold);
-            flex-shrink: 0;
+        .app-header .logo-img {
+            height: 40px;
+            width: auto;
+            border-radius: 8px;
             background: #fff;
+            object-fit: contain;
         }
 
-        .brand-info {
+        .app-header .brand-text {
             display: flex;
             flex-direction: column;
-            min-width: 0;
+            line-height: 1.15;
         }
-
-        .brand-info h1 {
+        .app-header .brand-text .main {
             font-family: 'Playfair Display', serif;
             font-size: 1.1rem;
-            font-weight: 800;
-            color: #ffffff;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            letter-spacing: 0.3px;
+            font-weight: 700;
+            color: #111;
+            letter-spacing: -0.3px;
+        }
+        .app-header .brand-text .sub {
+            font-size: 0.55rem;
+            font-weight: 500;
+            color: #777;
+            letter-spacing: 0.2px;
+            text-transform: uppercase;
         }
 
-        .brand-info .sub {
-            font-size: 0.62rem;
-            color: var(--accent-gold);
-            font-style: italic;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-
-        .header-right {
+        .app-header .right {
             display: flex;
             align-items: center;
-            gap: 16px;
-            flex-shrink: 0;
-            margin-left: 10px;
+            gap: 14px;
         }
 
-        .header-action-btn {
-            background: none;
-            border: none;
-            color: #ffffff;
-            font-size: 1.2rem;
+        .app-header .right .search-icon {
+            font-size: 1.25rem;
+            color: #333;
             cursor: pointer;
-            transition: color 0.2s, transform 0.15s;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            transition: transform 0.2s;
         }
+        .app-header .right .search-icon:active { transform: scale(0.90); }
 
-        .header-action-btn:hover { color: var(--accent-gold); }
-        .header-action-btn:active { transform: scale(0.9); }
-
-        .user-profile-avatar {
+        .app-header .profile-pic {
             width: 36px;
             height: 36px;
             border-radius: 50%;
             object-fit: cover;
-            border: 2px solid var(--accent-gold);
+            border: 2px solid var(--bmd-gold);
+            background: #ddd;
             cursor: pointer;
-            background: #374151;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #fff;
-            font-size: 1.1rem;
-            overflow: hidden;
+            transition: border 0.2s;
         }
+        .app-header .profile-pic:active { opacity: 0.7; }
 
-        /* ===== MOVING AD (MARQUEE) ===== */
+        /* ----- MOVING AD (gold/black) ----- */
         .marquee-ad {
             position: fixed;
             top: var(--header-height);
-            left: 0; right: 0;
+            left: 0;
+            right: 0;
             z-index: 999;
             height: var(--ad-height);
-            background: #1f2937;
-            color: #f3f4f6;
-            font-size: 0.72rem;
+            background: #1a1a1a;
+            color: #f0e6d0;
+            font-size: 0.7rem;
             font-weight: 500;
             display: flex;
             align-items: center;
             overflow: hidden;
-            border-bottom: 1px solid rgba(212, 167, 67, 0.4);
+            border-bottom: 1px solid var(--bmd-gold);
         }
 
-        .marquee-track {
+        .marquee-ad .marquee-track {
             display: flex;
             white-space: nowrap;
-            animation: marqueeScroll 22s linear infinite;
+            animation: marqueeScroll 20s linear infinite;
         }
-
-        .marquee-track span {
-            padding: 0 45px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .marquee-track i { color: var(--accent-gold); }
+        .marquee-ad .marquee-track span { padding: 0 60px; letter-spacing: 0.4px; }
+        .marquee-ad .marquee-track i { color: var(--bmd-gold); margin-right: 6px; }
 
         @keyframes marqueeScroll {
             0% { transform: translateX(0%); }
             100% { transform: translateX(-50%); }
         }
 
-        /* ===== FEED CONTAINER ===== */
-        .feed {
-            max-width: 620px;
-            margin: 0 auto;
-            padding: 12px 12px 24px;
+        /* ----- SEARCH OVERLAY (black/white) ----- */
+        .search-overlay {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            z-index: 2000;
+            background: rgba(0,0,0,0.75);
+            backdrop-filter: blur(6px);
+            display: none;
+            align-items: flex-start;
+            justify-content: center;
+            padding: 80px 20px 30px;
+        }
+        .search-overlay.active { display: flex; }
+
+        .search-overlay .search-box {
+            width: 100%;
+            max-width: 480px;
+            background: #fff;
+            border-radius: var(--bmd-radius);
+            padding: 16px 20px 20px;
+            box-shadow: 0 12px 48px rgba(0,0,0,0.3);
+            animation: slideUp 0.25s ease;
+        }
+        @keyframes slideUp {
+            0% { opacity:0; transform: translateY(30px) scale(0.96); }
+            100% { opacity:1; transform: translateY(0) scale(1); }
         }
 
-        /* ===== POST CARD ===== */
-        .post-card {
-            background: var(--card-bg);
-            border-radius: var(--radius-lg);
-            margin-bottom: 20px;
-            box-shadow: var(--shadow-sm);
-            border: 1px solid var(--border-color);
-            overflow: hidden;
-            transition: box-shadow 0.2s ease, transform 0.15s ease;
+        .search-overlay .search-box .close-btn {
+            text-align: right;
+            font-size: 1.4rem;
+            color: #888;
+            cursor: pointer;
+            margin-bottom: 4px;
         }
-
-        .post-card:hover {
-            box-shadow: var(--shadow-md);
+        .search-overlay .search-box input {
+            width: 100%;
+            padding: 12px 16px;
+            font-size: 1rem;
+            border: 2px solid #ddd;
+            border-radius: var(--bmd-radius-sm);
+            outline: none;
+            font-family: inherit;
+            transition: border 0.2s;
         }
+        .search-overlay .search-box input:focus { border-color: #111; }
 
-        .card-header-author {
-            padding: 14px 16px 4px;
+        .search-overlay .search-box .results {
+            margin-top: 14px;
+            max-height: 50vh;
+            overflow-y: auto;
+        }
+        .search-overlay .search-box .results .result-item {
+            padding: 10px 12px;
+            border-radius: var(--bmd-radius-sm);
+            background: #f5f0e8;
+            margin-bottom: 6px;
+            cursor: pointer;
             display: flex;
             align-items: center;
             gap: 10px;
+            transition: background 0.15s;
+        }
+        .search-overlay .search-box .results .result-item:active { background: #e8e0d4; }
+        .search-overlay .search-box .results .result-item img {
+            width: 44px; height: 44px; object-fit: cover; border-radius: 8px;
+            background: #ddd; flex-shrink: 0;
+        }
+        .search-overlay .search-box .results .result-item .info {
+            flex:1; min-width:0;
+        }
+        .search-overlay .search-box .results .result-item .info .title {
+            font-weight: 600; font-size: 0.9rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+        }
+        .search-overlay .search-box .results .result-item .info .preview {
+            font-size: 0.75rem; color: #666; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+        }
+        .search-overlay .search-box .results .empty {
+            text-align: center; color: #888; padding: 30px 0; font-size: 0.9rem;
         }
 
-        .author-avatar {
-            width: 32px;
-            height: 32px;
-            border-radius: 50%;
-            object-fit: cover;
-            background: #e5e7eb;
-            flex-shrink: 0;
+        /* ----- FEED ----- */
+        .feed {
+            max-width: 680px;
+            margin: 0 auto;
+            padding: 6px 14px 20px;
         }
 
-        .author-meta {
-            display: flex;
-            flex-direction: column;
-            min-width: 0;
+        /* ----- POST CARD (clean, professional) ----- */
+        .post-card {
+            background: #ffffff;
+            border-radius: var(--bmd-radius);
+            margin-bottom: 20px;
+            box-shadow: var(--bmd-shadow);
+            overflow: hidden;
+            transition: transform 0.15s, box-shadow 0.2s;
+            border: 1px solid rgba(0,0,0,0.02);
+            cursor: default;
+        }
+        .post-card:active { transform: scale(0.995); }
+
+        .post-card .card-body {
+            padding: 16px 18px 8px;
         }
 
-        .author-name {
+        .post-card .post-author {
             font-size: 0.8rem;
             font-weight: 600;
-            color: var(--text-secondary);
+            color: #555;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin-bottom: 2px;
         }
-
-        .post-date {
+        .post-card .post-author i {
+            color: var(--bmd-gold);
+            font-size: 0.7rem;
+        }
+        .post-card .post-author .name {
+            color: #222;
+        }
+        .post-card .post-author .date {
+            font-weight: 400;
+            color: #999;
             font-size: 0.65rem;
-            color: var(--text-muted);
         }
 
-        .card-post-title {
-            padding: 4px 16px 10px;
-            font-family: 'Lora', serif;
-            font-size: 1.18rem;
+        .post-card .post-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.25rem;
             font-weight: 700;
-            line-height: 1.35;
-            color: var(--text-primary);
+            color: #111;
+            line-height: 1.3;
+            margin-bottom: 6px;
         }
 
-        /* Media Container - ONLY rendered when media exists! */
-        .card-media-wrap {
-            width: 100%;
-            background: #000;
-            position: relative;
+        .post-card .card-media {
+            margin: 8px 0 0;
+            background: #f0f0f0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             overflow: hidden;
+            border-radius: var(--bmd-radius-sm);
         }
-
-        .card-media-wrap img {
+        .post-card .card-media img {
             width: 100%;
-            max-height: 380px;
+            height: auto;
+            max-height: 320px;
             object-fit: cover;
             display: block;
         }
-
-        .card-media-wrap video {
-            width: 100%;
-            max-height: 380px;
-            display: block;
-            background: #000;
+        .post-card .card-media .media-badge {
+            display: none;
         }
 
-        .card-media-wrap audio {
+        .post-card .media-player {
+            margin-top: 6px;
+            border-radius: var(--bmd-radius-sm);
+            overflow: hidden;
+            background: #1a1a1a;
+        }
+        .post-card .media-player audio,
+        .post-card .media-player video {
             width: 100%;
-            padding: 8px 12px;
-            background: #111827;
             display: block;
+            max-height: 200px;
         }
 
-        .card-preview-text {
-            padding: 10px 16px 12px;
-            font-size: 0.88rem;
-            line-height: 1.55;
-            color: #374151;
+        .post-card .post-preview {
+            font-size: 0.9rem;
+            line-height: 1.6;
+            color: #2d2d2d;
+            margin: 10px 0 6px;
             display: -webkit-box;
             -webkit-line-clamp: 3;
             -webkit-box-orient: vertical;
             overflow: hidden;
         }
 
-        /* ACTIONS ROW */
-        .post-actions {
+        .post-card .post-actions {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 10px 16px;
-            border-top: 1px solid #f3f4f6;
-            background: #fafafa;
+            padding: 8px 18px 14px;
+            border-top: 1px solid #f0ebe4;
+            flex-wrap: wrap;
+            gap: 6px;
         }
-
-        .actions-left {
+        .post-card .post-actions .left {
             display: flex;
             align-items: center;
             gap: 16px;
         }
-
-        .btn-action {
-            background: transparent;
-            border: none;
+        .post-card .post-actions .action-btn {
             display: flex;
             align-items: center;
-            gap: 6px;
-            font-size: 0.82rem;
-            font-weight: 600;
-            color: var(--text-secondary);
-            cursor: pointer;
-            padding: 6px 8px;
-            border-radius: 20px;
-            transition: background 0.15s, color 0.15s;
-        }
-
-        .btn-action:hover { background: #f3f4f6; }
-        .btn-action i { font-size: 1.05rem; }
-
-        .btn-action.like-btn.liked { color: #e11d48; }
-        .btn-action.like-btn.liked i { font-weight: 900; }
-
-        .btn-action.share-btn { color: #16a34a; }
-
-        .btn-read-more {
-            background: var(--header-bg);
-            color: #ffffff;
+            gap: 4px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            color: #555;
+            background: none;
             border: none;
-            padding: 6px 14px;
-            border-radius: 20px;
+            padding: 4px 8px;
+            border-radius: 30px;
+            cursor: pointer;
+            transition: background 0.15s;
+            font-family: inherit;
+        }
+        .post-card .post-actions .action-btn:active { transform: scale(0.92); }
+        .post-card .post-actions .action-btn i { font-size: 1.1rem; }
+        .post-card .post-actions .action-btn.liked { color: #d93025; }
+        .post-card .post-actions .action-btn.liked i { font-weight: 900; }
+        .post-card .post-actions .action-btn .count {
+            font-size: 0.7rem;
+            font-weight: 600;
+            color: #777;
+            min-width: 12px;
+        }
+        .post-card .post-actions .read-more {
             font-size: 0.75rem;
             font-weight: 600;
+            color: #111;
+            background: rgba(0,0,0,0.04);
+            padding: 4px 16px;
+            border-radius: 30px;
+            border: none;
             cursor: pointer;
-            transition: background 0.2s;
+            font-family: inherit;
+            transition: background 0.15s;
         }
+        .post-card .post-actions .read-more:active { background: rgba(0,0,0,0.10); }
 
-        .btn-read-more:hover {
-            background: #374151;
-        }
-
-        /* ===== SHARE MODAL ===== */
-        .share-modal-overlay {
+        /* Share modal (simple) */
+        .share-modal {
             position: fixed;
-            inset: 0;
+            top: 0; left: 0; right: 0; bottom: 0;
             z-index: 3000;
             background: rgba(0,0,0,0.6);
             backdrop-filter: blur(4px);
             display: none;
-            align-items: flex-end;
+            align-items: center;
             justify-content: center;
         }
-
-        .share-modal-overlay.active { display: flex; }
-
-        .share-card {
+        .share-modal.active { display: flex; }
+        .share-modal .share-box {
             background: #fff;
+            border-radius: var(--bmd-radius);
+            padding: 24px 20px 28px;
+            max-width: 340px;
             width: 100%;
-            max-width: 500px;
-            border-radius: 20px 20px 0 0;
-            padding: 20px;
-            animation: slideUp 0.25s ease-out;
+            animation: slideUp 0.25s ease;
+            box-shadow: 0 20px 48px rgba(0,0,0,0.3);
         }
-
-        .share-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
+        .share-modal .share-box h3 {
+            font-family: 'Playfair Display', serif;
             margin-bottom: 16px;
-            padding-bottom: 10px;
-            border-bottom: 1px solid var(--border-color);
+            font-weight: 600;
+            color: #111;
         }
-
-        .share-header h3 {
-            font-size: 1rem;
-            font-weight: 700;
-        }
-
-        .share-grid {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 16px;
-            padding: 10px 0;
-        }
-
-        .share-item {
+        .share-modal .share-box .share-grid {
             display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 6px;
-            background: none;
-            border: none;
-            cursor: pointer;
-            font-size: 0.7rem;
-            font-weight: 500;
-            color: var(--text-primary);
-        }
-
-        .share-icon-wrap {
-            width: 48px;
-            height: 48px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
+            flex-wrap: wrap;
+            gap: 12px;
             justify-content: center;
-            font-size: 1.4rem;
-            color: #fff;
+        }
+        .share-modal .share-box .share-grid button {
+            background: #f5f5f5;
+            border: none;
+            border-radius: 60px;
+            padding: 10px 18px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            transition: background 0.15s;
+            font-family: inherit;
+        }
+        .share-modal .share-box .share-grid button:active { background: #e0e0e0; }
+        .share-modal .share-box .share-grid button i { font-size: 1.2rem; }
+        .share-modal .share-box .close-share {
+            margin-top: 16px;
+            width: 100%;
+            padding: 10px;
+            background: #eee;
+            border: none;
+            border-radius: 60px;
+            font-weight: 500;
+            cursor: pointer;
         }
 
-        .bg-wa { background: #25D366; }
-        .bg-wb { background: #128C7E; }
-        .bg-msg { background: #0084FF; }
-        .bg-x { background: #000000; }
-        .bg-tt { background: #000000; }
-        .bg-copy { background: #6B7280; }
-
-        /* ===== FULL POST MODAL ===== */
+        /* ----- FULL POST OVERLAY (modal) ----- */
         .full-post-overlay {
             position: fixed;
-            inset: 0;
-            z-index: 2500;
-            background: rgba(0,0,0,0.7);
-            backdrop-filter: blur(5px);
+            top: 0; left: 0; right: 0; bottom: 0;
+            z-index: 3000;
+            background: rgba(0,0,0,0.70);
+            backdrop-filter: blur(6px);
             display: none;
             align-items: center;
             justify-content: center;
-            padding: 16px;
+            padding: 20px 12px 30px;
+            overflow-y: auto;
         }
-
         .full-post-overlay.active { display: flex; }
 
-        .full-post-modal {
-            background: #ffffff;
-            width: 100%;
+        .full-post-overlay .full-post-content {
+            background: #fff;
+            border-radius: var(--bmd-radius);
             max-width: 640px;
-            max-height: 90vh;
-            border-radius: var(--radius-lg);
+            width: 100%;
+            max-height: 92vh;
             overflow-y: auto;
+            padding: 20px 20px 30px;
+            animation: slideUp 0.3s ease;
             position: relative;
-            padding: 24px;
-            box-shadow: 0 20px 50px rgba(0,0,0,0.3);
-            animation: slideUp 0.25s ease-out;
+            box-shadow: 0 24px 64px rgba(0,0,0,0.4);
         }
-
-        .close-modal-btn {
+        .full-post-overlay .full-post-content .close-full {
             position: sticky;
             top: 0;
-            float: right;
-            background: #f3f4f6;
-            border: none;
-            width: 32px;
-            height: 32px;
-            border-radius: 50%;
-            font-size: 1.1rem;
+            z-index: 1;
+            text-align: right;
+            font-size: 1.6rem;
+            color: #999;
             cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 10;
-        }
-
-        .full-post-author {
-            font-size: 0.82rem;
-            font-weight: 600;
-            color: var(--accent-gold);
-            margin-bottom: 4px;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-
-        .full-post-title {
-            font-family: 'Lora', serif;
-            font-size: 1.5rem;
-            font-weight: 700;
-            margin-bottom: 8px;
-            line-height: 1.3;
-            color: var(--text-primary);
-        }
-
-        .full-post-date {
-            font-size: 0.72rem;
-            color: var(--text-muted);
-            margin-bottom: 16px;
-        }
-
-        .full-post-body {
-            font-size: 0.96rem;
-            line-height: 1.75;
-            color: #2d3748;
-            margin-top: 14px;
-        }
-
-        .full-post-body p {
-            margin-bottom: 14px;
-        }
-
-        /* ===== SEARCH OVERLAY ===== */
-        .search-overlay {
-            position: fixed;
-            inset: 0;
-            z-index: 2000;
-            background: rgba(0,0,0,0.7);
-            backdrop-filter: blur(4px);
-            display: none;
-            padding: 80px 16px 20px;
-            justify-content: center;
-        }
-
-        .search-overlay.active { display: flex; }
-
-        .search-box {
-            width: 100%;
-            max-width: 500px;
+            margin-bottom: 6px;
             background: #fff;
-            border-radius: var(--radius-lg);
-            padding: 16px;
-            height: fit-content;
+            padding: 4px 0 8px;
+            border-bottom: 1px solid #eee;
         }
-
-        .search-box input {
+        .full-post-overlay .full-post-content .full-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.6rem;
+            font-weight: 700;
+            color: #111;
+            margin: 4px 0 6px;
+            line-height: 1.3;
+        }
+        .full-post-overlay .full-post-content .full-meta {
+            font-size: 0.75rem;
+            color: #888;
+            margin-bottom: 12px;
+        }
+        .full-post-overlay .full-post-content .full-image {
             width: 100%;
-            padding: 12px 14px;
+            border-radius: var(--bmd-radius-sm);
+            margin: 8px 0 14px;
+            background: #ddd;
+            max-height: 400px;
+            object-fit: cover;
+        }
+        .full-post-overlay .full-post-content .full-text {
             font-size: 0.95rem;
-            border: 1.5px solid var(--border-color);
-            border-radius: var(--radius-md);
-            outline: none;
+            line-height: 1.8;
+            color: #1e1e1e;
+            white-space: pre-wrap;
+            word-break: break-word;
+        }
+        .full-post-overlay .full-post-content .full-text p { margin-bottom: 12px; }
+        .full-post-overlay .full-post-content .full-media {
+            margin: 12px 0;
+            border-radius: var(--bmd-radius-sm);
+            overflow: hidden;
+            background: #1a1a1a;
+        }
+        .full-post-overlay .full-post-content .full-media audio,
+        .full-post-overlay .full-post-content .full-media video {
+            width: 100%;
+            display: block;
+            max-height: 360px;
+        }
+        .full-post-overlay .full-post-content .full-actions {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            margin-top: 16px;
+            padding-top: 14px;
+            border-top: 1px solid #f0ebe4;
         }
 
-        .search-results {
-            margin-top: 12px;
-            max-height: 50vh;
-            overflow-y: auto;
-        }
-
-        .search-item {
-            padding: 10px;
-            border-bottom: 1px solid #f3f4f6;
-            cursor: pointer;
-        }
-
-        /* ===== BOTTOM NAVIGATION ===== */
+        /* ----- BOTTOM NAV (black/white) ----- */
         .bottom-nav {
             position: fixed;
-            bottom: 0; left: 0; right: 0;
+            bottom: 0;
+            left: 0;
+            right: 0;
             z-index: 1000;
             height: var(--nav-height);
             background: #ffffff;
-            border-top: 1px solid var(--border-color);
+            border-top: 1px solid rgba(0,0,0,0.06);
+            box-shadow: 0 -4px 16px rgba(0,0,0,0.04);
             display: flex;
-            align-items: center;
+            align-items: stretch;
             justify-content: space-around;
-            box-shadow: 0 -2px 10px rgba(0,0,0,0.05);
+            padding: 0 4px;
         }
-
-        .nav-item {
+        .bottom-nav .nav-item {
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 2px;
-            font-size: 0.58rem;
-            font-weight: 600;
-            color: #6b7280;
+            justify-content: center;
+            flex: 1;
+            gap: 1px;
+            font-size: 0.5rem;
+            font-weight: 500;
+            color: #888;
+            cursor: pointer;
+            transition: color 0.15s;
+            padding: 4px 0;
+            border: none;
+            background: none;
+            font-family: inherit;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .bottom-nav .nav-item i {
+            font-size: 1.3rem;
+            transition: transform 0.2s;
+        }
+        .bottom-nav .nav-item:active i { transform: scale(0.88); }
+        .bottom-nav .nav-item.active { color: #111; }
+        .bottom-nav .nav-item.active i { color: var(--bmd-gold); }
+        .bottom-nav .nav-item .label {
+            font-size: 0.5rem;
+            letter-spacing: 0.2px;
             text-transform: uppercase;
         }
-
-        .nav-item i { font-size: 1.25rem; }
-        .nav-item.active { color: var(--header-bg); }
-        .nav-item.active i { color: var(--accent-gold); }
-
-        .nav-item.post-btn i {
-            width: 44px; height: 44px;
-            background: var(--header-bg);
-            color: var(--accent-gold);
-            border-radius: 50%;
+        .bottom-nav .nav-item.post-btn i {
+            font-size: 2rem;
+            color: var(--bmd-gold);
+            background: #111;
+            width: 46px;
+            height: 46px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 1.4rem;
+            border-radius: 50%;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.15);
             margin-top: -16px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+            transition: transform 0.2s;
         }
+        .bottom-nav .nav-item.post-btn:active i { transform: scale(0.92); }
+        .bottom-nav .nav-item.post-btn .label { margin-top: 2px; }
 
-        /* TOAST */
+        /* ----- TOAST ----- */
         .toast {
             position: fixed;
-            bottom: 80px;
+            bottom: 90px;
             left: 50%;
             transform: translateX(-50%) translateY(20px);
-            background: #111827;
+            background: #1e1e1e;
             color: #fff;
-            padding: 8px 20px;
-            border-radius: 20px;
-            font-size: 0.8rem;
+            padding: 10px 24px;
+            border-radius: 60px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.3);
             opacity: 0;
-            transition: all 0.3s;
-            z-index: 5000;
             pointer-events: none;
+            transition: opacity 0.3s, transform 0.3s;
+            z-index: 5000;
+            max-width: 90%;
+            text-align: center;
         }
-        .toast.show {
-            opacity: 1;
-            transform: translateX(-50%) translateY(0);
+        .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+        /* ----- LOADING / SKELETON ----- */
+        .skeleton {
+            background: #e8e0d4;
+            border-radius: var(--bmd-radius);
+            padding: 16px;
+            margin-bottom: 20px;
+            animation: pulse 1.5s ease-in-out infinite;
+        }
+        .skeleton .s-image {
+            height: 180px;
+            background: #d5cdc0;
+            border-radius: var(--bmd-radius-sm);
+            margin-bottom: 12px;
+        }
+        .skeleton .s-line {
+            height: 14px;
+            background: #d5cdc0;
+            border-radius: 8px;
+            margin-bottom: 8px;
+        }
+        .skeleton .s-line.short { width: 60%; }
+        .skeleton .s-line.med { width: 80%; }
+        @keyframes pulse {
+            0%,100% { opacity: 0.6; }
+            50% { opacity: 1; }
         }
 
-        @keyframes slideUp {
-            from { transform: translateY(20px); opacity: 0; }
-            to { transform: translateY(0); opacity: 1; }
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #888;
         }
+        .empty-state i { font-size: 3rem; color: #ccc; margin-bottom: 12px; }
+        .empty-state h3 { font-size: 1.1rem; color: #555; }
+        .empty-state p { font-size: 0.85rem; color: #999; }
+
+        /* responsive */
+        @media (max-width: 480px) {
+            .app-header .brand-text .main { font-size: 0.9rem; }
+            .app-header .logo-img { height: 32px; }
+            .app-header .profile-pic { width: 30px; height: 30px; }
+            .post-card .post-title { font-size: 1.1rem; }
+            .post-card .card-media img { max-height: 220px; }
+            .full-post-overlay .full-post-content .full-title { font-size: 1.3rem; }
+            .bottom-nav .nav-item i { font-size: 1.1rem; }
+            .bottom-nav .nav-item.post-btn i { width: 40px; height: 40px; font-size: 1.6rem; margin-top: -12px; }
+        }
+        @media (min-width: 768px) {
+            .feed { padding: 10px 24px 30px; }
+            .post-card .card-media img { max-height: 400px; }
+        }
+
+        ::-webkit-scrollbar { width: 4px; }
+        ::-webkit-scrollbar-track { background: #f0ebe4; }
+        ::-webkit-scrollbar-thumb { background: #888; border-radius: 10px; }
+
+        .hidden { display: none; }
     </style>
 </head>
 <body>
 
-    <!-- ===== INITIAL PRELOADER ===== -->
-    <div id="pagePreloader">
-        <img src="https://res.cloudinary.com/dp81zzxlh/image/upload/v1/bmd-og-default.jpg" alt="BMD Logo" class="preloader-logo" id="preloaderLogo" />
-        <div class="preloader-text">Welcome back</div>
-        <div class="preloader-subtext">Page loading...</div>
-    </div>
-
-    <!-- ===== HEADER ===== -->
+    <!-- HEADER -->
     <header class="app-header">
-        <div class="header-left">
-            <img src="https://res.cloudinary.com/dp81zzxlh/image/upload/v1/bmd-og-default.jpg" alt="BMD Logo" class="header-logo" id="headerLogo" />
-            <div class="brand-info">
-                <h1>BUHWEJU MUST DEVELOP</h1>
-                <span class="sub">Eiraka ryabantu baburijo.</span>
+        <div class="left">
+            <img class="logo-img" src="https://res.cloudinary.com/dp81zzxlh/image/upload/v1784978097/vhaafrigchmqnqbhehft.jpg" alt="BMD Logo" />
+            <div class="brand-text">
+                <span class="main">BUHWEJU MUST DEVELOP</span>
+                <span class="sub">Ordinary people's voice</span>
             </div>
         </div>
-        <div class="header-right">
-            <button class="header-action-btn" id="searchToggle" aria-label="Search">
-                <i class="fas fa-search"></i>
-            </button>
-            <a href="account.html" id="userProfileLink">
-                <div class="user-profile-avatar" id="headerAvatar">
-                    <i class="fas fa-user"></i>
-                </div>
-            </a>
+        <div class="right">
+            <i class="fas fa-search search-icon" id="searchToggle"></i>
+            <img class="profile-pic" id="headerProfilePic" src="https://res.cloudinary.com/dp81zzxlh/image/upload/v1/default-avatar.png" alt="Profile" />
         </div>
     </header>
 
-    <!-- ===== MOVING AD ===== -->
+    <!-- MOVING AD -->
     <div class="marquee-ad">
         <div class="marquee-track">
-            <span><i class="fas fa-bullhorn"></i> App designed by Dr Byamukama Mentor, expert in ICT.</span>
-            <span><i class="fas fa-bullhorn"></i> App designed by Dr Byamukama Mentor, expert in ICT.</span>
-            <span><i class="fas fa-bullhorn"></i> App designed by Dr Byamukama Mentor, expert in ICT.</span>
+            <span><i class="fas fa-microphone-alt"></i> App designed by Dr Byamukama Mentor, expert in ICT.</span>
+            <span><i class="fas fa-microphone-alt"></i> App designed by Dr Byamukama Mentor, expert in ICT.</span>
+            <span><i class="fas fa-microphone-alt"></i> App designed by Dr Byamukama Mentor, expert in ICT.</span>
+            <span><i class="fas fa-microphone-alt"></i> App designed by Dr Byamukama Mentor, expert in ICT.</span>
         </div>
     </div>
 
-    <!-- ===== SEARCH OVERLAY ===== -->
+    <!-- SEARCH OVERLAY -->
     <div class="search-overlay" id="searchOverlay">
         <div class="search-box">
-            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
-                <span style="font-weight:700;">Search Posts</span>
-                <i class="fas fa-times" id="searchClose" style="cursor:pointer;"></i>
-            </div>
-            <input type="text" id="searchInput" placeholder="Type title or keywords..." />
-            <div class="search-results" id="searchResults"></div>
+            <div class="close-btn" id="searchClose"><i class="fas fa-times"></i></div>
+            <input type="text" id="searchInput" placeholder="Search posts..." autofocus />
+            <div class="results" id="searchResults"></div>
         </div>
     </div>
 
-    <!-- ===== MAIN FEED ===== -->
-    <main class="feed">
-        <div id="postsWrapper"></div>
+    <!-- FEED -->
+    <main class="feed" id="feedContainer">
+        <div id="postsWrapper">
+            <!-- skeletons will be shown initially -->
+        </div>
     </main>
 
-    <!-- ===== FULL POST MODAL ===== -->
+    <!-- FULL POST OVERLAY -->
     <div class="full-post-overlay" id="fullPostOverlay">
-        <div class="full-post-modal">
-            <button class="close-modal-btn" id="fullPostClose">&times;</button>
+        <div class="full-post-content" id="fullPostContent">
+            <div class="close-full" id="fullPostClose"><i class="fas fa-times"></i></div>
             <div id="fullPostBody"></div>
         </div>
     </div>
 
-    <!-- ===== SHARE MODAL ===== -->
-    <div class="share-modal-overlay" id="shareModal">
-        <div class="share-card">
-            <div class="share-header">
-                <h3>Share Article</h3>
-                <i class="fas fa-times" id="closeShareModal" style="cursor:pointer;"></i>
+    <!-- SHARE MODAL -->
+    <div class="share-modal" id="shareModal">
+        <div class="share-box">
+            <h3><i class="fas fa-share-alt" style="color:var(--bmd-gold);"></i> Share via</h3>
+            <div class="share-grid" id="shareGrid">
+                <!-- dynamic -->
             </div>
-            <div class="share-grid">
-                <button class="share-item" id="shareWA">
-                    <div class="share-icon-wrap bg-wa"><i class="fab fa-whatsapp"></i></div>
-                    WhatsApp
-                </button>
-                <button class="share-item" id="shareWB">
-                    <div class="share-icon-wrap bg-wb"><i class="fab fa-whatsapp"></i></div>
-                    WA Business
-                </button>
-                <button class="share-item" id="shareMSG">
-                    <div class="share-icon-wrap bg-msg"><i class="fab fa-facebook-messenger"></i></div>
-                    Messenger
-                </button>
-                <button class="share-item" id="shareX">
-                    <div class="share-icon-wrap bg-x"><i class="fab fa-x-twitter"></i></div>
-                    X (Twitter)
-                </button>
-                <button class="share-item" id="shareTT">
-                    <div class="share-icon-wrap bg-tt"><i class="fab fa-tiktok"></i></div>
-                    TikTok
-                </button>
-                <button class="share-item" id="shareCopy">
-                    <div class="share-icon-wrap bg-copy"><i class="fas fa-link"></i></div>
-                    Copy Link
-                </button>
-            </div>
+            <button class="close-share" id="closeShareBtn">Cancel</button>
         </div>
     </div>
 
-    <!-- ===== BOTTOM NAVIGATION ===== -->
+    <!-- BOTTOM NAV -->
     <nav class="bottom-nav">
-        <a href="index.html" class="nav-item active"><i class="fas fa-home"></i><span>Home</span></a>
-        <a href="register.html" class="nav-item"><i class="fas fa-user-plus"></i><span>Register</span></a>
-        <a href="post.html" class="nav-item post-btn"><i class="fas fa-plus"></i><span style="margin-top:2px;">Post</span></a>
-        <a href="activities.html" class="nav-item"><i class="fas fa-calendar-alt"></i><span>Activities</span></a>
-        <a href="account.html" class="nav-item"><i class="fas fa-user-circle"></i><span>Account</span></a>
+        <button class="nav-item active" data-tab="home"><i class="fas fa-home"></i><span class="label">Home</span></button>
+        <button class="nav-item" data-tab="register"><i class="fas fa-user-plus"></i><span class="label">Register</span></button>
+        <button class="nav-item post-btn" data-tab="post"><i class="fas fa-plus"></i><span class="label">Post</span></button>
+        <button class="nav-item" data-tab="activities"><i class="fas fa-calendar-alt"></i><span class="label">Activities</span></button>
+        <button class="nav-item" data-tab="account"><i class="fas fa-user-circle"></i><span class="label">Account</span></button>
     </nav>
 
     <!-- TOAST -->
     <div class="toast" id="toast"></div>
 
-    <!-- ===== FIREBASE & APPLICATION LOGIC ===== -->
+    <!-- ============================================================ -->
+    <!-- ======================== FIREBASE + APP ===================== -->
+    <!-- ============================================================ -->
     <script>
-        // 1. FIREBASE INITIALIZATION
+        // ================================================================
+        //  FIREBASE CONFIG (same as shared)
+        // ================================================================
         const firebaseConfig = {
             apiKey: "AIzaSyC-PINF2AJcETYIMINiCfT0gSxLxw70vSE",
             authDomain: "bmd-app-1aec8.firebaseapp.com",
@@ -794,103 +775,93 @@
             appId: "1:722780031230:web:cd19a98e24e4d9d80dfdaf",
             measurementId: "G-WPEG8SQSW7"
         };
-
         firebase.initializeApp(firebaseConfig);
         const db = firebase.firestore();
         const auth = firebase.auth();
 
-        // 2. STATE
+        // ================================================================
+        //  STATE
+        // ================================================================
         let allPosts = [];
         let currentUser = null;
         let likedPosts = new Set();
-        let activeSharePost = null;
+        let currentSharePostId = null;
 
-        // 3. DOM ELEMENTS
-        const preloader = document.getElementById('pagePreloader');
+        // ================================================================
+        //  DOM REFS
+        // ================================================================
         const postsWrapper = document.getElementById('postsWrapper');
-        const headerAvatar = document.getElementById('headerAvatar');
         const searchOverlay = document.getElementById('searchOverlay');
         const searchInput = document.getElementById('searchInput');
         const searchResults = document.getElementById('searchResults');
+        const searchToggle = document.getElementById('searchToggle');
+        const searchClose = document.getElementById('searchClose');
         const fullPostOverlay = document.getElementById('fullPostOverlay');
         const fullPostBody = document.getElementById('fullPostBody');
+        const fullPostClose = document.getElementById('fullPostClose');
         const shareModal = document.getElementById('shareModal');
+        const shareGrid = document.getElementById('shareGrid');
+        const closeShareBtn = document.getElementById('closeShareBtn');
         const toast = document.getElementById('toast');
+        const headerProfilePic = document.getElementById('headerProfilePic');
 
-        // TOAST FUNCTION
-        function showToast(msg) {
+        // ================================================================
+        //  TOAST
+        // ================================================================
+        let toastTimer = null;
+        function showToast(msg, duration = 2500) {
             toast.textContent = msg;
             toast.classList.add('show');
-            setTimeout(() => toast.classList.remove('show'), 2500);
+            clearTimeout(toastTimer);
+            toastTimer = setTimeout(() => toast.classList.remove('show'), duration);
         }
 
-        // HIDE PRELOADER
-        function hidePreloader() {
-            if (preloader) {
-                preloader.classList.add('hidden');
-            }
-        }
-
-        // 4. AUTHENTICATION & USER PROFILE
-        auth.onAuthStateChanged(async (user) => {
+        // ================================================================
+        //  AUTH
+        // ================================================================
+        auth.onAuthStateChanged(user => {
             currentUser = user;
             if (user) {
-                // Fetch profile pic from Firestore 'users' collection or Auth
-                try {
-                    const userDoc = await db.collection('users').doc(user.uid).get();
-                    let photoURL = user.photoURL;
-                    if (userDoc.exists && userDoc.data().photoURL) {
-                        photoURL = userDoc.data().photoURL;
-                    }
-                    if (photoURL) {
-                        headerAvatar.innerHTML = `<img src="${photoURL}" style="width:100%;height:100%;object-fit:cover;" />`;
-                    }
-                } catch (e) {
-                    console.error("Error fetching user profile:", e);
+                // update profile pic
+                if (user.photoURL) headerProfilePic.src = user.photoURL;
+                else {
+                    db.collection('users').doc(user.uid).get().then(doc => {
+                        if (doc.exists && doc.data().photoURL) headerProfilePic.src = doc.data().photoURL;
+                    });
                 }
-
-                // Load User Likes
-                db.collection('likes').where('userId', '==', user.uid).get().then(snap => {
-                    likedPosts.clear();
-                    snap.forEach(doc => likedPosts.add(doc.data().postId));
-                    renderPosts(allPosts);
-                });
+                // load liked posts
+                db.collection('likes').where('userId', '==', user.uid).get()
+                    .then(snap => { snap.forEach(d => likedPosts.add(d.data().postId)); renderPosts(allPosts); })
+                    .catch(() => {});
             } else {
-                headerAvatar.innerHTML = `<i class="fas fa-user"></i>`;
                 likedPosts.clear();
+                headerProfilePic.src = 'https://res.cloudinary.com/dp81zzxlh/image/upload/v1/default-avatar.png';
                 renderPosts(allPosts);
             }
         });
 
-        // 5. FETCH POSTS
+        // ================================================================
+        //  FETCH POSTS (real-time)
+        // ================================================================
         function listenPosts() {
-            db.collection('posts').orderBy('createdAt', 'desc').onSnapshot(snapshot => {
-                const posts = [];
-                snapshot.forEach(doc => {
-                    const data = doc.data();
-                    posts.push({
-                        id: doc.id,
-                        ...data,
-                        createdAt: data.createdAt ? data.createdAt.toDate() : new Date()
+            db.collection('posts').orderBy('createdAt', 'desc')
+                .onSnapshot(snapshot => {
+                    const posts = [];
+                    snapshot.forEach(doc => {
+                        const data = doc.data();
+                        posts.push({ id: doc.id, ...data, createdAt: data.createdAt ? data.createdAt.toDate() : new Date() });
                     });
-                });
-                allPosts = posts;
-                renderPosts(posts);
-                hidePreloader();
-            }, err => {
-                console.error("Posts error:", err);
-                hidePreloader();
-            });
+                    allPosts = posts;
+                    renderPosts(posts);
+                }, err => { console.error(err); showToast('Error loading posts.'); });
         }
 
-        // 6. RENDER POSTS TO FEED
+        // ================================================================
+        //  RENDER POSTS
+        // ================================================================
         function renderPosts(posts) {
-            if (!posts.length) {
-                postsWrapper.innerHTML = `
-                    <div style="text-align:center; padding: 40px; color:#888;">
-                        <i class="fas fa-newspaper" style="font-size:2.5rem; margin-bottom:10px;"></i>
-                        <p>No posts available yet.</p>
-                    </div>`;
+            if (!posts || posts.length === 0) {
+                postsWrapper.innerHTML = `<div class="empty-state"><i class="fas fa-newspaper"></i><h3>No posts yet</h3><p>Be the first to share your voice!</p></div>`;
                 return;
             }
 
@@ -898,187 +869,319 @@
             posts.forEach(post => {
                 const isLiked = likedPosts.has(post.id);
                 const likeCount = post.likes || 0;
-                const author = post.authorName || 'Anonymous';
-                const title = post.title || 'Untitled';
-                const preview = post.preview || (post.content ? post.content.substring(0, 140) + '...' : '');
-                const dateStr = post.createdAt ? post.createdAt.toLocaleDateString() : '';
+                const previewText = post.preview || post.content?.slice(0, 150) || '';
+                const authorName = post.authorName || 'Anonymous';
+                const dateStr = post.createdAt ? formatDate(post.createdAt) : '';
 
-                // Build Media Content - ONLY IF PRESENT
+                // media
                 let mediaHtml = '';
                 if (post.imageUrl) {
-                    mediaHtml = `<div class="card-media-wrap"><img src="${post.imageUrl}" alt="Post image" loading="lazy"/></div>`;
-                } else if (post.videoUrl) {
-                    mediaHtml = `<div class="card-media-wrap"><video controls><source src="${post.videoUrl}" type="video/mp4"/></video></div>`;
-                } else if (post.audioUrl) {
-                    mediaHtml = `<div class="card-media-wrap"><audio controls><source src="${post.audioUrl}" type="audio/mpeg"/></audio></div>`;
+                    mediaHtml += `<div class="card-media"><img src="${post.imageUrl}" alt="${post.title || 'image'}" loading="lazy" /></div>`;
+                }
+                if (post.audioUrl) {
+                    mediaHtml += `<div class="media-player"><audio controls preload="metadata"><source src="${post.audioUrl}" type="audio/mpeg" /></audio></div>`;
+                }
+                if (post.videoUrl) {
+                    mediaHtml += `<div class="media-player"><video controls preload="metadata" style="width:100%;max-height:260px;"><source src="${post.videoUrl}" type="video/mp4" /></video></div>`;
                 }
 
                 html += `
-                    <article class="post-card" data-id="${post.id}">
-                        <!-- 1. AUTHOR NAME (SMALLER) -->
-                        <div class="card-header-author">
-                            <img src="${post.authorPhoto || 'https://res.cloudinary.com/dp81zzxlh/image/upload/v1/bmd-og-default.jpg'}" class="author-avatar" />
-                            <div class="author-meta">
-                                <span class="author-name">${escapeHtml(author)}</span>
-                                <span class="post-date">${dateStr}</span>
+                    <div class="post-card" data-postid="${post.id}">
+                        <div class="card-body">
+                            <div class="post-author">
+                                <i class="fas fa-user-circle"></i>
+                                <span class="name">${escapeHtml(authorName)}</span>
+                                ${dateStr ? `<span class="date">• ${dateStr}</span>` : ''}
                             </div>
+                            <div class="post-title">${escapeHtml(post.title || 'Untitled')}</div>
+                            ${mediaHtml}
+                            <div class="post-preview">${escapeHtml(previewText)}</div>
                         </div>
-
-                        <!-- 2. TITLE -->
-                        <h2 class="card-post-title">${escapeHtml(title)}</h2>
-
-                        <!-- 3. MEDIA (OMITTED IF EMPTY) -->
-                        ${mediaHtml}
-
-                        <!-- 4. PREVIEW TEXT -->
-                        <div class="card-preview-text">${escapeHtml(preview)}</div>
-
-                        <!-- 5. ACTIONS -->
                         <div class="post-actions">
-                            <div class="actions-left">
-                                <button class="btn-action like-btn ${isLiked ? 'liked' : ''}" onclick="toggleLike('${post.id}')">
+                            <div class="left">
+                                <button class="action-btn like-btn ${isLiked ? 'liked' : ''}" data-postid="${post.id}">
                                     <i class="${isLiked ? 'fas' : 'far'} fa-heart"></i>
-                                    <span>${likeCount}</span>
+                                    <span class="count">${likeCount}</span>
                                 </button>
-                                <button class="btn-action share-btn" onclick="openShareModal('${post.id}')">
+                                <button class="action-btn share-btn" data-postid="${post.id}">
                                     <i class="fas fa-share-alt"></i>
                                 </button>
                             </div>
-                            <button class="btn-read-more" onclick="openFullPost('${post.id}')">Read More</button>
+                            <button class="read-more" data-postid="${post.id}">Read More →</button>
                         </div>
-                    </article>
+                    </div>
                 `;
             });
 
             postsWrapper.innerHTML = html;
+
+            // attach events
+            document.querySelectorAll('.post-card').forEach(card => {
+                const pid = card.dataset.postid;
+                card.addEventListener('click', (e) => {
+                    if (e.target.closest('.post-actions') || e.target.closest('.media-player') ||
+                        e.target.tagName === 'BUTTON' || e.target.tagName === 'AUDIO' || e.target.tagName === 'VIDEO' || e.target.tagName === 'SOURCE') return;
+                    openFullPost(pid);
+                });
+            });
+
+            document.querySelectorAll('.like-btn').forEach(btn => {
+                btn.addEventListener('click', (e) => { e.stopPropagation(); toggleLike(btn.dataset.postid); });
+            });
+            document.querySelectorAll('.share-btn').forEach(btn => {
+                btn.addEventListener('click', (e) => { e.stopPropagation(); openShareModal(btn.dataset.postid); });
+            });
+            document.querySelectorAll('.read-more').forEach(btn => {
+                btn.addEventListener('click', (e) => { e.stopPropagation(); openFullPost(btn.dataset.postid); });
+            });
         }
 
-        // 7. LIKE TOGGLE
+        // ================================================================
+        //  LIKE
+        // ================================================================
         async function toggleLike(postId) {
-            if (!currentUser) {
-                showToast("Please sign in to like posts.");
-                return;
-            }
+            if (!currentUser) { showToast('Please sign in to like.'); return; }
             const post = allPosts.find(p => p.id === postId);
             if (!post) return;
-
             const isLiked = likedPosts.has(postId);
-            const newCount = isLiked ? Math.max(0, (post.likes || 1) - 1) : (post.likes || 0) + 1;
-
+            const newCount = isLiked ? (post.likes || 1) - 1 : (post.likes || 0) + 1;
             try {
                 await db.collection('posts').doc(postId).update({ likes: newCount });
                 if (isLiked) {
-                    likedPosts.delete(postId);
                     const snap = await db.collection('likes').where('userId', '==', currentUser.uid).where('postId', '==', postId).get();
                     snap.forEach(d => d.ref.delete());
+                    likedPosts.delete(postId);
                 } else {
+                    await db.collection('likes').add({ userId: currentUser.uid, postId, createdAt: firebase.firestore.FieldValue.serverTimestamp() });
                     likedPosts.add(postId);
-                    await db.collection('likes').add({ userId: currentUser.uid, postId: postId });
                 }
                 post.likes = newCount;
                 renderPosts(allPosts);
-            } catch (e) {
-                console.error("Like error:", e);
-            }
+            } catch (err) { showToast('Error updating like.'); }
         }
 
-        // 8. DISPLAY FULL POST MODAL WITH FORMATTED PARAGRAPHS
-        function openFullPost(postId) {
+        // ================================================================
+        //  SHARE MODAL
+        // ================================================================
+        function openShareModal(postId) {
+            currentSharePostId = postId;
             const post = allPosts.find(p => p.id === postId);
             if (!post) return;
+            const title = post.title || 'BMD Post';
+            const preview = post.preview || post.content?.slice(0, 120) || '';
+            const imageUrl = post.imageUrl || 'https://res.cloudinary.com/dp81zzxlh/image/upload/v1784978097/vhaafrigchmqnqbhehft.jpg';
+            const baseUrl = window.location.origin + window.location.pathname;
+            const params = new URLSearchParams();
+            params.set('post', postId);
+            params.set('t', encodeURIComponent(title));
+            params.set('p', encodeURIComponent(preview));
+            params.set('i', encodeURIComponent(imageUrl));
+            const shareUrl = baseUrl + '?' + params.toString();
+
+            const apps = [
+                { name: 'WhatsApp', icon: 'fab fa-whatsapp', color: '#25D366', url: `https://api.whatsapp.com/send?text=${encodeURIComponent('📢 *' + title + '*\n\n' + preview + '…\n\n🔗 ' + shareUrl)}` },
+                { name: 'WhatsApp Business', icon: 'fab fa-whatsapp', color: '#25D366', url: `https://api.whatsapp.com/send?text=${encodeURIComponent('📢 *' + title + '*\n\n' + preview + '…\n\n🔗 ' + shareUrl)}` },
+                { name: 'TikTok', icon: 'fab fa-tiktok', color: '#000', url: `https://www.tiktok.com/` },
+                { name: 'Telegram', icon: 'fab fa-telegram', color: '#26A5E4', url: `https://t.me/share/url?url=${encodeURIComponent(shareUrl)}&text=${encodeURIComponent('📢 ' + title)}` },
+                { name: 'Twitter', icon: 'fab fa-twitter', color: '#1DA1F2', url: `https://twitter.com/intent/tweet?text=${encodeURIComponent('📢 ' + title + ' ' + shareUrl)}` },
+                { name: 'Copy Link', icon: 'fas fa-link', color: '#555', url: '#' }
+            ];
+
+            shareGrid.innerHTML = apps.map(app => `
+                <button style="background:${app.color};color:#fff;" data-url="${app.url}" data-copy="${app.name === 'Copy Link'}">
+                    <i class="${app.icon}"></i> ${app.name}
+                </button>
+            `).join('');
+
+            shareGrid.querySelectorAll('button').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const url = btn.dataset.url;
+                    if (btn.dataset.copy === 'true') {
+                        navigator.clipboard.writeText(shareUrl).then(() => showToast('Link copied!')).catch(() => showToast('Copy failed.'));
+                    } else {
+                        window.open(url, '_blank');
+                    }
+                    shareModal.classList.remove('active');
+                });
+            });
+
+            shareModal.classList.add('active');
+            // update OG for preview
+            updateOgMeta(title, preview, imageUrl, shareUrl);
+        }
+
+        closeShareBtn.addEventListener('click', () => shareModal.classList.remove('active'));
+        shareModal.addEventListener('click', (e) => { if (e.target === shareModal) shareModal.classList.remove('active'); });
+
+        // ================================================================
+        //  OPEN FULL POST
+        // ================================================================
+        function openFullPost(postId) {
+            const post = allPosts.find(p => p.id === postId);
+            if (!post) { showToast('Post not found.'); return; }
+            const authorName = post.authorName || 'Anonymous';
+            const dateStr = post.createdAt ? formatDate(post.createdAt) : '';
+            const content = post.content || post.preview || '';
 
             let mediaHtml = '';
-            if (post.imageUrl) mediaHtml = `<img src="${post.imageUrl}" style="width:100%;border-radius:10px;margin:12px 0;" />`;
-            else if (post.videoUrl) mediaHtml = `<video controls style="width:100%;border-radius:10px;margin:12px 0;"><source src="${post.videoUrl}"/></video>`;
-            else if (post.audioUrl) mediaHtml = `<audio controls style="width:100%;margin:12px 0;"><source src="${post.audioUrl}"/></audio>`;
+            if (post.imageUrl) mediaHtml += `<img class="full-image" src="${post.imageUrl}" alt="${post.title || 'image'}" />`;
+            if (post.audioUrl) mediaHtml += `<div class="full-media"><audio controls preload="metadata" style="width:100%;"><source src="${post.audioUrl}" type="audio/mpeg" /></audio></div>`;
+            if (post.videoUrl) mediaHtml += `<div class="full-media"><video controls preload="metadata" style="width:100%;max-height:360px;"><source src="${post.videoUrl}" type="video/mp4" /></video></div>`;
 
-            // Format full content into paragraphs matching editor format
-            const paragraphs = (post.content || '').split('\n').filter(p => p.trim() !== '').map(p => `<p>${escapeHtml(p)}</p>`).join('');
+            const isLiked = likedPosts.has(post.id);
+            const likeCount = post.likes || 0;
 
             fullPostBody.innerHTML = `
-                <div class="full-post-author"><i class="fas fa-user-circle"></i> ${escapeHtml(post.authorName || 'Anonymous')}</div>
-                <h1 class="full-post-title">${escapeHtml(post.title || '')}</h1>
-                <div class="full-post-date">${post.createdAt ? post.createdAt.toLocaleString() : ''}</div>
+                <div class="full-title">${escapeHtml(post.title || 'Untitled')}</div>
+                <div class="full-meta"><i class="fas fa-user-circle"></i> ${escapeHtml(authorName)} ${dateStr ? '• ' + dateStr : ''}</div>
                 ${mediaHtml}
-                <div class="full-post-body">${paragraphs}</div>
-            `;
-            fullPostOverlay.classList.add('active');
-        }
-
-        document.getElementById('fullPostClose').onclick = () => fullPostOverlay.classList.remove('active');
-
-        // 9. SHARE MODAL LOGIC
-        function openShareModal(postId) {
-            activeSharePost = allPosts.find(p => p.id === postId);
-            if (activeSharePost) {
-                shareModal.classList.add('active');
-            }
-        }
-
-        document.getElementById('closeShareModal').onclick = () => shareModal.classList.remove('active');
-
-        function getShareUrl() {
-            return window.location.origin + window.location.pathname + '?post=' + (activeSharePost ? activeSharePost.id : '');
-        }
-
-        document.getElementById('shareWA').onclick = () => {
-            const url = `https://api.whatsapp.com/send?text=${encodeURIComponent(activeSharePost.title + ' ' + getShareUrl())}`;
-            window.open(url, '_blank');
-        };
-
-        document.getElementById('shareWB').onclick = () => {
-            const url = `https://api.whatsapp.com/send?text=${encodeURIComponent(activeSharePost.title + ' ' + getShareUrl())}`;
-            window.open(url, '_blank');
-        };
-
-        document.getElementById('shareMSG').onclick = () => {
-            const url = `fb-messenger://share/?link=${encodeURIComponent(getShareUrl())}`;
-            window.open(url, '_blank');
-        };
-
-        document.getElementById('shareX').onclick = () => {
-            const url = `https://twitter.com/intent/tweet?text=${encodeURIComponent(activeSharePost.title)}&url=${encodeURIComponent(getShareUrl())}`;
-            window.open(url, '_blank');
-        };
-
-        document.getElementById('shareTT').onclick = () => {
-            navigator.clipboard.writeText(getShareUrl());
-            showToast("Link copied! Paste it into TikTok.");
-        };
-
-        document.getElementById('shareCopy').onclick = () => {
-            navigator.clipboard.writeText(getShareUrl());
-            showToast("Link copied to clipboard!");
-            shareModal.classList.remove('active');
-        };
-
-        // 10. SEARCH OVERLAY LOGIC
-        document.getElementById('searchToggle').onclick = () => searchOverlay.classList.add('active');
-        document.getElementById('searchClose').onclick = () => searchOverlay.classList.remove('active');
-
-        searchInput.oninput = (e) => {
-            const query = e.target.value.toLowerCase().trim();
-            if (!query) {
-                searchResults.innerHTML = '';
-                return;
-            }
-            const filtered = allPosts.filter(p => (p.title && p.title.toLowerCase().includes(query)) || (p.content && p.content.toLowerCase().includes(query)));
-            
-            searchResults.innerHTML = filtered.map(p => `
-                <div class="search-item" onclick="openFullPost('${p.id}'); searchOverlay.classList.remove('active');">
-                    <strong>${escapeHtml(p.title || 'Untitled')}</strong>
-                    <div style="font-size:0.75rem; color:#666;">${escapeHtml(p.authorName || 'Anonymous')}</div>
+                <div class="full-text">${escapeHtml(content)}</div>
+                <div class="full-actions">
+                    <button class="action-btn like-btn ${isLiked ? 'liked' : ''}" data-postid="${post.id}" style="display:flex;align-items:center;gap:4px;font-size:0.9rem;background:none;border:none;cursor:pointer;font-family:inherit;padding:4px 10px;border-radius:20px;">
+                        <i class="${isLiked ? 'fas' : 'far'} fa-heart"></i> <span class="count">${likeCount}</span>
+                    </button>
+                    <button class="action-btn share-btn" data-postid="${post.id}" style="display:flex;align-items:center;gap:4px;font-size:0.9rem;background:none;border:none;cursor:pointer;font-family:inherit;padding:4px 10px;border-radius:20px;color:#25D366;">
+                        <i class="fas fa-share-alt"></i> Share
+                    </button>
+                    <button style="margin-left:auto;background:none;border:none;color:#888;cursor:pointer;font-size:0.8rem;" id="fullPostCloseBtn2"><i class="fas fa-times"></i> Close</button>
                 </div>
-            `).join('');
-        };
+            `;
 
-        // HELPER UTILITY
-        function escapeHtml(str) {
-            return String(str || '').replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+            fullPostOverlay.classList.add('active');
+            document.body.style.overflow = 'hidden';
+
+            fullPostBody.querySelector('.like-btn')?.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const pid = e.currentTarget.dataset.postid;
+                toggleLike(pid);
+                setTimeout(() => openFullPost(pid), 300);
+            });
+            fullPostBody.querySelector('.share-btn')?.addEventListener('click', (e) => {
+                e.stopPropagation();
+                openShareModal(post.id);
+            });
+            fullPostBody.querySelector('#fullPostCloseBtn2')?.addEventListener('click', closeFullPost);
         }
 
-        // STARTUP
+        function closeFullPost() {
+            fullPostOverlay.classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        // ================================================================
+        //  SEARCH
+        // ================================================================
+        searchToggle.addEventListener('click', () => { searchOverlay.classList.add('active'); searchInput.value = ''; searchResults.innerHTML = ''; searchInput.focus(); });
+        searchClose.addEventListener('click', () => searchOverlay.classList.remove('active'));
+        searchOverlay.addEventListener('click', (e) => { if (e.target === searchOverlay) searchOverlay.classList.remove('active'); });
+
+        searchInput.addEventListener('input', (e) => {
+            const q = e.target.value.trim().toLowerCase();
+            if (!q) { searchResults.innerHTML = ''; return; }
+            const matches = allPosts.filter(p => (p.title||'').toLowerCase().includes(q) || (p.content||'').toLowerCase().includes(q) || (p.preview||'').toLowerCase().includes(q) || (p.authorName||'').toLowerCase().includes(q));
+            if (!matches.length) { searchResults.innerHTML = '<div class="empty">No posts found.</div>'; return; }
+            let html = '';
+            matches.slice(0, 12).forEach(p => {
+                const img = p.imageUrl || 'https://res.cloudinary.com/dp81zzxlh/image/upload/v1784978097/vhaafrigchmqnqbhehft.jpg';
+                html += `<div class="result-item" data-postid="${p.id}"><img src="${img}" alt="" /><div class="info"><div class="title">${escapeHtml(p.title||'Untitled')}</div><div class="preview">${escapeHtml((p.preview||p.content||'').slice(0,80))}…</div></div></div>`;
+            });
+            searchResults.innerHTML = html;
+            searchResults.querySelectorAll('.result-item').forEach(el => {
+                el.addEventListener('click', () => { const pid = el.dataset.postid; searchOverlay.classList.remove('active'); openFullPost(pid); });
+            });
+        });
+
+        // ================================================================
+        //  FULL POST CLOSE
+        // ================================================================
+        fullPostClose.addEventListener('click', closeFullPost);
+        fullPostOverlay.addEventListener('click', (e) => { if (e.target === fullPostOverlay) closeFullPost(); });
+
+        // ================================================================
+        //  OG META UPDATE
+        // ================================================================
+        function updateOgMeta(title, description, image, url) {
+            let m = document.querySelector('meta[property="og:title"]');
+            if (m) m.setAttribute('content', title + ' – BMD');
+            else { m = document.createElement('meta'); m.setAttribute('property','og:title'); m.setAttribute('content', title + ' – BMD'); document.head.appendChild(m); }
+            m = document.querySelector('meta[property="og:description"]');
+            if (m) m.setAttribute('content', description);
+            else { m = document.createElement('meta'); m.setAttribute('property','og:description'); m.setAttribute('content', description); document.head.appendChild(m); }
+            m = document.querySelector('meta[property="og:image"]');
+            if (m) m.setAttribute('content', image);
+            else { m = document.createElement('meta'); m.setAttribute('property','og:image'); m.setAttribute('content', image); document.head.appendChild(m); }
+            m = document.querySelector('meta[property="og:url"]');
+            if (m) m.setAttribute('content', url);
+            else { m = document.createElement('meta'); m.setAttribute('property','og:url'); m.setAttribute('content', url); document.head.appendChild(m); }
+        }
+
+        // ================================================================
+        //  UTILITY
+        // ================================================================
+        function escapeHtml(t) { if (!t) return ''; const d = document.createElement('div'); d.textContent = t; return d.innerHTML; }
+        function formatDate(d) {
+            if (!d) return '';
+            const diff = Date.now() - d.getTime();
+            if (diff < 60000) return 'Just now';
+            if (diff < 3600000) return Math.floor(diff/60000) + 'm ago';
+            if (diff < 86400000) return Math.floor(diff/3600000) + 'h ago';
+            if (diff < 172800000) return 'Yesterday';
+            return d.toLocaleDateString('en-US', { month:'short', day:'numeric', year:'numeric' });
+        }
+
+        function handleUrlParams() {
+            const params = new URLSearchParams(window.location.search);
+            const pid = params.get('post');
+            if (pid) {
+                const check = setInterval(() => {
+                    if (allPosts.length > 0) {
+                        clearInterval(check);
+                        const p = allPosts.find(x => x.id === pid);
+                        if (p) openFullPost(pid);
+                        else showToast('Post not found.');
+                    }
+                }, 300);
+                const t = params.get('t'), pr = params.get('p'), img = params.get('i');
+                if (t && pr && img) updateOgMeta(decodeURIComponent(t), decodeURIComponent(pr), decodeURIComponent(img), window.location.href);
+            }
+        }
+
+        // ================================================================
+        //  BOTTOM NAV
+        // ================================================================
+        document.querySelectorAll('.bottom-nav .nav-item').forEach(item => {
+            item.addEventListener('click', () => {
+                const tab = item.dataset.tab;
+                document.querySelectorAll('.bottom-nav .nav-item').forEach(n => n.classList.remove('active'));
+                item.classList.add('active');
+                switch(tab) {
+                    case 'home': window.scrollTo({ top:0, behavior:'smooth' }); break;
+                    case 'register': showToast('📝 Register page coming soon!'); break;
+                    case 'activities': showToast('📅 Activities page coming soon!'); break;
+                    case 'post': window.location.href = 'post.html'; break;
+                    case 'account': window.location.href = 'account.html'; break;
+                    default: break;
+                }
+            });
+        });
+
+        // ================================================================
+        //  INIT
+        // ================================================================
+        // show skeletons while loading
+        postsWrapper.innerHTML = `
+            <div class="skeleton"><div class="s-image"></div><div class="s-line med"></div><div class="s-line"></div><div class="s-line short"></div></div>
+            <div class="skeleton"><div class="s-image"></div><div class="s-line med"></div><div class="s-line"></div><div class="s-line short"></div></div>
+        `;
+
         listenPosts();
+        setTimeout(handleUrlParams, 600);
+        window.addEventListener('popstate', handleUrlParams);
+
+        // header profile click -> account
+        headerProfilePic.addEventListener('click', () => window.location.href = 'account.html');
+
+        console.log('🚀 BMD App (updated) loaded.');
     </script>
 </body>
 </html>
