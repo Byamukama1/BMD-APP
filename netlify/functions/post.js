@@ -8,7 +8,6 @@
 
 <title>Buhweju Must Develop - People's Voice</title>
 
-<!-- Open Graph default values -->
 <meta property="og:type" content="article">
 <meta property="og:title" content="Buhweju Must Develop - People's Voice">
 <meta property="og:description" content="Leadership back to the ordinary people.">
@@ -22,7 +21,7 @@
 import { initializeApp } from 
 "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 
-import { 
+import {
 getFirestore,
 doc,
 getDoc
@@ -31,30 +30,39 @@ from
 "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 
-// YOUR FIREBASE CONFIG
+// ================================================================
+// FIREBASE CONFIGURATION
+// ================================================================
+
 const firebaseConfig = {
 
-apiKey: "YOUR_API_KEY",
+apiKey: "AIzaSyC-PINF2AJcETYIMINiCfT0gSxLxw70vSE",
 
-authDomain: "YOUR_AUTH_DOMAIN",
+authDomain: "bmd-app-1aec8.firebaseapp.com",
 
-projectId: "YOUR_PROJECT_ID",
+projectId: "bmd-app-1aec8",
 
-storageBucket: "YOUR_STORAGE_BUCKET",
+storageBucket: "bmd-app-1aec8.firebasestorage.app",
 
-messagingSenderId: "YOUR_SENDER_ID",
+messagingSenderId: "722780031230",
 
-appId: "YOUR_APP_ID"
+appId: "1:722780031230:web:cd19a98e24e4d9d80dfdaf",
+
+measurementId: "G-WPEG8SQSW7"
 
 };
 
+
+// Initialize Firebase
 
 const app = initializeApp(firebaseConfig);
 
 const db = getFirestore(app);
 
 
-// Get post ID from URL
+// ================================================================
+// LOAD POST
+// ================================================================
 
 const params = new URLSearchParams(window.location.search);
 
@@ -63,19 +71,25 @@ const postId = params.get("post");
 
 async function loadPost(){
 
+
 if(!postId){
 
 document.getElementById("content").innerHTML =
-"No post selected";
+"<h2>No post selected</h2>";
 
 return;
 
 }
 
 
+
+try {
+
+
 const postRef = doc(db,"posts",postId);
 
 const snapshot = await getDoc(postRef);
+
 
 
 if(snapshot.exists()){
@@ -84,18 +98,23 @@ if(snapshot.exists()){
 const post = snapshot.data();
 
 
+// Update page title
+
 document.title = post.title;
 
 
-// Display post
+// Display content
 
 document.getElementById("title").innerHTML =
-post.title;
+post.title || "Buhweju Must Develop";
 
 
 document.getElementById("description").innerHTML =
-post.description;
+post.description || "";
 
+
+
+// Display image
 
 if(post.imageUrl){
 
@@ -103,14 +122,34 @@ document.getElementById("image").src =
 post.imageUrl;
 
 }
+else{
+
+document.getElementById("image").style.display="none";
+
+}
+
 
 
 }
 
 else{
 
+
 document.getElementById("content").innerHTML =
-"Post not found";
+"<h2>Post not found</h2>";
+
+}
+
+
+
+}
+
+catch(error){
+
+console.error(error);
+
+document.getElementById("content").innerHTML =
+"<h2>Error loading post</h2>";
 
 }
 
@@ -128,11 +167,11 @@ loadPost();
 
 body{
 
-font-family: Arial, sans-serif;
+font-family:Arial, sans-serif;
 
 margin:0;
 
-background:#f5f5f5;
+background:#f4f4f4;
 
 }
 
@@ -141,11 +180,13 @@ background:#f5f5f5;
 
 max-width:800px;
 
-margin:auto;
+margin:30px auto;
 
 background:white;
 
 padding:20px;
+
+border-radius:12px;
 
 }
 
@@ -156,12 +197,23 @@ width:100%;
 
 border-radius:10px;
 
+margin-top:20px;
+
 }
 
 
 h1{
 
 color:#1b5e20;
+
+}
+
+
+p{
+
+font-size:18px;
+
+line-height:1.6;
 
 }
 
