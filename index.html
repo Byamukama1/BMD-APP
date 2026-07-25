@@ -58,8 +58,18 @@
                         const cleanPreview = postData.preview || postData.content.replace(/<[^>]*>?/gm, '').substring(0, 160);
                         document.getElementById('ogDesc').setAttribute('content', cleanPreview);
                     }
-                    if (postData.imageUrl || postData.authorPhoto) {
-                        document.getElementById('ogImage').setAttribute('content', postData.imageUrl || postData.authorPhoto);
+                    // Prioritize imageUrl, fallback to video thumbnail or audio placeholder, then authorPhoto, then logo
+                    if (postData.imageUrl) {
+                        document.getElementById('ogImage').setAttribute('content', postData.imageUrl);
+                    } else if (postData.videoUrl) {
+                        // If video, we still set a default image (could be a poster frame if available)
+                        document.getElementById('ogImage').setAttribute('content', postData.imageUrl || 'https://res.cloudinary.com/dp81zzxlh/image/upload/v1/bmd-og-default.jpg');
+                    } else if (postData.audioUrl) {
+                        document.getElementById('ogImage').setAttribute('content', postData.imageUrl || 'https://res.cloudinary.com/dp81zzxlh/image/upload/v1/bmd-og-default.jpg');
+                    } else if (postData.authorPhoto) {
+                        document.getElementById('ogImage').setAttribute('content', postData.authorPhoto);
+                    } else {
+                        document.getElementById('ogImage').setAttribute('content', 'https://res.cloudinary.com/dp81zzxlh/image/upload/v1/bmd-og-default.jpg');
                     }
                 }
             }).catch(err => console.error("Error preloading shared post header preview:", err));
