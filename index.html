@@ -882,7 +882,7 @@
                     mediaHtml += `<div class="media-player"><audio controls preload="metadata"><source src="${post.audioUrl}" type="audio/mpeg" /></audio></div>`;
                 }
                 if (post.videoUrl) {
-                    mediaHtml += `<div class="media-player"><video controls preload="metadata" style="width:100%;max-height:260px;"><source src="${post.videoUrl}" type="video/mp4" /></video></div>`;
+                    mediaHtml += `<div class="media-player"><video controls autoplay muted playsinline preload="metadata" style="width:100%;max-height:260px;"><source src="${post.videoUrl}" type="video/mp4" /></video></div>`;
                 }
 
                 html += `
@@ -969,6 +969,7 @@
             if (!post) return;
             const title = post.title || 'BMD Post';
             const preview = post.preview || post.content?.slice(0, 120) || '';
+            // use the post's own image, or fallback to logo
             const imageUrl = post.imageUrl || 'https://res.cloudinary.com/dp81zzxlh/image/upload/v1784978097/vhaafrigchmqnqbhehft.jpg';
             const baseUrl = window.location.origin + window.location.pathname;
             const params = new URLSearchParams();
@@ -978,9 +979,12 @@
             params.set('i', encodeURIComponent(imageUrl));
             const shareUrl = baseUrl + '?' + params.toString();
 
+            // Build a clean message WITHOUT the raw link text — just the URL as a preview
+            const message = `📢 *${title}*\n\n${preview}…\n\n${shareUrl}`;
+
             const apps = [
-                { name: 'WhatsApp', icon: 'fab fa-whatsapp', color: '#25D366', url: `https://api.whatsapp.com/send?text=${encodeURIComponent('📢 *' + title + '*\n\n' + preview + '…\n\n🔗 ' + shareUrl)}` },
-                { name: 'WhatsApp Business', icon: 'fab fa-whatsapp', color: '#25D366', url: `https://api.whatsapp.com/send?text=${encodeURIComponent('📢 *' + title + '*\n\n' + preview + '…\n\n🔗 ' + shareUrl)}` },
+                { name: 'WhatsApp', icon: 'fab fa-whatsapp', color: '#25D366', url: `https://api.whatsapp.com/send?text=${encodeURIComponent(message)}` },
+                { name: 'WhatsApp Business', icon: 'fab fa-whatsapp', color: '#25D366', url: `https://api.whatsapp.com/send?text=${encodeURIComponent(message)}` },
                 { name: 'TikTok', icon: 'fab fa-tiktok', color: '#000', url: `https://www.tiktok.com/` },
                 { name: 'Telegram', icon: 'fab fa-telegram', color: '#26A5E4', url: `https://t.me/share/url?url=${encodeURIComponent(shareUrl)}&text=${encodeURIComponent('📢 ' + title)}` },
                 { name: 'Twitter', icon: 'fab fa-twitter', color: '#1DA1F2', url: `https://twitter.com/intent/tweet?text=${encodeURIComponent('📢 ' + title + ' ' + shareUrl)}` },
@@ -1026,7 +1030,7 @@
             let mediaHtml = '';
             if (post.imageUrl) mediaHtml += `<img class="full-image" src="${post.imageUrl}" alt="${post.title || 'image'}" />`;
             if (post.audioUrl) mediaHtml += `<div class="full-media"><audio controls preload="metadata" style="width:100%;"><source src="${post.audioUrl}" type="audio/mpeg" /></audio></div>`;
-            if (post.videoUrl) mediaHtml += `<div class="full-media"><video controls preload="metadata" style="width:100%;max-height:360px;"><source src="${post.videoUrl}" type="video/mp4" /></video></div>`;
+            if (post.videoUrl) mediaHtml += `<div class="full-media"><video controls autoplay muted playsinline preload="metadata" style="width:100%;max-height:360px;"><source src="${post.videoUrl}" type="video/mp4" /></video></div>`;
 
             const isLiked = likedPosts.has(post.id);
             const likeCount = post.likes || 0;
