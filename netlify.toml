@@ -1,0 +1,8 @@
+[functions]
+directory = "netlify/functions"
+
+
+[[redirects]]
+from = "/post/*"
+to = "/.netlify/functions/post"
+status = 200
