@@ -10,32 +10,29 @@ admin.initializeApp({
 
 const db = admin.firestore();
 
-
-exports.handler = async function(event) {
+exports.handler = async (event) => {
 
   const id = event.path.split("/").pop();
 
-  try {
+  const doc = await db.collection("posts").doc(id).get();
 
-    const doc = await db.collection("posts").doc(id).get();
+  if (!doc.exists) {
+    return {
+      statusCode: 404,
+      body: "Post not found"
+    };
+  }
 
+  const post = doc.data();
 
-    if (!doc.exists) {
-      return {
-        statusCode: 404,
-        body: "Post not found"
-      };
-    }
-
-
-    const post = doc.data();
-
-
-    const html = `
+  return {
+    statusCode: 200,
+    headers: {
+      "Content-Type": "text/html"
+    },
+    body: `
 <!DOCTYPE html>
-
 <html>
-
 <head>
 
 <title>${post.title}</title>
@@ -50,33 +47,11 @@ exports.handler = async function(event) {
 </head>
 
 <body>
-
 <h1>${post.title}</h1>
-
 <p>${post.description}</p>
-
 </body>
 
 </html>
-`;
-
-
-    return {
-      statusCode: 200,
-      headers:{
-        "Content-Type":"text/html"
-      },
-      body:html
-    };
-
-
-  } catch(error){
-
-    return {
-      statusCode:500,
-      body:error.message
-    };
-
-  }
-
+`
+  };
 };
