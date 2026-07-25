@@ -1,8 +1,8 @@
 [functions]
 directory = "netlify/functions"
 
-
 [[redirects]]
-from = "/post/*"
+from = "/"
 to = "/.netlify/functions/post"
 status = 200
+force = false
