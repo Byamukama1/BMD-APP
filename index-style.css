@@ -416,16 +416,19 @@ a { text-decoration: none; color: inherit; }
 .btn-action.share-btn { color: #16a34a; }
 
 .btn-read-more {
-    background: var(--header-bg);
-    color: #fff !important;
+    background: var(--accent-gold);
+    color: #111827;
     border: none;
     padding: 6px 14px;
     border-radius: 20px;
     font-size: 0.75rem;
     font-weight: 600;
     cursor: pointer;
-    transition: background 0.2s;
-    text-shadow: none;
+    transition: all 0.2s ease;
+}
+
+.btn-read-more:hover {
+    background: var(--accent-gold-hover);
 }
 
 /* ===== SHARE MODAL ===== */
