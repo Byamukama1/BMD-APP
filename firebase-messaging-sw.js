@@ -18,7 +18,7 @@ messaging.onBackgroundMessage((payload) => {
   const notificationTitle = payload.notification?.title || 'BMD Update';
   const notificationOptions = {
     body: payload.notification?.body || 'New content available',
-    icon: 'https://res.cloudinary.com/dp81zzxlh/image/upload/v1/bmd-og-default.jpg'
+    icon: 'https://res.cloudinary.com/dp81zzxlh/image/upload/v1784978097/vhaafrigchmqnqbhehft.jpg'
   };
   self.registration.showNotification(notificationTitle, notificationOptions);
 });
