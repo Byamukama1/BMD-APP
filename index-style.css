@@ -427,9 +427,6 @@ a { text-decoration: none; color: inherit; }
     transition: background 0.2s;
 }
 
-.btn-read-more:hover {
-    background: #374151;
-}
 
 /* ===== SHARE MODAL ===== */
 .share-modal-overlay {
