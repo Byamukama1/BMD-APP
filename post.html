@@ -1112,43 +1112,7 @@
         const auth = firebase.auth();
 
 
-// ===== FIREBASE CLOUD MESSAGING =====
-const messaging = firebase.messaging();
-
-if ('serviceWorker' in navigator) {
-
-    navigator.serviceWorker.register('/firebase-messaging-sw.js')
-    .then((registration) => {
-
-        console.log("Firebase Service Worker registered:", registration);
-
-        return messaging.requestPermission();
-
-    })
-    .then(() => {
-
-        console.log("Notification permission granted");
-
-        return messaging.getToken({
-            vapidKey: "BE3D5sIL5umpsfzIPKcIxn8yNToSCR5v8r_pRwZivm6W-fvlv2zjxcGzrDKoTwcSPqUBfJ14xQLrsEfns58pdD8"
-        });
-
-    })
-    .then((token) => {
-
-        console.log("FCM Token:", token);
-
-        // Next step: Save token to Firestore
-
-    })
-    .catch((error) => {
-
-        console.error("Firebase Messaging Error:", error);
-
-    });
-
-}
-        // ================================================================
+      // ================================================================
     // ================================================================
         //  CLOUDINARY — UPDATED WITH YOUR CREDENTIALS
         // ================================================================
