@@ -257,80 +257,6 @@
             background: var(--accent-gold-hover, #f0d080);
         }
 
-        /* ===== DELETE CONFIRM MODAL ===== */
-        .delete-overlay {
-            position: fixed;
-            inset: 0;
-            z-index: 3000;
-            background: rgba(0,0,0,0.6);
-            backdrop-filter: blur(4px);
-            display: none;
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
-        }
-
-        .delete-overlay.active {
-            display: flex;
-        }
-
-        .delete-modal {
-            background: #fff;
-            border-radius: var(--radius-lg, 18px);
-            max-width: 380px;
-            width: 100%;
-            padding: 24px 20px 28px;
-            animation: slideUp 0.25s ease;
-            box-shadow: 0 24px 64px rgba(0,0,0,0.3);
-        }
-
-        .delete-modal .modal-title {
-            font-family: 'Playfair Display', serif;
-            font-size: 1.1rem;
-            font-weight: 700;
-            color: var(--text-primary, #1f2937);
-            margin-bottom: 8px;
-            text-align: center;
-        }
-
-        .delete-modal .modal-text {
-            font-size: 0.9rem;
-            color: #666;
-            text-align: center;
-            margin-bottom: 20px;
-        }
-
-        .delete-modal .modal-actions {
-            display: flex;
-            gap: 10px;
-        }
-
-        .delete-modal .modal-actions button {
-            flex: 1;
-            padding: 12px;
-            border: none;
-            border-radius: var(--radius-md, 12px);
-            font-weight: 600;
-            font-size: 0.9rem;
-            cursor: pointer;
-            font-family: inherit;
-            transition: transform 0.15s;
-        }
-
-        .delete-modal .modal-actions button:active {
-            transform: scale(0.95);
-        }
-
-        .delete-modal .btn-cancel {
-            background: #f3f4f6;
-            color: #555;
-        }
-
-        .delete-modal .btn-confirm-delete {
-            background: #e74c3c;
-            color: #fff;
-        }
-
         /* ===== RESPONSIVE ===== */
         @media (max-width: 480px) {
             .omir-container {
@@ -368,9 +294,6 @@
                 font-size: 0.7rem;
                 padding: 4px 8px;
             }
-            .delete-modal {
-                padding: 20px 16px 24px;
-            }
         }
 
         @media (min-width: 768px) {
@@ -395,6 +318,73 @@
             to {
                 transform: rotate(360deg);
             }
+        }
+
+        /* ===== LOADING SKELETON ===== */
+        .skeleton {
+            background: #e8e0d4;
+            border-radius: var(--radius-lg);
+            padding: 16px;
+            margin-bottom: 16px;
+            animation: pulse 1.5s ease-in-out infinite;
+        }
+
+        .skeleton .skeleton-row {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .skeleton .skeleton-avatar {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: #d5cdc0;
+            flex-shrink: 0;
+        }
+
+        .skeleton .skeleton-lines {
+            flex: 1;
+        }
+
+        .skeleton .skeleton-line {
+            height: 12px;
+            background: #d5cdc0;
+            border-radius: 6px;
+            margin-bottom: 6px;
+        }
+
+        .skeleton .skeleton-line.short {
+            width: 40%;
+        }
+        .skeleton .skeleton-line.med {
+            width: 60%;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 0.6; }
+            50% { opacity: 1; }
+        }
+
+        /* Toast */
+        .toast {
+            position: fixed;
+            bottom: 80px;
+            left: 50%;
+            transform: translateX(-50%) translateY(20px);
+            background: #111827;
+            color: #fff;
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            opacity: 0;
+            transition: all 0.3s;
+            z-index: 5000;
+            pointer-events: none;
+        }
+        .toast.show {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
         }
     </style>
 </head>
@@ -443,50 +433,38 @@
         <!-- Members Wrapper -->
         <div id="membersWrapper">
             <!-- Loading skeleton -->
-            <div class="skeleton" style="background:#e8e0d4; border-radius:var(--radius-lg); padding:16px; margin-bottom:16px; animation:pulse 1.5s ease-in-out infinite;">
-                <div style="display:flex; align-items:center; gap:16px;">
-                    <div style="width:60px; height:60px; border-radius:50%; background:#d5cdc0;"></div>
-                    <div style="flex:1;">
-                        <div style="height:14px; background:#d5cdc0; border-radius:8px; width:60%; margin-bottom:8px;"></div>
-                        <div style="height:12px; background:#d5cdc0; border-radius:8px; width:40%;"></div>
-                        <div style="height:10px; background:#d5cdc0; border-radius:8px; width:30%; margin-top:4px;"></div>
+            <div class="skeleton">
+                <div class="skeleton-row">
+                    <div class="skeleton-avatar"></div>
+                    <div class="skeleton-lines">
+                        <div class="skeleton-line med"></div>
+                        <div class="skeleton-line"></div>
+                        <div class="skeleton-line short"></div>
                     </div>
                 </div>
             </div>
-            <div class="skeleton" style="background:#e8e0d4; border-radius:var(--radius-lg); padding:16px; margin-bottom:16px; animation:pulse 1.5s ease-in-out infinite;">
-                <div style="display:flex; align-items:center; gap:16px;">
-                    <div style="width:60px; height:60px; border-radius:50%; background:#d5cdc0;"></div>
-                    <div style="flex:1;">
-                        <div style="height:14px; background:#d5cdc0; border-radius:8px; width:60%; margin-bottom:8px;"></div>
-                        <div style="height:12px; background:#d5cdc0; border-radius:8px; width:40%;"></div>
-                        <div style="height:10px; background:#d5cdc0; border-radius:8px; width:30%; margin-top:4px;"></div>
+            <div class="skeleton">
+                <div class="skeleton-row">
+                    <div class="skeleton-avatar"></div>
+                    <div class="skeleton-lines">
+                        <div class="skeleton-line med"></div>
+                        <div class="skeleton-line"></div>
+                        <div class="skeleton-line short"></div>
                     </div>
                 </div>
             </div>
-            <div class="skeleton" style="background:#e8e0d4; border-radius:var(--radius-lg); padding:16px; margin-bottom:16px; animation:pulse 1.5s ease-in-out infinite;">
-                <div style="display:flex; align-items:center; gap:16px;">
-                    <div style="width:60px; height:60px; border-radius:50%; background:#d5cdc0;"></div>
-                    <div style="flex:1;">
-                        <div style="height:14px; background:#d5cdc0; border-radius:8px; width:60%; margin-bottom:8px;"></div>
-                        <div style="height:12px; background:#d5cdc0; border-radius:8px; width:40%;"></div>
-                        <div style="height:10px; background:#d5cdc0; border-radius:8px; width:30%; margin-top:4px;"></div>
+            <div class="skeleton">
+                <div class="skeleton-row">
+                    <div class="skeleton-avatar"></div>
+                    <div class="skeleton-lines">
+                        <div class="skeleton-line med"></div>
+                        <div class="skeleton-line"></div>
+                        <div class="skeleton-line short"></div>
                     </div>
                 </div>
             </div>
         </div>
     </main>
-
-    <!-- ===== DELETE CONFIRM MODAL ===== -->
-    <div class="delete-overlay" id="deleteOverlay">
-        <div class="delete-modal">
-            <div class="modal-title">Remove Member?</div>
-            <div class="modal-text">Are you sure you want to remove this member from your list? This action cannot be undone.</div>
-            <div class="modal-actions">
-                <button class="btn-cancel" id="cancelDeleteBtn">Cancel</button>
-                <button class="btn-confirm-delete" id="confirmDeleteBtn">Remove</button>
-            </div>
-        </div>
-    </div>
 
     <!-- ===== BOTTOM NAV (same as index) ===== -->
     <nav class="bottom-nav">
@@ -535,6 +513,7 @@
         if (!firebase.apps.length) {
             firebase.initializeApp(firebaseConfig);
         }
+
         const db = firebase.firestore();
         const auth = firebase.auth();
 
@@ -545,12 +524,8 @@
         const memberCount = document.getElementById('memberCount');
         const headerAvatar = document.getElementById('headerAvatar');
         const toast = document.getElementById('toast');
-        const deleteOverlay = document.getElementById('deleteOverlay');
-        const cancelDeleteBtn = document.getElementById('cancelDeleteBtn');
-        const confirmDeleteBtn = document.getElementById('confirmDeleteBtn');
 
         let currentUser = null;
-        let deleteMemberId = null;
         let allMembers = [];
 
         // ================================================================
@@ -591,32 +566,33 @@
                 console.error("Error fetching user profile:", e);
             }
 
-            // Load members registered by this user
+            // Load members registered by this user (only "other" members)
             loadRegisteredMembers(user.uid);
         });
 
         // ================================================================
         //  LOAD REGISTERED MEMBERS
         // ================================================================
-        function loadRegisteredMembers(userId) {
+        function loadRegisteredMembers(uid) {
+            // Query: only "other" members where registeredBy == current user
             db.collection('users')
-                .where('registeredBy', '==', userId)
+                .where('registeredBy', '==', uid)
+                .where('isOther', '==', true)
                 .orderBy('createdAt', 'desc')
                 .onSnapshot(snapshot => {
-                    const members = [];
+                    allMembers = [];
                     snapshot.forEach(doc => {
                         const data = doc.data();
-                        members.push({
+                        allMembers.push({
                             id: doc.id,
                             ...data,
                             createdAt: data.createdAt ? data.createdAt.toDate() : new Date()
                         });
                     });
-                    allMembers = members;
-                    renderMembers(members);
-                }, err => {
-                    console.error("Error loading members:", err);
-                    showToast('Error loading members. Please refresh.');
+                    renderMembers(allMembers);
+                }, error => {
+                    console.error("Error loading members:", error);
+                    showToast('Failed loading members. Please refresh.');
                     membersWrapper.innerHTML = `
                         <div class="empty-state">
                             <i class="fas fa-exclamation-triangle"></i>
@@ -637,10 +613,10 @@
                 membersWrapper.innerHTML = `
                     <div class="empty-state">
                         <i class="fas fa-users"></i>
-                        <h3>No Members Registered Yet</h3>
-                        <p>You haven't registered any members. Help community members without smartphones join BMD!</p>
+                        <h3>No Members Registered</h3>
+                        <p>You have not registered any other members yet.</p>
                         <a href="register.html" class="register-btn">
-                            <i class="fas fa-user-plus"></i> Register a Member
+                            <i class="fas fa-user-plus"></i> Register Member
                         </a>
                     </div>
                 `;
@@ -655,22 +631,10 @@
                 const parish = member.parish || 'N/A';
                 const subcounty = member.subcounty || 'N/A';
                 const district = member.district || 'N/A';
-                const dob = member.dob || '';
-                const education = member.education || '';
-                const role = member.role || '';
+                const role = member.role || 'N/A';
                 const photoURL = member.photoURL || null;
                 const dateStr = member.createdAt ? member.createdAt.toLocaleDateString() : '';
-
-                // Format education label
-                const educationLabels = {
-                    'none': 'No formal education',
-                    'primary': 'Primary',
-                    'secondary': 'Secondary',
-                    'tertiary': 'Tertiary / College',
-                    'university': 'University',
-                    'postgraduate': 'Postgraduate'
-                };
-                const educationLabel = educationLabels[education] || education || 'N/A';
+                const registeredByName = member.registeredByName || 'You';
 
                 let avatarHtml = '';
                 if (photoURL) {
@@ -692,13 +656,15 @@
                                     <div class="member-name">${escapeHtml(displayName)}</div>
                                     <div class="member-details-grid">
                                         <div class="detail-item"><i class="fas fa-phone"></i> ${escapeHtml(phone)}</div>
-                                        <div class="detail-item"><i class="fas fa-map-marker-alt"></i> ${escapeHtml(village)}, ${escapeHtml(parish)}</div>
-                                        ${dob ? `<div class="detail-item"><i class="fas fa-calendar-alt"></i> <span class="label">DOB:</span> ${escapeHtml(dob)}</div>` : ''}
-                                        ${education ? `<div class="detail-item"><i class="fas fa-graduation-cap"></i> <span class="label">Education:</span> ${escapeHtml(educationLabel)}</div>` : ''}
-                                        ${role ? `<div class="detail-item"><i class="fas fa-user-tag"></i> <span class="label">Role:</span> ${escapeHtml(role)}</div>` : ''}
-                                        <div class="detail-item"><i class="fas fa-calendar-check"></i> <span class="label">Registered:</span> ${dateStr}</div>
+                                        <div class="detail-item"><i class="fas fa-location-dot"></i> ${escapeHtml(village)}, ${escapeHtml(parish)}</div>
+                                        <div class="detail-item"><i class="fas fa-map-pin"></i> ${escapeHtml(subcounty)}, ${escapeHtml(district)}</div>
+                                        <div class="detail-item"><i class="fas fa-user-tag"></i> ${escapeHtml(role)}</div>
+                                        <div class="detail-item"><i class="fas fa-calendar"></i> ${dateStr}</div>
                                     </div>
-                                    <span class="member-badge other"><i class="fas fa-check-circle"></i> Registered by you</span>
+                                    <span class="member-badge other">
+                                        <i class="fas fa-check-circle"></i> Registered by you
+                                    </span>
+                                    ${registeredByName ? `<span style="font-size:0.6rem; color:#999; background:#f3f4f6; padding:2px 10px; border-radius:12px; margin-left:6px;"><i class="fas fa-user-plus"></i> by ${escapeHtml(registeredByName)}</span>` : ''}
                                 </div>
                             </div>
                         </div>
@@ -709,7 +675,7 @@
                             <button class="btn-action edit-btn" onclick="editMember('${member.id}')">
                                 <i class="fas fa-edit"></i> Edit
                             </button>
-                            <button class="btn-action delete-btn" onclick="confirmDelete('${member.id}')">
+                            <button class="btn-action delete-btn" onclick="removeMember('${member.id}')">
                                 <i class="fas fa-user-minus"></i> Remove
                             </button>
                         </div>
@@ -723,103 +689,51 @@
         // ================================================================
         //  VIEW MEMBER
         // ================================================================
-        function viewMember(memberId) {
-            const member = allMembers.find(m => m.id === memberId);
-            if (member) {
-                const educationLabels = {
-                    'none': 'No formal education',
-                    'primary': 'Primary',
-                    'secondary': 'Secondary',
-                    'tertiary': 'Tertiary / College',
-                    'university': 'University',
-                    'postgraduate': 'Postgraduate'
-                };
-                const educationLabel = educationLabels[member.education] || member.education || 'N/A';
+        function viewMember(id) {
+            const member = allMembers.find(m => m.id === id);
+            if (!member) return;
 
-                const msg = encodeURIComponent(
-                    `📋 MEMBER DETAILS\n` +
-                    `━━━━━━━━━━━━━━━━━━━━━\n` +
-                    `👤 Name: ${member.displayName}\n` +
-                    `📱 Phone: ${member.phone}\n` +
-                    `📍 Village: ${member.village || 'N/A'}\n` +
-                    `📍 Parish: ${member.parish || 'N/A'}\n` +
-                    `📍 Subcounty: ${member.subcounty || 'N/A'}\n` +
-                    `📍 District: ${member.district || 'N/A'}\n` +
-                    `🎂 DOB: ${member.dob || 'N/A'}\n` +
-                    `🎓 Education: ${educationLabel}\n` +
-                    `👔 Role: ${member.role || 'N/A'}\n` +
-                    `📅 Registered: ${member.createdAt ? member.createdAt.toLocaleDateString() : 'N/A'}\n` +
-                    `━━━━━━━━━━━━━━━━━━━━━\n` +
-                    `Registered by: ${member.registeredByName || 'You'}`
-                );
-                window.open(`https://wa.me/256761828694?text=${msg}`, '_blank');
-            }
+            const msg = encodeURIComponent(
+                `📋 MEMBER DETAILS\n` +
+                `━━━━━━━━━━━━━━━━━━━━━\n` +
+                `👤 Name: ${member.displayName || 'N/A'}\n` +
+                `📱 Phone: ${member.phone || 'N/A'}\n` +
+                `📍 Village: ${member.village || 'N/A'}\n` +
+                `📍 Parish: ${member.parish || 'N/A'}\n` +
+                `📍 Subcounty: ${member.subcounty || 'N/A'}\n` +
+                `📍 District: ${member.district || 'N/A'}\n` +
+                `👔 Role: ${member.role || 'N/A'}\n` +
+                `📅 Registered: ${member.createdAt ? member.createdAt.toLocaleDateString() : 'N/A'}\n` +
+                `━━━━━━━━━━━━━━━━━━━━━\n` +
+                `Registered by: ${member.registeredByName || 'You'}`
+            );
+            window.open(`https://wa.me/256761828694?text=${msg}`, '_blank');
         }
 
         // ================================================================
         //  EDIT MEMBER
         // ================================================================
-        function editMember(memberId) {
-            window.location.href = 'register.html?edit=' + memberId;
+        function editMember(id) {
+            window.location.href = 'register.html?edit=' + id;
         }
 
         // ================================================================
-        //  CONFIRM DELETE
+        //  REMOVE MEMBER (from your list only - does not delete document)
         // ================================================================
-        function confirmDelete(memberId) {
-            deleteMemberId = memberId;
-            deleteOverlay.classList.add('active');
-            document.body.style.overflow = 'hidden';
-        }
-
-        // ================================================================
-        //  DELETE MEMBER (Remove from registered list only)
-        // ================================================================
-        async function deleteMember() {
-            if (!deleteMemberId || !currentUser) return;
-
-            const btn = confirmDeleteBtn;
-            btn.disabled = true;
-            btn.innerHTML = '<span class="spinner"></span> Removing…';
+        async function removeMember(id) {
+            if (!confirm('Remove this member from your list?')) return;
 
             try {
-                await db.collection('users').doc(deleteMemberId).update({
+                await db.collection('users').doc(id).update({
                     registeredBy: null,
                     registeredByName: null
                 });
-
-                showToast('✅ Member removed from your list successfully!');
-                deleteOverlay.classList.remove('active');
-                document.body.style.overflow = '';
-                deleteMemberId = null;
-                btn.disabled = false;
-                btn.innerHTML = 'Remove';
+                showToast('✅ Member removed from your list.');
             } catch (err) {
                 console.error('Remove error:', err);
                 showToast('❌ Failed to remove member: ' + err.message);
-                btn.disabled = false;
-                btn.innerHTML = 'Remove';
             }
         }
-
-        // ================================================================
-        //  DELETE MODAL EVENTS
-        // ================================================================
-        cancelDeleteBtn.addEventListener('click', () => {
-            deleteOverlay.classList.remove('active');
-            document.body.style.overflow = '';
-            deleteMemberId = null;
-        });
-
-        deleteOverlay.addEventListener('click', (e) => {
-            if (e.target === deleteOverlay) {
-                deleteOverlay.classList.remove('active');
-                document.body.style.overflow = '';
-                deleteMemberId = null;
-            }
-        });
-
-        confirmDeleteBtn.addEventListener('click', deleteMember);
 
         // ================================================================
         //  NAVIGATION
@@ -868,13 +782,18 @@
         //  UTILITY
         // ================================================================
         function escapeHtml(str) {
-            return String(str || '').replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+            return String(str || '')
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;');
         }
 
         // ================================================================
         //  INIT
         // ================================================================
         console.log('👥 BMD Other Members I Registered page loaded.');
+        console.log('📌 Query: users where registeredBy == current user AND isOther == true');
     </script>
 
 </body>
