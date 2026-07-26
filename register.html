@@ -17,170 +17,23 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
     <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap" rel="stylesheet" />
 
+    <!-- ===== EXTERNAL STYLES ===== -->
+    <link rel="stylesheet" href="index-style.css" />
+
     <style>
-        /* ===== BMD COLOR PALETTE ===== */
-        :root {
-            --bmd-dark: #0f261b;
-            --bmd-primary: #1a3c2a;
-            --bmd-primary-light: #2a5a3e;
-            --bmd-gold: #d4a743;
-            --bmd-gold-light: #f0d080;
-            --bmd-cream: #faf6ed;
-            --bmd-text: #1e1e1e;
-            --bmd-shadow: 0 4px 20px rgba(0, 0, 0, 0.12);
-            --bmd-radius: 16px;
-            --bmd-radius-sm: 10px;
-            --bmd-nav-height: 70px;
-            --bmd-header-height: 72px;
-            --bmd-ad-height: 36px;
-        }
-
-        /* ===== RESET ===== */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-            background: var(--bmd-cream);
-            color: var(--bmd-text);
-            padding-bottom: calc(var(--bmd-nav-height) + 24px);
-            padding-top: calc(var(--bmd-header-height) + var(--bmd-ad-height) + 12px);
-            min-height: 100vh;
-            -webkit-tap-highlight-color: transparent;
-        }
-
-        /* ===== HEADER ===== */
-        .app-header {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            z-index: 1000;
-            background: linear-gradient(145deg, var(--bmd-dark), var(--bmd-primary));
-            color: #fff;
-            padding: 10px 16px 8px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            height: var(--bmd-header-height);
-            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.25);
-            border-bottom: 2px solid var(--bmd-gold);
-        }
-
-        .app-header .brand {
-            display: flex;
-            flex-direction: column;
-            line-height: 1.1;
-            flex: 1;
-            min-width: 0;
-        }
-
-        .app-header .brand h1 {
-            font-family: 'Playfair Display', serif;
-            font-size: 1.15rem;
-            font-weight: 700;
-            letter-spacing: 0.5px;
-            color: var(--bmd-gold-light);
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-
-        .app-header .brand .sub {
-            font-size: 0.6rem;
-            font-weight: 400;
-            opacity: 0.85;
-            letter-spacing: 0.3px;
-            font-style: italic;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-
-        .app-header .back-btn {
-            background: none;
-            border: none;
-            color: var(--bmd-gold-light);
-            font-size: 1.3rem;
-            cursor: pointer;
-            padding: 4px 10px 4px 4px;
-            transition: transform 0.2s;
-            flex-shrink: 0;
-        }
-        .app-header .back-btn:active {
-            transform: scale(0.90);
-        }
-
-        .app-header .sign-in-link {
-            color: var(--bmd-gold-light);
-            font-size: 0.8rem;
-            font-weight: 600;
-            text-decoration: underline;
-            cursor: pointer;
-            padding: 4px 6px;
-        }
-
-        /* ===== MOVING AD ===== */
-        .marquee-ad {
-            position: fixed;
-            top: var(--bmd-header-height);
-            left: 0;
-            right: 0;
-            z-index: 999;
-            height: var(--bmd-ad-height);
-            background: linear-gradient(90deg, #2c1810, #4a2a1a);
-            color: #f0e6d0;
-            font-size: 0.7rem;
-            font-weight: 500;
-            display: flex;
-            align-items: center;
-            overflow: hidden;
-            border-bottom: 1px solid var(--bmd-gold);
-            box-shadow: 0 1px 6px rgba(0, 0, 0, 0.15);
-        }
-
-        .marquee-ad .marquee-track {
-            display: flex;
-            white-space: nowrap;
-            animation: marqueeScroll 18s linear infinite;
-        }
-
-        .marquee-ad .marquee-track span {
-            padding: 0 60px;
-            letter-spacing: 0.5px;
-        }
-
-        .marquee-ad .marquee-track i {
-            color: var(--bmd-gold);
-            margin-right: 6px;
-        }
-
-        @keyframes marqueeScroll {
-            0% {
-                transform: translateX(0%);
-            }
-            100% {
-                transform: translateX(-50%);
-            }
-        }
-
-        /* ===== MAIN CONTAINER ===== */
+        /* ===== REGISTER SPECIFIC STYLES ===== */
         .register-container {
             max-width: 640px;
             margin: 0 auto;
             padding: 8px 16px 20px;
         }
 
-        /* ===== FORM CARD ===== */
         .form-card {
             background: #ffffff;
-            border-radius: var(--bmd-radius);
-            box-shadow: var(--bmd-shadow);
+            border-radius: var(--radius-lg, 18px);
+            box-shadow: var(--shadow-sm, 0 2px 8px rgba(0,0,0,0.05));
             padding: 20px 18px 24px;
-            border: 1px solid rgba(0, 0, 0, 0.04);
+            border: 1px solid var(--border-color, #e5e7eb);
             margin-top: 12px;
         }
 
@@ -188,14 +41,14 @@
             font-family: 'Playfair Display', serif;
             font-size: 1.5rem;
             font-weight: 700;
-            color: var(--bmd-primary);
+            color: var(--text-primary, #1f2937);
             margin-bottom: 4px;
             display: flex;
             align-items: center;
             gap: 10px;
         }
         .page-title i {
-            color: var(--bmd-gold);
+            color: var(--accent-gold, #d4a743);
         }
         .page-sub {
             font-size: 0.85rem;
@@ -211,7 +64,7 @@
             display: block;
             font-weight: 600;
             font-size: 0.8rem;
-            color: var(--bmd-primary);
+            color: var(--text-primary, #1f2937);
             margin-bottom: 3px;
         }
 
@@ -225,8 +78,8 @@
         .form-group textarea {
             width: 100%;
             padding: 10px 12px;
-            border: 2px solid #e8e0d4;
-            border-radius: var(--bmd-radius-sm);
+            border: 2px solid var(--border-color, #e5e7eb);
+            border-radius: var(--radius-md, 12px);
             font-size: 0.95rem;
             font-family: inherit;
             outline: none;
@@ -237,7 +90,7 @@
         .form-group input:focus,
         .form-group select:focus,
         .form-group textarea:focus {
-            border-color: var(--bmd-gold);
+            border-color: var(--accent-gold, #d4a743);
             box-shadow: 0 0 0 4px rgba(212, 167, 67, 0.12);
         }
 
@@ -255,7 +108,8 @@
         .form-row .form-group {
             margin-bottom: 0;
         }
-  /* ===== IMAGE UPLOAD ===== */
+
+        /* ===== IMAGE UPLOAD ===== */
         .image-upload-wrapper {
             display: flex;
             align-items: center;
@@ -268,7 +122,7 @@
             height: 80px;
             border-radius: 50%;
             background: #e8e0d4;
-            border: 3px solid var(--bmd-gold);
+            border: 3px solid var(--accent-gold, #d4a743);
             overflow: hidden;
             flex-shrink: 0;
             display: flex;
@@ -286,11 +140,11 @@
         }
 
         .image-upload-btn {
-            background: var(--bmd-primary);
+            background: var(--text-primary, #1f2937);
             color: #fff;
             border: none;
             padding: 8px 18px;
-            border-radius: var(--bmd-radius-sm);
+            border-radius: var(--radius-md, 12px);
             font-weight: 600;
             font-size: 0.8rem;
             cursor: pointer;
@@ -302,7 +156,7 @@
         }
 
         .image-upload-btn:active {
-            background: var(--bmd-primary-light);
+            background: #374151;
         }
 
         .image-upload-btn .file-name {
@@ -326,18 +180,18 @@
         }
 
         .submit-btn {
-            background: linear-gradient(145deg, var(--bmd-primary), var(--bmd-primary-light));
-            color: #fff;
+            background: var(--accent-gold, #d4a743);
+            color: #111827;
             border: none;
             padding: 16px 24px;
-            border-radius: var(--bmd-radius-sm);
+            border-radius: var(--radius-md, 12px);
             font-size: 1.05rem;
             font-weight: 700;
             font-family: 'Playfair Display', serif;
             letter-spacing: 0.5px;
             cursor: pointer;
             transition: all 0.25s;
-            box-shadow: 0 4px 16px rgba(26, 60, 42, 0.25);
+            box-shadow: 0 4px 16px rgba(212, 167, 67, 0.3);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -346,7 +200,7 @@
 
         .submit-btn:active {
             transform: scale(0.97);
-            box-shadow: 0 2px 8px rgba(26, 60, 42, 0.15);
+            box-shadow: 0 2px 8px rgba(212, 167, 67, 0.2);
         }
 
         .submit-btn:disabled {
@@ -374,123 +228,45 @@
             color: #27ae60;
         }
 
-        /* ===== BOTTOM NAV ===== */
-        .bottom-nav {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            z-index: 1000;
-            height: var(--bmd-nav-height);
-            background: rgba(255, 255, 255, 0.96);
-            backdrop-filter: blur(12px);
-            border-top: 1px solid rgba(0, 0, 0, 0.08);
-            box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.06);
-            display: flex;
-            align-items: stretch;
-            justify-content: space-around;
-            padding: 0 4px;
-        }
-
-        .bottom-nav .nav-item {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            flex: 1;
-            gap: 1px;
-            font-size: 0.5rem;
-            font-weight: 500;
-            color: #888;
-            cursor: pointer;
-            transition: color 0.15s;
-            padding: 4px 0;
-            border: none;
-            background: none;
-            font-family: inherit;
-            position: relative;
-            -webkit-tap-highlight-color: transparent;
-        }
-
-        .bottom-nav .nav-item i {
-            font-size: 1.3rem;
-            transition: transform 0.2s;
-        }
-
-        .bottom-nav .nav-item:active i {
-            transform: scale(0.88);
-        }
-
-        .bottom-nav .nav-item.active {
-            color: var(--bmd-primary);
-        }
-        .bottom-nav .nav-item.active i {
-            color: var(--bmd-gold);
-        }
-
-        .bottom-nav .nav-item .label {
-            font-size: 0.5rem;
-            letter-spacing: 0.2px;
-            text-transform: uppercase;
-        }
-
-        .bottom-nav .nav-item.post-btn i {
-            font-size: 2rem;
-            color: var(--bmd-gold);
-            background: var(--bmd-primary);
-            width: 46px;
-            height: 46px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 50%;
-            box-shadow: 0 4px 16px rgba(26, 60, 42, 0.3);
-            margin-top: -16px;
-            transition: transform 0.2s, box-shadow 0.2s;
-        }
-
-        .bottom-nav .nav-item.post-btn:active i {
-            transform: scale(0.92);
-            box-shadow: 0 2px 8px rgba(26, 60, 42, 0.25);
-        }
-
-        .bottom-nav .nav-item.post-btn .label {
+        /* ===== PASSWORD HINT ===== */
+        .password-hint {
+            font-size: 0.7rem;
+            color: #999;
             margin-top: 2px;
         }
 
-        /* ===== TOAST ===== */
-        .toast {
-            position: fixed;
-            bottom: 90px;
-            left: 50%;
-            transform: translateX(-50%) translateY(20px);
-            background: #1e1e1e;
-            color: #fff;
-            padding: 10px 24px;
-            border-radius: 30px;
-            font-size: 0.85rem;
-            font-weight: 500;
-            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity 0.3s, transform 0.3s;
-            z-index: 5000;
-            max-width: 90%;
+        /* ===== FORGOT PASSWORD ===== */
+        .forgot-password-link {
             text-align: center;
+            margin-top: 12px;
+            font-size: 0.85rem;
         }
-        .toast.show {
-            opacity: 1;
-            transform: translateX(-50%) translateY(0);
+
+        .forgot-password-link a {
+            color: var(--accent-gold, #d4a743);
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: underline;
+        }
+
+        /* ===== REGISTER OTHER ===== */
+        .register-other-link {
+            text-align: center;
+            margin-top: 8px;
+            font-size: 0.85rem;
+            padding-top: 12px;
+            border-top: 1px solid var(--border-color, #e5e7eb);
+        }
+
+        .register-other-link a {
+            color: var(--accent-gold, #d4a743);
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: underline;
         }
 
         /* ===== RESPONSIVE ===== */
         @media (max-width: 480px) {
-            .app-header .brand h1 {
-                font-size: 1rem;
-            }
-            .app-header .brand .sub {
-                font-size: 0.5rem;
-            }
             .register-container {
                 padding: 6px 10px 12px;
             }
@@ -510,33 +286,12 @@
             .image-upload-wrapper {
                 flex-wrap: wrap;
             }
-            .bottom-nav .nav-item i {
-                font-size: 1.1rem;
-            }
-            .bottom-nav .nav-item.post-btn i {
-                width: 40px;
-                height: 40px;
-                font-size: 1.6rem;
-                margin-top: -12px;
-            }
         }
 
         @media (min-width: 768px) {
             .register-container {
                 padding: 12px 24px 30px;
             }
-        }
-
-        /* ===== SCROLLBAR ===== */
-        ::-webkit-scrollbar {
-            width: 4px;
-        }
-        ::-webkit-scrollbar-track {
-            background: #f0ebe4;
-        }
-        ::-webkit-scrollbar-thumb {
-            background: var(--bmd-primary-light);
-            border-radius: 10px;
         }
 
         /* ===== SPINNER ===== */
@@ -555,178 +310,68 @@
                 transform: rotate(360deg);
             }
         }
-
-        /* ===== PASSWORD HINT ===== */
-        .password-hint {
-            font-size: 0.7rem;
-            color: #999;
-            margin-top: 2px;
-        }
     </style>
 </head>
 <body>
 
-   <!-- ===== HEADER ===== -->
+    <!-- ===== HEADER (white, centered - same as index) ===== -->
     <header class="app-header">
-        <button class="back-btn" id="backBtn" aria-label="Go back">
-            <i class="fas fa-arrow-left"></i>
-        </button>
-        <div class="brand">
-            <h1>BUHWEJU MUST DEVELOP</h1>
-            <div class="sub">Eiraka ryabantu baburijo.</div>
+        <div class="header-center">
+            <img src="https://res.cloudinary.com/dp81zzxlh/image/upload/v1784978097/vhaafrigchmqnqbhehft.jpg" alt="BMD Logo" class="header-logo" />
+            <div class="brand-info">
+                <h1>BUHWEJU MUST DEVELOP</h1>
+                <span class="sub">Eiraka ryabantu baburijo.</span>
+            </div>
         </div>
-        <span class="sign-in-link" id="signInLink">Sign In</span>
+        <div class="header-right">
+            <button class="header-action-btn" id="searchToggle" aria-label="Search" style="display:none;">
+                <i class="fas fa-search"></i>
+            </button>
+            <a href="account.html" id="userProfileLink">
+                <div class="user-profile-avatar" id="headerAvatar">
+                    <i class="fas fa-user"></i>
+                </div>
+            </a>
+        </div>
     </header>
 
     <!-- ===== MOVING AD ===== -->
     <div class="marquee-ad">
         <div class="marquee-track">
-            <span><i class="fas fa-microphone-alt"></i> App designed by Dr Byamukama Mentor, expert in ICT.</span>
-            <span><i class="fas fa-microphone-alt"></i> App designed by Dr Byamukama Mentor, expert in ICT.</span>
-            <span><i class="fas fa-microphone-alt"></i> App designed by Dr Byamukama Mentor, expert in ICT.</span>
-            <span><i class="fas fa-microphone-alt"></i> App designed by Dr Byamukama Mentor, expert in ICT.</span>
+            <span><i class="fas fa-bullhorn"></i> App designed by Dr Byamukama Mentor, expert in ICT.</span>
+            <span><i class="fas fa-bullhorn"></i> App designed by Dr Byamukama Mentor, expert in ICT.</span>
+            <span><i class="fas fa-bullhorn"></i> App designed by Dr Byamukama Mentor, expert in ICT.</span>
         </div>
     </div>
 
     <!-- ===== MAIN ===== -->
     <main class="register-container">
-        <div class="form-card">
-            <div class="page-title">
-                <i class="fas fa-user-plus"></i> Create Account
-            </div>
-            <div class="page-sub">Join the BMD community – share your voice and connect with others.</div>
-
-            <form id="registerForm" novalidate>
-                <!-- Full Name -->
-                <div class="form-group">
-                    <label for="fullName">Full Name <span class="required">*</span></label>
-                    <input type="text" id="fullName" placeholder="e.g. John Mukasa" required />
-                </div>
-
-                <!-- District, Subcounty, Parish, Village -->
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="district">District <span class="required">*</span></label>
-                        <input type="text" id="district" placeholder="e.g. Buhweju" required />
-                    </div>
-                    <div class="form-group">
-                        <label for="subcounty">Subcounty <span class="required">*</span></label>
-                        <input type="text" id="subcounty" placeholder="e.g. Nyakashaka" required />
-                    </div>
-                </div>
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="parish">Parish <span class="required">*</span></label>
-                        <input type="text" id="parish" placeholder="e.g. Rubengye" required />
-                    </div>
-                    <div class="form-group">
-                        <label for="village">Village <span class="required">*</span></label>
-                        <input type="text" id="village" placeholder="e.g. Kiziiba" required />
-                    </div>
-                </div>
-
-                <!-- Occupation -->
-                <div class="form-group">
-                    <label for="occupation">Occupation</label>
-                    <input type="text" id="occupation" placeholder="e.g. Farmer, Teacher, Business" />
-                </div>
-
-                <!-- Phone Numbers -->
-                <div class="form-group">
-                    <label for="phone1">Primary Phone <span class="required">*</span></label>
-                    <input type="tel" id="phone1" placeholder="e.g. +256 700 123 456" required />
-                </div>
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="phone2">Phone 2 (optional)</label>
-                        <input type="tel" id="phone2" placeholder="e.g. +256 700 123 457" />
-                    </div>
-                    <div class="form-group">
-                        <label for="phone3">Phone 3 (optional)</label>
-                        <input type="tel" id="phone3" placeholder="e.g. +256 700 123 458" />
-                    </div>
-                </div>
-
-                <!-- Role in community -->
-                <div class="form-group">
-                    <label for="role">Role in Community</label>
-                    <input type="text" id="role" placeholder="e.g. Chairman LC1, Church Leader" />
-                </div>
-
-                <!-- Education Level -->
-                <div class="form-group">
-                    <label for="education">Education Level</label>
-                    <select id="education">
-                        <option value="">Select...</option>
-                        <option value="none">No formal education</option>
-                        <option value="primary">Primary</option>
-                        <option value="secondary">Secondary</option>
-                        <option value="tertiary">Tertiary / College</option>
-                        <option value="university">University</option>
-                        <option value="postgraduate">Postgraduate</option>
-                    </select>
-                </div>
-
-                <!-- Profile Image -->
-                <div class="form-group">
-                    <label>Profile Picture</label>
-                    <div class="image-upload-wrapper">
-                        <div class="image-preview" id="imagePreview">
-                            <i class="fas fa-user"></i>
-                        </div>
-                        <button type="button" class="image-upload-btn" id="imageUploadBtn">
-                            <i class="fas fa-camera"></i>
-                            <span class="file-name" id="imageFileName">Choose Image</span>
-                        </button>
-                        <input type="file" id="imageInput" class="hidden-input" accept="image/*" />
-                    </div>
-                </div>
-
-                <!-- Password & Confirm -->
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="password">Password <span class="required">*</span></label>
-                        <input type="password" id="password" placeholder="Min 6 characters" required minlength="6" />
-                        <div class="password-hint">At least 6 characters</div>
-                    </div>
-                    <div class="form-group">
-                        <label for="confirmPassword">Confirm Password <span class="required">*</span></label>
-                        <input type="password" id="confirmPassword" placeholder="Re-enter password" required />
-                    </div>
-                </div>
-
-                <!-- Submit -->
-                <div class="submit-area">
-                    <button type="submit" class="submit-btn" id="registerBtn">
-                        <i class="fas fa-user-plus"></i> Register
-                    </button>
-                    <div class="submit-status" id="registerStatus"></div>
-                </div>
-            </form>
+        <div id="registerContent">
+            <!-- Dynamic content rendered by JS -->
         </div>
     </main>
 
-    <!-- ===== BOTTOM NAV ===== -->
+    <!-- ===== BOTTOM NAV (same as index) ===== -->
     <nav class="bottom-nav">
         <button class="nav-item" data-tab="home" id="navHome">
             <i class="fas fa-home"></i>
-            <span class="label">Home</span>
+            <span>Home</span>
         </button>
         <button class="nav-item" data-tab="register" id="navRegister">
             <i class="fas fa-user-plus"></i>
-            <span class="label">Register</span>
-        </button>
-        <button class="nav-item" data-tab="activities" id="navActivities">
-            <i class="fas fa-calendar-alt"></i>
-            <span class="label">Activities</span>
+            <span>Register</span>
         </button>
         <button class="nav-item post-btn" data-tab="post" id="navPost">
             <i class="fas fa-plus"></i>
-            <span class="label">Post</span>
+            <span style="margin-top:2px;">Post</span>
+        </button>
+        <button class="nav-item" data-tab="activities" id="navActivities">
+            <i class="fas fa-calendar-alt"></i>
+            <span>Activities</span>
         </button>
         <button class="nav-item" data-tab="account" id="navAccount">
             <i class="fas fa-user-circle"></i>
-            <span class="label">Account</span>
+            <span>Account</span>
         </button>
     </nav>
 
@@ -750,7 +395,9 @@
             measurementId: "G-WPEG8SQSW7"
         };
 
-        firebase.initializeApp(firebaseConfig);
+        if (!firebase.apps.length) {
+            firebase.initializeApp(firebaseConfig);
+        }
         const db = firebase.firestore();
         const auth = firebase.auth();
 
@@ -764,14 +411,12 @@
         // ================================================================
         //  DOM REFS
         // ================================================================
-        const form = document.getElementById('registerForm');
-        const statusEl = document.getElementById('registerStatus');
-        const submitBtn = document.getElementById('registerBtn');
+        const container = document.getElementById('registerContent');
         const toast = document.getElementById('toast');
+        const headerAvatar = document.getElementById('headerAvatar');
 
-        const imageInput = document.getElementById('imageInput');
-        const imagePreview = document.getElementById('imagePreview');
-        const imageFileName = document.getElementById('imageFileName');
+        let currentUser = null;
+        let uploadedImageUrl = null;
 
         // ================================================================
         //  TOAST
@@ -786,31 +431,179 @@
         }
 
         // ================================================================
-        //  IMAGE UPLOAD HANDLING
+        //  RENDER REGISTER FORM
         // ================================================================
-        let uploadedImageUrl = null;
+        function renderRegisterForm() {
+            container.innerHTML = `
+                <div class="form-card">
+                    <div class="page-title">
+                        <i class="fas fa-user-plus"></i> Create Account
+                    </div>
+                    <div class="page-sub">Join the BMD community – share your voice and connect with others.</div>
 
-        document.getElementById('imageUploadBtn').addEventListener('click', () => {
-            imageInput.click();
-        });
+                    <form id="registerForm" novalidate>
+                        <div class="form-group">
+                            <label for="fullName">Full Name <span class="required">*</span></label>
+                            <input type="text" id="fullName" placeholder="e.g. John Mukasa" required />
+                        </div>
 
-        imageInput.addEventListener('change', (e) => {
-            const file = e.target.files[0];
-            if (!file) return;
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="district">District <span class="required">*</span></label>
+                                <input type="text" id="district" placeholder="e.g. Buhweju" required />
+                            </div>
+                            <div class="form-group">
+                                <label for="subcounty">Subcounty <span class="required">*</span></label>
+                                <input type="text" id="subcounty" placeholder="e.g. Nyakashaka" required />
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="parish">Parish <span class="required">*</span></label>
+                                <input type="text" id="parish" placeholder="e.g. Rubengye" required />
+                            </div>
+                            <div class="form-group">
+                                <label for="village">Village <span class="required">*</span></label>
+                                <input type="text" id="village" placeholder="e.g. Kiziiba" required />
+                            </div>
+                        </div>
 
-            // Show preview
-            const reader = new FileReader();
-            reader.onload = (event) => {
-                imagePreview.innerHTML = `<img src="${event.target.result}" alt="Preview" />`;
-            };
-            reader.readAsDataURL(file);
+                        <div class="form-group">
+                            <label for="occupation">Occupation</label>
+                            <input type="text" id="occupation" placeholder="e.g. Farmer, Teacher, Business" />
+                        </div>
 
-            imageFileName.textContent = file.name;
+                        <div class="form-group">
+                            <label for="phone1">Primary Phone <span class="required">*</span></label>
+                            <input type="tel" id="phone1" placeholder="e.g. +256 700 123 456" required />
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="phone2">Phone 2 (optional)</label>
+                                <input type="tel" id="phone2" placeholder="e.g. +256 700 123 457" />
+                            </div>
+                            <div class="form-group">
+                                <label for="phone3">Phone 3 (optional)</label>
+                                <input type="tel" id="phone3" placeholder="e.g. +256 700 123 458" />
+                            </div>
+                        </div>
 
-            // Upload to Cloudinary immediately
-            uploadImageToCloudinary(file);
-        });
+                        <div class="form-group">
+                            <label for="role">Role in Community</label>
+                            <input type="text" id="role" placeholder="e.g. Chairman LC1, Church Leader" />
+                        </div>
 
+                        <div class="form-group">
+                            <label for="education">Education Level</label>
+                            <select id="education">
+                                <option value="">Select...</option>
+                                <option value="none">No formal education</option>
+                                <option value="primary">Primary</option>
+                                <option value="secondary">Secondary</option>
+                                <option value="tertiary">Tertiary / College</option>
+                                <option value="university">University</option>
+                                <option value="postgraduate">Postgraduate</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Profile Picture</label>
+                            <div class="image-upload-wrapper">
+                                <div class="image-preview" id="imagePreview">
+                                    <i class="fas fa-user"></i>
+                                </div>
+                                <button type="button" class="image-upload-btn" id="imageUploadBtn">
+                                    <i class="fas fa-camera"></i>
+                                    <span class="file-name" id="imageFileName">Choose Image</span>
+                                </button>
+                                <input type="file" id="imageInput" class="hidden-input" accept="image/*" />
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="password">Password <span class="required">*</span></label>
+                                <input type="password" id="password" placeholder="Min 6 characters" required minlength="6" />
+                                <div class="password-hint">At least 6 characters</div>
+                            </div>
+                            <div class="form-group">
+                                <label for="confirmPassword">Confirm Password <span class="required">*</span></label>
+                                <input type="password" id="confirmPassword" placeholder="Re-enter password" required />
+                            </div>
+                        </div>
+
+                        <div class="submit-area">
+                            <button type="submit" class="submit-btn" id="registerBtn">
+                                <i class="fas fa-user-plus"></i> Register
+                            </button>
+                            <div class="submit-status" id="registerStatus"></div>
+                        </div>
+
+                        <div class="forgot-password-link">
+                            Already have an account? <a id="signInLink">Sign In</a>
+                        </div>
+
+                        <div class="register-other-link">
+                            <a id="registerOtherLink">📱 Register for someone without a smartphone</a>
+                        </div>
+                    </form>
+                </div>
+            `;
+
+            // Attach events
+            setupRegisterForm();
+        }
+
+        // ================================================================
+        //  SETUP REGISTER FORM EVENTS
+        // ================================================================
+        function setupRegisterForm() {
+            const form = document.getElementById('registerForm');
+            const imageInput = document.getElementById('imageInput');
+            const imagePreview = document.getElementById('imagePreview');
+            const imageFileName = document.getElementById('imageFileName');
+            const statusEl = document.getElementById('registerStatus');
+            const submitBtn = document.getElementById('registerBtn');
+
+            // Image upload
+            document.getElementById('imageUploadBtn').addEventListener('click', () => {
+                imageInput.click();
+            });
+
+            imageInput.addEventListener('change', (e) => {
+                const file = e.target.files[0];
+                if (!file) return;
+
+                const reader = new FileReader();
+                reader.onload = (event) => {
+                    imagePreview.innerHTML = `<img src="${event.target.result}" alt="Preview" />`;
+                };
+                reader.readAsDataURL(file);
+
+                imageFileName.textContent = file.name;
+                uploadImageToCloudinary(file);
+            });
+
+            // Sign In link
+            document.getElementById('signInLink').addEventListener('click', () => {
+                window.location.href = 'account.html';
+            });
+
+            // Register Other link
+            document.getElementById('registerOtherLink').addEventListener('click', () => {
+                showToast('📱 This feature is coming soon. Please contact BMD officials for assistance.', 4000);
+            });
+
+            // Form submit
+            form.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                await handleRegister(form, statusEl, submitBtn);
+            });
+        }
+
+        // ================================================================
+        //  IMAGE UPLOAD TO CLOUDINARY
+        // ================================================================
         async function uploadImageToCloudinary(file) {
             const formData = new FormData();
             formData.append('file', file);
@@ -829,25 +622,21 @@
 
                 const data = await response.json();
                 uploadedImageUrl = data.secure_url;
-                showToast('✅ Profile picture uploaded successfully!', 2000);
+                showToast('✅ Profile picture uploaded!', 2000);
             } catch (err) {
                 console.error('Cloudinary upload error:', err);
                 showToast('❌ Image upload failed: ' + err.message);
                 uploadedImageUrl = null;
-                // Reset preview
-                imagePreview.innerHTML = `<i class="fas fa-user"></i>`;
-                imageFileName.textContent = 'Choose Image';
-                imageInput.value = '';
+                document.getElementById('imagePreview').innerHTML = `<i class="fas fa-user"></i>`;
+                document.getElementById('imageFileName').textContent = 'Choose Image';
+                document.getElementById('imageInput').value = '';
             }
         }
 
         // ================================================================
-        //  REGISTER FORM SUBMIT
+        //  HANDLE REGISTER
         // ================================================================
-        form.addEventListener('submit', async (e) => {
-            e.preventDefault();
-
-            // Gather data
+        async function handleRegister(form, statusEl, submitBtn) {
             const fullName = document.getElementById('fullName').value.trim();
             const district = document.getElementById('district').value.trim();
             const subcounty = document.getElementById('subcounty').value.trim();
@@ -881,7 +670,6 @@
                 return;
             }
 
-            // Convert phone1 to email: remove non-digits, append @bmd.app
             const phoneDigits = phone1.replace(/\D/g, '');
             if (phoneDigits.length < 6) {
                 statusEl.textContent = '⚠️ Please enter a valid phone number.';
@@ -890,25 +678,38 @@
             }
             const email = phoneDigits + '@bmd.app';
 
-            // Disable button
             submitBtn.disabled = true;
             submitBtn.innerHTML = '<span class="spinner"></span> Creating account…';
             statusEl.textContent = '';
             statusEl.className = 'submit-status';
 
             try {
-                // 1. Create auth user
+                // Check if phone already exists in Firestore
+                const existingUser = await db.collection('users')
+                    .where('phone', '==', phone1)
+                    .get();
+
+                if (!existingUser.empty) {
+                    statusEl.textContent = '❌ You already have an account. Please sign in instead.';
+                    statusEl.className = 'submit-status error';
+                    showToast('You already have an account. Please sign in.', 4000);
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = '<i class="fas fa-user-plus"></i> Register';
+                    return;
+                }
+
+                // Create auth user
                 const userCredential = await auth.createUserWithEmailAndPassword(email, password);
                 const user = userCredential.user;
 
-                // 2. Update auth profile with name and photo
+                // Update auth profile
                 const updateData = { displayName: fullName };
                 if (uploadedImageUrl) {
                     updateData.photoURL = uploadedImageUrl;
                 }
                 await user.updateProfile(updateData);
 
-                // 3. Save user data to Firestore
+                // Save to Firestore
                 const userDoc = {
                     uid: user.uid,
                     displayName: fullName,
@@ -930,12 +731,10 @@
 
                 await db.collection('users').doc(user.uid).set(userDoc);
 
-                // Success
                 statusEl.textContent = '✅ Registration successful! Redirecting…';
                 statusEl.className = 'submit-status success';
                 showToast('🎉 Welcome to BMD, ' + fullName + '!', 3000);
 
-                // Redirect to account page after short delay
                 setTimeout(() => {
                     window.location.href = 'account.html';
                 }, 2000);
@@ -944,7 +743,7 @@
                 console.error('Registration error:', err);
                 let errorMsg = err.message;
                 if (err.code === 'auth/email-already-in-use') {
-                    errorMsg = 'This phone number is already registered. Please sign in.';
+                    errorMsg = 'You already have an account. Please sign in.';
                 }
                 statusEl.textContent = '❌ ' + errorMsg;
                 statusEl.className = 'submit-status error';
@@ -952,10 +751,116 @@
                 submitBtn.disabled = false;
                 submitBtn.innerHTML = '<i class="fas fa-user-plus"></i> Register';
             }
+        }
+
+        // ================================================================
+        //  RENDER EXISTING USER PROFILE
+        // ================================================================
+        function renderExistingUser(user) {
+            const photoURL = user.photoURL || 'https://res.cloudinary.com/dp81zzxlh/image/upload/v1/default-avatar.png';
+            const displayName = user.displayName || 'BMD User';
+
+            // Update header avatar
+            if (photoURL) {
+                headerAvatar.innerHTML = `<img src="${photoURL}" style="width:100%;height:100%;object-fit:cover;" />`;
+            }
+
+            container.innerHTML = `
+                <div class="form-card">
+                    <div class="page-title">
+                        <i class="fas fa-check-circle" style="color:var(--accent-gold);"></i> You're Already Registered
+                    </div>
+                    <div class="page-sub">Welcome back, ${displayName}!</div>
+
+                    <div style="display:flex; align-items:center; gap:16px; padding:16px 0; border-bottom:1px solid var(--border-color); margin-bottom:16px;">
+                        <img src="${photoURL}" style="width:80px;height:80px;border-radius:50%;object-fit:cover;border:3px solid var(--accent-gold);" />
+                        <div>
+                            <div style="font-weight:700; font-size:1.1rem;">${displayName}</div>
+                            <div style="color:#888; font-size:0.85rem;">${user.phone || user.email || ''}</div>
+                        </div>
+                    </div>
+
+                    <div style="display:flex; flex-direction:column; gap:10px;">
+                        <a href="account.html" class="submit-btn" style="text-decoration:none; text-align:center;">
+                            <i class="fas fa-user-circle"></i> Go to My Account
+                        </a>
+                        <button class="image-upload-btn" id="editProfileBtn" style="justify-content:center; background:var(--accent-gold); color:#111827; width:100%; padding:12px;">
+                            <i class="fas fa-edit"></i> Edit Profile
+                        </button>
+                        <button class="image-upload-btn" id="registerOtherBtn" style="justify-content:center; background:var(--text-primary); color:#fff; width:100%; padding:12px;">
+                            <i class="fas fa-user-plus"></i> Register for Someone Else
+                        </button>
+                        <button class="image-upload-btn" id="forgotPasswordBtn" style="justify-content:center; background:#e74c3c; color:#fff; width:100%; padding:12px;">
+                            <i class="fas fa-key"></i> Forgot Password
+                        </button>
+                        <div class="forgot-password-link" style="border-top:none; padding-top:0;">
+                            <a id="signOutLink" style="color:#e74c3c;">Sign Out</a>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            // Events
+            document.getElementById('editProfileBtn').addEventListener('click', () => {
+                window.location.href = 'account.html';
+            });
+
+            document.getElementById('registerOtherBtn').addEventListener('click', () => {
+                showToast('📱 This feature is coming soon. Please contact BMD officials for assistance.', 4000);
+            });
+
+            document.getElementById('forgotPasswordBtn').addEventListener('click', () => {
+                const phone = user.phone || '';
+                const message = encodeURIComponent(
+                    `I forgot my password on BMD app. My phone number is ${phone}. Please help me reset it.`
+                );
+                window.open(`https://wa.me/256761828694?text=${message}`, '_blank');
+            });
+
+            document.getElementById('signOutLink').addEventListener('click', async () => {
+                try {
+                    await auth.signOut();
+                    showToast('Signed out successfully.');
+                    renderRegisterForm();
+                } catch (err) {
+                    showToast('Error signing out: ' + err.message);
+                }
+            });
+        }
+
+        // ================================================================
+        //  AUTH STATE LISTENER
+        // ================================================================
+        auth.onAuthStateChanged(async (user) => {
+            if (user) {
+                try {
+                    // Fetch user data from Firestore
+                    const doc = await db.collection('users').doc(user.uid).get();
+                    if (doc.exists) {
+                        const userData = doc.data();
+                        // Merge auth and Firestore data
+                        const mergedUser = {
+                            ...user,
+                            ...userData,
+                            phone: userData.phone || ''
+                        };
+                        renderExistingUser(mergedUser);
+                    } else {
+                        // User exists in auth but not in Firestore - show register form
+                        renderRegisterForm();
+                    }
+                } catch (err) {
+                    console.error('Error fetching user data:', err);
+                    renderRegisterForm();
+                }
+            } else {
+                // Not logged in - show register form
+                renderRegisterForm();
+            }
         });
 
         // ================================================================
-        //  NAVIGATION
+        //  NAVIGATION (same as index)
         // ================================================================
         document.querySelectorAll('.bottom-nav .nav-item').forEach(item => {
             item.addEventListener('click', () => {
@@ -968,7 +873,6 @@
                         window.location.href = 'index.html';
                         break;
                     case 'register':
-                        // Already here
                         break;
                     case 'activities':
                         showToast('📅 Activities page coming soon!');
@@ -985,14 +889,8 @@
             });
         });
 
-        // ================================================================
-        //  BACK & SIGN IN LINKS
-        // ================================================================
-        document.getElementById('backBtn').addEventListener('click', () => {
-            window.location.href = 'index.html';
-        });
-
-        document.getElementById('signInLink').addEventListener('click', () => {
+        // Header avatar click -> account
+        headerAvatar.addEventListener('click', () => {
             window.location.href = 'account.html';
         });
 
@@ -1001,10 +899,7 @@
         // ================================================================
         console.log('📝 BMD Registration page loaded.');
         console.log('☁️ Cloudinary preset:', UPLOAD_PRESET);
-        console.log('📁 User data will be stored in Firestore "users" collection.');
-
-        // Auto-focus on first field
-        document.getElementById('fullName').focus();
+        console.log('📁 User data stored in Firestore "users" collection.');
     </script>
 </body>
 </html>
