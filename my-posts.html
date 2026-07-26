@@ -113,10 +113,15 @@
             color: #e11d48;
         }
 
-        .post-card .post-meta .comments {
+        .post-card .post-meta .media-type {
             display: flex;
             align-items: center;
             gap: 4px;
+            color: var(--accent-gold, #d4a743);
+            background: #f8f5ee;
+            padding: 2px 10px;
+            border-radius: 12px;
+            font-size: 0.65rem;
         }
 
         .post-card .card-media-wrap {
@@ -124,28 +129,36 @@
             background: #000;
             position: relative;
             overflow: hidden;
-            max-height: 250px;
+            max-height: 300px;
+            border-radius: var(--radius-sm, 12px);
+            margin-bottom: 8px;
         }
 
         .post-card .card-media-wrap img {
             width: 100%;
-            max-height: 250px;
+            max-height: 300px;
             object-fit: cover;
             display: block;
         }
 
         .post-card .card-media-wrap video {
             width: 100%;
-            max-height: 250px;
+            max-height: 300px;
             display: block;
             background: #000;
+            border-radius: var(--radius-sm, 12px);
         }
 
         .post-card .card-media-wrap audio {
             width: 100%;
-            padding: 8px 12px;
-            background: #111827;
+            padding: 12px 16px;
+            background: #1f2937;
             display: block;
+            border-radius: var(--radius-sm, 12px);
+        }
+
+        .post-card .card-media-wrap audio::-webkit-media-controls-panel {
+            background: #1f2937;
         }
 
         .post-card .post-preview {
@@ -207,6 +220,22 @@
 
         .post-card .post-actions .btn-action:active {
             transform: scale(0.95);
+        }
+
+        /* ===== MEDIA ICON OVERLAY ===== */
+        .media-overlay-icon {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: rgba(0,0,0,0.7);
+            color: #fff;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.65rem;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            backdrop-filter: blur(4px);
         }
 
         /* ===== EMPTY STATE ===== */
@@ -345,13 +374,13 @@
                 font-size: 1rem;
             }
             .post-card .card-media-wrap {
-                max-height: 180px;
+                max-height: 200px;
             }
             .post-card .card-media-wrap img {
-                max-height: 180px;
+                max-height: 200px;
             }
             .post-card .card-media-wrap video {
-                max-height: 180px;
+                max-height: 200px;
             }
             .post-card .post-actions {
                 padding: 10px 12px;
@@ -603,6 +632,34 @@
         }
 
         // ================================================================
+        //  GET MEDIA TYPE
+        // ================================================================
+        function getMediaType(post) {
+            if (post.videoUrl && post.videoUrl !== 'null' && post.videoUrl !== null) return 'video';
+            if (post.imageUrl && post.imageUrl !== 'null' && post.imageUrl !== null) return 'image';
+            if (post.audioUrl && post.audioUrl !== 'null' && post.audioUrl !== null) return 'audio';
+            return null;
+        }
+
+        function getMediaIcon(type) {
+            switch(type) {
+                case 'video': return 'fa-video';
+                case 'image': return 'fa-image';
+                case 'audio': return 'fa-music';
+                default: return 'fa-file';
+            }
+        }
+
+        function getMediaLabel(type) {
+            switch(type) {
+                case 'video': return 'Video';
+                case 'image': return 'Image';
+                case 'audio': return 'Audio';
+                default: return 'File';
+            }
+        }
+
+        // ================================================================
         //  RENDER POSTS
         // ================================================================
         function renderPosts(posts) {
@@ -628,14 +685,44 @@
                 const preview = post.preview || (post.content ? post.content.replace(/<[^>]*>?/gm, '').substring(0, 120) + '...' : '');
                 const dateStr = post.createdAt ? post.createdAt.toLocaleDateString() + ' ' + post.createdAt.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : '';
                 const likeCount = post.likes || 0;
+                const mediaType = getMediaType(post);
 
                 let mediaHtml = '';
-                if (post.imageUrl) {
-                    mediaHtml = `<div class="card-media-wrap"><img src="${post.imageUrl}" alt="Post image" loading="lazy"/></div>`;
-                } else if (post.videoUrl) {
-                    mediaHtml = `<div class="card-media-wrap"><video controls><source src="${post.videoUrl}" type="video/mp4"/></video></div>`;
-                } else if (post.audioUrl) {
-                    mediaHtml = `<div class="card-media-wrap"><audio controls><source src="${post.audioUrl}" type="audio/mpeg"/></audio></div>`;
+                let mediaIconHtml = '';
+
+                if (mediaType === 'video') {
+                    mediaHtml = `
+                        <div class="card-media-wrap">
+                            <video controls preload="metadata" style="width:100%;">
+                                <source src="${post.videoUrl}" type="video/mp4" />
+                                Your browser does not support video.
+                            </video>
+                            <div class="media-overlay-icon"><i class="fas fa-video"></i> Video</div>
+                        </div>
+                    `;
+                } else if (mediaType === 'image') {
+                    mediaHtml = `
+                        <div class="card-media-wrap">
+                            <img src="${post.imageUrl}" alt="Post image" loading="lazy" />
+                            <div class="media-overlay-icon"><i class="fas fa-image"></i> Image</div>
+                        </div>
+                    `;
+                } else if (mediaType === 'audio') {
+                    mediaHtml = `
+                        <div class="card-media-wrap">
+                            <audio controls preload="metadata" style="width:100%;">
+                                <source src="${post.audioUrl}" type="audio/mpeg" />
+                                Your browser does not support audio.
+                            </audio>
+                            <div class="media-overlay-icon"><i class="fas fa-music"></i> Audio</div>
+                        </div>
+                    `;
+                }
+
+                // Show media type badge in meta
+                let mediaBadge = '';
+                if (mediaType) {
+                    mediaBadge = `<span class="media-type"><i class="fas ${getMediaIcon(mediaType)}"></i> ${getMediaLabel(mediaType)}</span>`;
                 }
 
                 html += `
@@ -645,6 +732,7 @@
                             <div class="post-meta">
                                 <span class="date"><i class="far fa-clock"></i> ${dateStr}</span>
                                 <span class="likes"><i class="fas fa-heart"></i> ${likeCount}</span>
+                                ${mediaBadge}
                             </div>
                             ${mediaHtml}
                             <div class="post-preview">${escapeHtml(preview)}</div>
