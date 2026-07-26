@@ -5,10 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
     <title>Buhweju Must Develop – BMD</title>
 
-    <!-- ===== OPEN GRAPH META TAGS (Updated dynamically via Header Script) ===== -->
+    <!-- ===== OPEN GRAPH META TAGS ===== -->
     <meta id="ogTitle" property="og:title" content="Buhweju Must Develop (BMD)" />
     <meta id="ogDesc" property="og:description" content="Eiraka ryabantu baburijo. – People's Voice" />
-    <meta id="ogImage" property="og:image" content="https://res.cloudinary.com/dp81zzxlh/image/upload/v1/bmd-og-default.jpg" />
+    <meta id="ogImage" property="og:image" content="https://res.cloudinary.com/dp81zzxlh/image/upload/v1784978097/vhaafrigchmqnqbhehft.jpg" />
     <meta property="og:url" content="https://bmd-app-1aec8.web.app/" />
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content="Buhweju Must Develop" />
@@ -43,6 +43,8 @@
             navigator.serviceWorker.register('/firebase-messaging-sw.js')
                 .then((registration) => {
                     console.log("Firebase Service Worker registered:", registration);
+                    // Request permission when user interacts with page
+                    // We'll call this on user interaction to avoid blocking
                     return messaging.requestPermission();
                 })
                 .then(() => {
@@ -123,7 +125,6 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Lora:ital,wght@0,500;0,600;0,700;1,400&family=Playfair+Display:wght@700;800&display=swap" rel="stylesheet" />
 
     <style>
-        /* ===== RESET & ROOT VARS ===== */
         * {
             margin: 0;
             padding: 0;
@@ -160,9 +161,96 @@
             -webkit-tap-highlight-color: transparent;
         }
 
-        a { text-decoration: none; color: inherit; }
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
 
-        /* ===== INITIAL PAGE PRELOADER ===== */
+        /* ===== NOTIFICATION PERMISSION BANNER ===== */
+        .notification-banner {
+            position: fixed;
+            bottom: 80px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #1a3c2a;
+            color: #fff;
+            padding: 14px 24px;
+            border-radius: 16px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+            z-index: 4000;
+            display: none;
+            max-width: 90%;
+            width: 440px;
+            animation: slideUp 0.4s ease;
+            border: 1px solid var(--accent-gold);
+        }
+
+        .notification-banner.show {
+            display: block;
+        }
+
+        .notification-banner .banner-title {
+            font-weight: 700;
+            font-size: 0.95rem;
+            margin-bottom: 4px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .notification-banner .banner-title i {
+            color: var(--accent-gold);
+            font-size: 1.2rem;
+        }
+
+        .notification-banner .banner-text {
+            font-size: 0.8rem;
+            opacity: 0.9;
+            margin-bottom: 12px;
+        }
+
+        .notification-banner .banner-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .notification-banner .banner-actions button {
+            padding: 8px 20px;
+            border: none;
+            border-radius: 30px;
+            font-weight: 600;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: transform 0.15s;
+            font-family: inherit;
+        }
+
+        .notification-banner .banner-actions button:active {
+            transform: scale(0.95);
+        }
+
+        .notification-banner .btn-allow {
+            background: var(--accent-gold);
+            color: #111;
+        }
+
+        .notification-banner .btn-dismiss {
+            background: rgba(255,255,255,0.15);
+            color: #fff;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateX(-50%) translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(-50%) translateY(0);
+            }
+        }
+
+        /* ===== PRELOADER ===== */
         #pagePreloader {
             position: fixed;
             inset: 0;
@@ -208,7 +296,9 @@
         /* ===== HEADER ===== */
         .app-header {
             position: fixed;
-            top: 0; left: 0; right: 0;
+            top: 0;
+            left: 0;
+            right: 0;
             z-index: 1000;
             height: var(--header-height);
             background: var(--header-bg);
@@ -285,8 +375,12 @@
             justify-content: center;
         }
 
-        .header-action-btn:hover { color: var(--accent-gold); }
-        .header-action-btn:active { transform: scale(0.9); }
+        .header-action-btn:hover {
+            color: var(--accent-gold);
+        }
+        .header-action-btn:active {
+            transform: scale(0.9);
+        }
 
         .user-profile-avatar {
             width: 36px;
@@ -304,11 +398,12 @@
             overflow: hidden;
         }
 
-        /* ===== MOVING AD (MARQUEE) ===== */
+        /* ===== MOVING AD ===== */
         .marquee-ad {
             position: fixed;
             top: var(--header-height);
-            left: 0; right: 0;
+            left: 0;
+            right: 0;
             z-index: 999;
             height: var(--ad-height);
             background: #1f2937;
@@ -334,14 +429,20 @@
             gap: 8px;
         }
 
-        .marquee-track i { color: var(--accent-gold); }
-
-        @keyframes marqueeScroll {
-            0% { transform: translateX(0%); }
-            100% { transform: translateX(-50%); }
+        .marquee-track i {
+            color: var(--accent-gold);
         }
 
-        /* ===== FEED CONTAINER ===== */
+        @keyframes marqueeScroll {
+            0% {
+                transform: translateX(0%);
+            }
+            100% {
+                transform: translateX(-50%);
+            }
+        }
+
+        /* ===== FEED ===== */
         .feed {
             max-width: 620px;
             margin: 0 auto;
@@ -405,7 +506,6 @@
             color: var(--text-primary);
         }
 
-        /* Media Container - ONLY rendered when media exists! */
         .card-media-wrap {
             width: 100%;
             background: #000;
@@ -445,7 +545,6 @@
             overflow: hidden;
         }
 
-        /* ACTIONS ROW */
         .post-actions {
             display: flex;
             align-items: center;
@@ -476,13 +575,23 @@
             transition: background 0.15s, color 0.15s;
         }
 
-        .btn-action:hover { background: #f3f4f6; }
-        .btn-action i { font-size: 1.05rem; }
+        .btn-action:hover {
+            background: #f3f4f6;
+        }
+        .btn-action i {
+            font-size: 1.05rem;
+        }
 
-        .btn-action.like-btn.liked { color: #e11d48; }
-        .btn-action.like-btn.liked i { font-weight: 900; }
+        .btn-action.like-btn.liked {
+            color: #e11d48;
+        }
+        .btn-action.like-btn.liked i {
+            font-weight: 900;
+        }
 
-        .btn-action.share-btn { color: #16a34a; }
+        .btn-action.share-btn {
+            color: #16a34a;
+        }
 
         .btn-read-more {
             background: var(--header-bg);
@@ -505,14 +614,16 @@
             position: fixed;
             inset: 0;
             z-index: 3000;
-            background: rgba(0,0,0,0.6);
+            background: rgba(0, 0, 0, 0.6);
             backdrop-filter: blur(4px);
             display: none;
             align-items: flex-end;
             justify-content: center;
         }
 
-        .share-modal-overlay.active { display: flex; }
+        .share-modal-overlay.active {
+            display: flex;
+        }
 
         .share-card {
             background: #fff;
@@ -568,19 +679,31 @@
             color: #fff;
         }
 
-        .bg-wa { background: #25D366; }
-        .bg-wb { background: #128C7E; }
-        .bg-msg { background: #0084FF; }
-        .bg-x { background: #000000; }
-        .bg-tt { background: #000000; }
-        .bg-copy { background: #6B7280; }
+        .bg-wa {
+            background: #25D366;
+        }
+        .bg-wb {
+            background: #128C7E;
+        }
+        .bg-msg {
+            background: #0084FF;
+        }
+        .bg-x {
+            background: #000000;
+        }
+        .bg-tt {
+            background: #000000;
+        }
+        .bg-copy {
+            background: #6B7280;
+        }
 
         /* ===== FULL POST MODAL ===== */
         .full-post-overlay {
             position: fixed;
             inset: 0;
             z-index: 2500;
-            background: rgba(0,0,0,0.7);
+            background: rgba(0, 0, 0, 0.7);
             backdrop-filter: blur(5px);
             display: none;
             align-items: center;
@@ -588,7 +711,9 @@
             padding: 16px;
         }
 
-        .full-post-overlay.active { display: flex; }
+        .full-post-overlay.active {
+            display: flex;
+        }
 
         .full-post-modal {
             background: #ffffff;
@@ -599,7 +724,7 @@
             overflow-y: auto;
             position: relative;
             padding: 24px;
-            box-shadow: 0 20px 50px rgba(0,0,0,0.3);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
             animation: slideUp 0.25s ease-out;
         }
 
@@ -661,14 +786,16 @@
             position: fixed;
             inset: 0;
             z-index: 2000;
-            background: rgba(0,0,0,0.7);
+            background: rgba(0, 0, 0, 0.7);
             backdrop-filter: blur(4px);
             display: none;
             padding: 80px 16px 20px;
             justify-content: center;
         }
 
-        .search-overlay.active { display: flex; }
+        .search-overlay.active {
+            display: flex;
+        }
 
         .search-box {
             width: 100%;
@@ -700,10 +827,12 @@
             cursor: pointer;
         }
 
-        /* ===== BOTTOM NAVIGATION ===== */
+        /* ===== BOTTOM NAV ===== */
         .bottom-nav {
             position: fixed;
-            bottom: 0; left: 0; right: 0;
+            bottom: 0;
+            left: 0;
+            right: 0;
             z-index: 1000;
             height: var(--nav-height);
             background: #ffffff;
@@ -711,7 +840,7 @@
             display: flex;
             align-items: center;
             justify-content: space-around;
-            box-shadow: 0 -2px 10px rgba(0,0,0,0.05);
+            box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.05);
         }
 
         .nav-item {
@@ -723,14 +852,25 @@
             font-weight: 600;
             color: #6b7280;
             text-transform: uppercase;
+            cursor: pointer;
+            background: none;
+            border: none;
+            font-family: inherit;
         }
 
-        .nav-item i { font-size: 1.25rem; }
-        .nav-item.active { color: var(--header-bg); }
-        .nav-item.active i { color: var(--accent-gold); }
+        .nav-item i {
+            font-size: 1.25rem;
+        }
+        .nav-item.active {
+            color: var(--header-bg);
+        }
+        .nav-item.active i {
+            color: var(--accent-gold);
+        }
 
         .nav-item.post-btn i {
-            width: 44px; height: 44px;
+            width: 44px;
+            height: 44px;
             background: var(--header-bg);
             color: var(--accent-gold);
             border-radius: 50%;
@@ -739,10 +879,10 @@
             justify-content: center;
             font-size: 1.4rem;
             margin-top: -16px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
         }
 
-        /* TOAST */
+        /* ===== TOAST ===== */
         .toast {
             position: fixed;
             bottom: 80px;
@@ -763,17 +903,144 @@
             transform: translateX(-50%) translateY(0);
         }
 
-        @keyframes slideUp {
-            from { transform: translateY(20px); opacity: 0; }
-            to { transform: translateY(0); opacity: 1; }
+        /* ===== SKELETON ===== */
+        .skeleton {
+            background: #e8e0d4;
+            border-radius: var(--radius-lg);
+            padding: 16px;
+            margin-bottom: 20px;
+            animation: pulse 1.5s ease-in-out infinite;
+        }
+        .skeleton .s-image {
+            height: 180px;
+            background: #d5cdc0;
+            border-radius: var(--radius-sm);
+            margin-bottom: 12px;
+        }
+        .skeleton .s-line {
+            height: 14px;
+            background: #d5cdc0;
+            border-radius: 8px;
+            margin-bottom: 8px;
+        }
+        .skeleton .s-line.short {
+            width: 60%;
+        }
+        .skeleton .s-line.med {
+            width: 80%;
+        }
+        @keyframes pulse {
+            0%,
+            100% {
+                opacity: 0.6;
+            }
+            50% {
+                opacity: 1;
+            }
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #888;
+        }
+        .empty-state i {
+            font-size: 3rem;
+            color: #ccc;
+            margin-bottom: 12px;
+        }
+        .empty-state h3 {
+            font-size: 1.1rem;
+            color: #555;
+        }
+        .empty-state p {
+            font-size: 0.85rem;
+            color: #999;
+        }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 480px) {
+            .app-header .brand-text .main {
+                font-size: 0.9rem;
+            }
+            .app-header .logo-img {
+                height: 32px;
+            }
+            .app-header .profile-pic {
+                width: 30px;
+                height: 30px;
+            }
+            .post-card .post-title {
+                font-size: 1.1rem;
+            }
+            .post-card .card-media img {
+                max-height: 220px;
+            }
+            .full-post-overlay .full-post-content .full-title {
+                font-size: 1.3rem;
+            }
+            .bottom-nav .nav-item i {
+                font-size: 1.1rem;
+            }
+            .bottom-nav .nav-item.post-btn i {
+                width: 40px;
+                height: 40px;
+                font-size: 1.6rem;
+                margin-top: -12px;
+            }
+            .notification-banner {
+                bottom: 70px;
+                padding: 12px 16px;
+                width: 95%;
+            }
+            .notification-banner .banner-title {
+                font-size: 0.85rem;
+            }
+            .notification-banner .banner-text {
+                font-size: 0.75rem;
+            }
+        }
+
+        @media (min-width: 768px) {
+            .feed {
+                padding: 10px 24px 30px;
+            }
+            .post-card .card-media img {
+                max-height: 400px;
+            }
+        }
+
+        ::-webkit-scrollbar {
+            width: 4px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f0ebe4;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #888;
+            border-radius: 10px;
         }
     </style>
 </head>
 <body>
 
-    <!-- ===== INITIAL PRELOADER ===== -->
+    <!-- ===== NOTIFICATION PERMISSION BANNER ===== -->
+    <div class="notification-banner" id="notificationBanner">
+        <div class="banner-title">
+            <i class="fas fa-bell"></i> Stay Updated
+        </div>
+        <div class="banner-text">
+            Get notified when new posts are published in your community.
+        </div>
+        <div class="banner-actions">
+            <button class="btn-allow" id="notifAllowBtn">Allow Notifications</button>
+            <button class="btn-dismiss" id="notifDismissBtn">Maybe Later</button>
+        </div>
+    </div>
+
+    <!-- ===== PRELOADER ===== -->
     <div id="pagePreloader">
-        <img src="https://res.cloudinary.com/dp81zzxlh/image/upload/v1/bmd-og-default.jpg" alt="BMD Logo" class="preloader-logo" id="preloaderLogo" />
+        <img src="https://res.cloudinary.com/dp81zzxlh/image/upload/v1/bmd-og-default.jpg" alt="BMD Logo" class="preloader-logo" />
         <div class="preloader-text">Welcome back</div>
         <div class="preloader-subtext">Page loading...</div>
     </div>
@@ -781,7 +1048,7 @@
     <!-- ===== HEADER ===== -->
     <header class="app-header">
         <div class="header-left">
-            <img src="https://res.cloudinary.com/dp81zzxlh/image/upload/v1/bmd-og-default.jpg" alt="BMD Logo" class="header-logo" id="headerLogo" />
+            <img src="https://res.cloudinary.com/dp81zzxlh/image/upload/v1784978097/vhaafrigchmqnqbhehft.jpg" alt="BMD Logo" class="header-logo" />
             <div class="brand-info">
                 <h1>BUHWEJU MUST DEVELOP</h1>
                 <span class="sub">Eiraka ryabantu baburijo.</span>
@@ -820,7 +1087,7 @@
         </div>
     </div>
 
-    <!-- ===== MAIN FEED ===== -->
+    <!-- ===== FEED ===== -->
     <main class="feed">
         <div id="postsWrapper"></div>
     </main>
@@ -869,31 +1136,38 @@
         </div>
     </div>
 
-    <!-- ===== BOTTOM NAVIGATION ===== -->
+    <!-- ===== BOTTOM NAV ===== -->
     <nav class="bottom-nav">
-        <a href="index.html" class="nav-item active"><i class="fas fa-home"></i><span>Home</span></a>
-        <a href="register.html" class="nav-item"><i class="fas fa-user-plus"></i><span>Register</span></a>
-        <a href="post.html" class="nav-item post-btn"><i class="fas fa-plus"></i><span style="margin-top:2px;">Post</span></a>
-        <a href="activities.html" class="nav-item"><i class="fas fa-calendar-alt"></i><span>Activities</span></a>
-        <a href="account.html" class="nav-item"><i class="fas fa-user-circle"></i><span>Account</span></a>
+        <button class="nav-item active" data-tab="home"><i class="fas fa-home"></i><span>Home</span></button>
+        <button class="nav-item" data-tab="register"><i class="fas fa-user-plus"></i><span>Register</span></button>
+        <button class="nav-item post-btn" data-tab="post"><i class="fas fa-plus"></i><span style="margin-top:2px;">Post</span></button>
+        <button class="nav-item" data-tab="activities"><i class="fas fa-calendar-alt"></i><span>Activities</span></button>
+        <button class="nav-item" data-tab="account"><i class="fas fa-user-circle"></i><span>Account</span></button>
     </nav>
 
-    <!-- TOAST -->
+    <!-- ===== TOAST ===== -->
     <div class="toast" id="toast"></div>
 
-    <!-- ===== FIREBASE & APPLICATION LOGIC ===== -->
+    <!-- ============================================================ -->
+    <!-- ======================== FIREBASE + APP ===================== -->
+    <!-- ============================================================ -->
     <script>
         const db = firebase.firestore();
         const auth = firebase.auth();
+        const messaging = firebase.messaging();
 
-        // STATE
+        // ================================================================
+        //  STATE
+        // ================================================================
         let allPosts = [];
         let currentUser = null;
         let likedPosts = new Set();
         let activeSharePost = null;
         let autoOpenedPost = false;
 
-        // DOM ELEMENTS
+        // ================================================================
+        //  DOM REFS
+        // ================================================================
         const preloader = document.getElementById('pagePreloader');
         const postsWrapper = document.getElementById('postsWrapper');
         const headerAvatar = document.getElementById('headerAvatar');
@@ -904,22 +1178,117 @@
         const fullPostBody = document.getElementById('fullPostBody');
         const shareModal = document.getElementById('shareModal');
         const toast = document.getElementById('toast');
+        const notifBanner = document.getElementById('notificationBanner');
+        const notifAllowBtn = document.getElementById('notifAllowBtn');
+        const notifDismissBtn = document.getElementById('notifDismissBtn');
 
-        // TOAST FUNCTION
-        function showToast(msg) {
+        // ================================================================
+        //  TOAST
+        // ================================================================
+        let toastTimer = null;
+
+        function showToast(msg, duration = 2500) {
             toast.textContent = msg;
             toast.classList.add('show');
-            setTimeout(() => toast.classList.remove('show'), 2500);
+            clearTimeout(toastTimer);
+            toastTimer = setTimeout(() => toast.classList.remove('show'), duration);
         }
 
-        // HIDE PRELOADER
-        function hidePreloader() {
-            if (preloader) {
-                preloader.classList.add('hidden');
+        // ================================================================
+        //  NOTIFICATION PERMISSION HANDLING
+        // ================================================================
+        let notificationRequested = false;
+
+        function requestNotificationPermission() {
+            if (notificationRequested) return;
+            notificationRequested = true;
+
+            if (!('serviceWorker' in navigator)) {
+                showToast('Notifications not supported in this browser.');
+                return;
+            }
+
+            navigator.serviceWorker.register('/firebase-messaging-sw.js')
+                .then((registration) => {
+                    console.log("Service Worker registered for notifications");
+                    return messaging.requestPermission();
+                })
+                .then(() => {
+                    console.log("Notification permission granted");
+                    return messaging.getToken({
+                        vapidKey: "BE3D5sIL5umpsfzIPKcIxn8yNToSCR5v8r_pRwZivm6W-fvlv2zjxcGzrDKoTwcSPqUBfJ14xQLrsEfns58pd8D"
+                    });
+                })
+                .then((token) => {
+                    if (!token) {
+                        console.log("No FCM token available");
+                        return;
+                    }
+                    console.log("FCM Token:", token);
+                    return db.collection("notificationTokens")
+                        .doc(token)
+                        .set({
+                            token: token,
+                            userId: currentUser ? currentUser.uid : null,
+                            createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                            userAgent: navigator.userAgent
+                        });
+                })
+                .then(() => {
+                    console.log("FCM token saved successfully");
+                    showToast('✅ Notifications enabled!');
+                    notifBanner.classList.remove('show');
+                })
+                .catch((error) => {
+                    console.error("FCM Error:", error);
+                    showToast('❌ Could not enable notifications.');
+                    notifBanner.classList.remove('show');
+                });
+        }
+
+        // ================================================================
+        //  NOTIFICATION BANNER EVENTS
+        // ================================================================
+        notifAllowBtn.addEventListener('click', requestNotificationPermission);
+        notifDismissBtn.addEventListener('click', () => {
+            notifBanner.classList.remove('show');
+            showToast('You can enable notifications later in settings.');
+        });
+
+        // Show banner if notifications not granted
+        function checkAndShowNotificationBanner() {
+            if (Notification.permission === 'default') {
+                // Show banner after a short delay
+                setTimeout(() => {
+                    notifBanner.classList.add('show');
+                }, 3000);
+            } else if (Notification.permission === 'granted') {
+                // Already granted, just get token
+                if ('serviceWorker' in navigator) {
+                    navigator.serviceWorker.register('/firebase-messaging-sw.js')
+                        .then(() => messaging.getToken({
+                            vapidKey: "BE3D5sIL5umpsfzIPKcIxn8yNToSCR5v8r_pRwZivm6W-fvlv2zjxcGzrDKoTwcSPqUBfJ14xQLrsEfns58pd8D"
+                        }))
+                        .then((token) => {
+                            if (token) {
+                                return db.collection("notificationTokens")
+                                    .doc(token)
+                                    .set({
+                                        token: token,
+                                        userId: currentUser ? currentUser.uid : null,
+                                        updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
+                                        userAgent: navigator.userAgent
+                                    }, { merge: true });
+                            }
+                        })
+                        .catch((err) => console.error("FCM token refresh error:", err));
+                }
             }
         }
 
-        // AUTHENTICATION & USER PROFILE
+        // ================================================================
+        //  AUTHENTICATION & USER PROFILE
+        // ================================================================
         auth.onAuthStateChanged(async (user) => {
             currentUser = user;
             if (user) {
@@ -930,7 +1299,8 @@
                         photoURL = userDoc.data().photoURL;
                     }
                     if (photoURL) {
-                        headerAvatar.innerHTML = `<img src="${photoURL}" style="width:100%;height:100%;object-fit:cover;" />`;
+                        headerAvatar.innerHTML =
+                            `<img src="${photoURL}" style="width:100%;height:100%;object-fit:cover;" />`;
                     }
                 } catch (e) {
                     console.error("Error fetching user profile:", e);
@@ -941,14 +1311,22 @@
                     snap.forEach(doc => likedPosts.add(doc.data().postId));
                     renderPosts(allPosts);
                 });
+
+                // Check notification status after user logs in
+                setTimeout(checkAndShowNotificationBanner, 1500);
+
             } else {
                 headerAvatar.innerHTML = `<i class="fas fa-user"></i>`;
                 likedPosts.clear();
                 renderPosts(allPosts);
+                // Show banner for non-logged in users too
+                setTimeout(checkAndShowNotificationBanner, 1500);
             }
         });
 
-        // FETCH POSTS FROM FIRESTORE
+        // ================================================================
+        //  FETCH POSTS
+        // ================================================================
         function listenPosts() {
             db.collection('posts').orderBy('createdAt', 'desc').onSnapshot(snapshot => {
                 const posts = [];
@@ -962,8 +1340,7 @@
                 });
                 allPosts = posts;
                 renderPosts(posts);
-                
-                // AUTO OPEN SHARED POST IF URL CONTAINS ID
+
                 if (!autoOpenedPost && targetPostId) {
                     const target = posts.find(p => p.id === targetPostId);
                     if (target) {
@@ -979,13 +1356,16 @@
             });
         }
 
-        // RENDER POSTS TO FEED
+        // ================================================================
+        //  RENDER POSTS
+        // ================================================================
         function renderPosts(posts) {
             if (!posts.length) {
                 postsWrapper.innerHTML = `
-                    <div style="text-align:center; padding: 40px; color:#888;">
-                        <i class="fas fa-newspaper" style="font-size:2.5rem; margin-bottom:10px;"></i>
-                        <p>No posts available yet.</p>
+                    <div class="empty-state">
+                        <i class="fas fa-newspaper"></i>
+                        <h3>No posts yet</h3>
+                        <p>Be the first to share your voice!</p>
                     </div>`;
                 return;
             }
@@ -996,17 +1376,20 @@
                 const likeCount = post.likes || 0;
                 const author = post.authorName || 'Anonymous';
                 const title = post.title || 'Untitled';
-                const preview = post.preview || (post.content ? post.content.replace(/<[^>]*>?/gm, '').substring(0, 140) + '...' : '');
+                const preview = post.preview || (post.content ? post.content.replace(/<[^>]*>?/gm, '')
+                    .substring(0, 140) + '...' : '');
                 const dateStr = post.createdAt ? post.createdAt.toLocaleDateString() : '';
 
-                // Build Media Content dynamically based on Firestore fields
                 let mediaHtml = '';
                 if (post.imageUrl) {
-                    mediaHtml = `<div class="card-media-wrap"><img src="${post.imageUrl}" alt="Post image" loading="lazy"/></div>`;
+                    mediaHtml =
+                        `<div class="card-media-wrap"><img src="${post.imageUrl}" alt="Post image" loading="lazy"/></div>`;
                 } else if (post.videoUrl) {
-                    mediaHtml = `<div class="card-media-wrap"><video controls><source src="${post.videoUrl}" type="video/mp4"/></video></div>`;
+                    mediaHtml =
+                        `<div class="card-media-wrap"><video controls><source src="${post.videoUrl}" type="video/mp4"/></video></div>`;
                 } else if (post.audioUrl) {
-                    mediaHtml = `<div class="card-media-wrap"><audio controls><source src="${post.audioUrl}" type="audio/mpeg"/></audio></div>`;
+                    mediaHtml =
+                        `<div class="card-media-wrap"><audio controls><source src="${post.audioUrl}" type="audio/mpeg"/></audio></div>`;
                 }
 
                 html += `
@@ -1044,7 +1427,9 @@
             postsWrapper.innerHTML = html;
         }
 
-        // LIKE TOGGLE
+        // ================================================================
+        //  LIKE TOGGLE
+        // ================================================================
         async function toggleLike(postId) {
             if (!currentUser) {
                 showToast("Please sign in to like posts.");
@@ -1060,7 +1445,8 @@
                 await db.collection('posts').doc(postId).update({ likes: newCount });
                 if (isLiked) {
                     likedPosts.delete(postId);
-                    const snap = await db.collection('likes').where('userId', '==', currentUser.uid).where('postId', '==', postId).get();
+                    const snap = await db.collection('likes').where('userId', '==', currentUser.uid).where(
+                        'postId', '==', postId).get();
                     snap.forEach(d => d.ref.delete());
                 } else {
                     likedPosts.add(postId);
@@ -1073,20 +1459,26 @@
             }
         }
 
-        // FULL POST MODAL DISPLAY
+        // ================================================================
+        //  FULL POST
+        // ================================================================
         function openFullPost(postId) {
             const post = allPosts.find(p => p.id === postId);
             if (!post) return;
 
             let mediaHtml = '';
-            if (post.imageUrl) mediaHtml = `<img src="${post.imageUrl}" style="width:100%;border-radius:10px;margin:12px 0;" />`;
-            else if (post.videoUrl) mediaHtml = `<video controls style="width:100%;border-radius:10px;margin:12px 0;"><source src="${post.videoUrl}"/></video>`;
-            else if (post.audioUrl) mediaHtml = `<audio controls style="width:100%;margin:12px 0;"><source src="${post.audioUrl}"/></audio>`;
+            if (post.imageUrl) mediaHtml =
+                `<img src="${post.imageUrl}" style="width:100%;border-radius:10px;margin:12px 0;" />`;
+            else if (post.videoUrl) mediaHtml =
+                `<video controls style="width:100%;border-radius:10px;margin:12px 0;"><source src="${post.videoUrl}"/></video>`;
+            else if (post.audioUrl) mediaHtml =
+                `<audio controls style="width:100%;margin:12px 0;"><source src="${post.audioUrl}"/></audio>`;
 
             const rawContent = post.content || '';
             let contentDisplay = rawContent;
             if (!rawContent.includes('<div') && !rawContent.includes('<p')) {
-                contentDisplay = rawContent.split('\n').filter(p => p.trim() !== '').map(p => `<p>${escapeHtml(p)}</p>`).join('');
+                contentDisplay = rawContent.split('\n').filter(p => p.trim() !== '').map(p =>
+                    `<p>${escapeHtml(p)}</p>`).join('');
             }
 
             fullPostBody.innerHTML = `
@@ -1101,7 +1493,9 @@
 
         document.getElementById('fullPostClose').onclick = () => fullPostOverlay.classList.remove('active');
 
-        // SHARE MODAL & DIRECT DYNAMIC LINK CREATION
+        // ================================================================
+        //  SHARE
+        // ================================================================
         function openShareModal(postId) {
             activeSharePost = allPosts.find(p => p.id === postId);
             if (activeSharePost) {
@@ -1111,7 +1505,6 @@
 
         document.getElementById('closeShareModal').onclick = () => shareModal.classList.remove('active');
 
-        // Dynamically build link using page origin and post document ID
         function getShareUrl() {
             if (!activeSharePost) return window.location.href;
             return `${window.location.origin}${window.location.pathname}?post=${activeSharePost.id}`;
@@ -1136,7 +1529,9 @@
 
         document.getElementById('shareX').onclick = () => {
             const shareUrl = getShareUrl();
-            window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(activeSharePost.title)}&url=${encodeURIComponent(shareUrl)}`, '_blank');
+            window.open(
+                `https://twitter.com/intent/tweet?text=${encodeURIComponent(activeSharePost.title)}&url=${encodeURIComponent(shareUrl)}`,
+                '_blank');
         };
 
         document.getElementById('shareTT').onclick = () => {
@@ -1152,9 +1547,19 @@
             shareModal.classList.remove('active');
         };
 
-        // SEARCH OVERLAY LOGIC
-        document.getElementById('searchToggle').onclick = () => searchOverlay.classList.add('active');
+        // ================================================================
+        //  SEARCH
+        // ================================================================
+        document.getElementById('searchToggle').onclick = () => {
+            searchOverlay.classList.add('active');
+            searchInput.value = '';
+            searchResults.innerHTML = '';
+            searchInput.focus();
+        };
         document.getElementById('searchClose').onclick = () => searchOverlay.classList.remove('active');
+        searchOverlay.addEventListener('click', (e) => {
+            if (e.target === searchOverlay) searchOverlay.classList.remove('active');
+        });
 
         searchInput.oninput = (e) => {
             const query = e.target.value.toLowerCase().trim();
@@ -1162,8 +1567,9 @@
                 searchResults.innerHTML = '';
                 return;
             }
-            const filtered = allPosts.filter(p => (p.title && p.title.toLowerCase().includes(query)) || (p.content && p.content.toLowerCase().includes(query)));
-            
+            const filtered = allPosts.filter(p => (p.title && p.title.toLowerCase().includes(query)) || (p
+                .content && p.content.toLowerCase().includes(query)));
+
             searchResults.innerHTML = filtered.map(p => `
                 <div class="search-item" onclick="openFullPost('${p.id}'); searchOverlay.classList.remove('active');">
                     <strong>${escapeHtml(p.title || 'Untitled')}</strong>
@@ -1172,13 +1578,83 @@
             `).join('');
         };
 
-        // HELPER UTILITY
+        // ================================================================
+        //  UTILITY
+        // ================================================================
         function escapeHtml(str) {
-            return String(str || '').replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+            return String(str || '').replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g,
+                "&quot;");
         }
 
-        // STARTUP
+        function hidePreloader() {
+            if (preloader) {
+                preloader.classList.add('hidden');
+            }
+        }
+
+        // ================================================================
+        //  NAVIGATION
+        // ================================================================
+        document.querySelectorAll('.bottom-nav .nav-item').forEach(item => {
+            item.addEventListener('click', () => {
+                const tab = item.dataset.tab;
+                document.querySelectorAll('.bottom-nav .nav-item').forEach(n => n.classList.remove('active'));
+                item.classList.add('active');
+
+                switch (tab) {
+                    case 'home':
+                        window.scrollTo({ top: 0, behavior: 'smooth' });
+                        break;
+                    case 'register':
+                        window.location.href = 'register.html';
+                        break;
+                    case 'activities':
+                        showToast('📅 Activities page coming soon!');
+                        break;
+                    case 'post':
+                        window.location.href = 'post.html';
+                        break;
+                    case 'account':
+                        window.location.href = 'account.html';
+                        break;
+                    default:
+                        break;
+                }
+            });
+        });
+
+        // Header profile click
+        headerAvatar.addEventListener('click', () => {
+            window.location.href = 'account.html';
+        });
+
+        // ================================================================
+        //  INIT
+        // ================================================================
+        // Show skeletons
+        postsWrapper.innerHTML = `
+            <div class="skeleton"><div class="s-image"></div><div class="s-line med"></div><div class="s-line"></div><div class="s-line short"></div></div>
+            <div class="skeleton"><div class="s-image"></div><div class="s-line med"></div><div class="s-line"></div><div class="s-line short"></div></div>
+        `;
+
         listenPosts();
+
+        // Handle URL params after load
+        setTimeout(() => {
+            const params = new URLSearchParams(window.location.search);
+            const pid = params.get('post');
+            if (pid) {
+                const check = setInterval(() => {
+                    if (allPosts.length > 0) {
+                        clearInterval(check);
+                        const p = allPosts.find(x => x.id === pid);
+                        if (p) openFullPost(pid);
+                    }
+                }, 300);
+            }
+        }, 600);
+
+        console.log('🚀 BMD App loaded with notification support.');
     </script>
 </body>
 </html>
