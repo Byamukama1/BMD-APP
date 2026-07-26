@@ -64,13 +64,31 @@ if ('serviceWorker' in navigator) {
 
         // Next step: Save token to Firestore
 
+   .then((token) => {
+
+    console.log("FCM Token:", token);
+
+
+    // Save token to Firestore
+    db.collection("notificationTokens")
+    .doc(token)
+    .set({
+        token: token,
+        createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+        userAgent: navigator.userAgent
+    })
+    .then(() => {
+
+        console.log("Token saved to Firestore");
+
     })
     .catch((error) => {
 
-        console.error("Firebase Messaging Error:", error);
+        console.error("Error saving token:", error);
 
     });
 
+})
 }
 
         // Parse ?post= or ?id= query param from shared link on load
