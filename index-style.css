@@ -417,7 +417,7 @@ a { text-decoration: none; color: inherit; }
 
 .btn-read-more {
     background: var(--header-bg);
-    color: #ffffff;
+    color: #fff !important;
     border: none;
     padding: 6px 14px;
     border-radius: 20px;
@@ -425,8 +425,8 @@ a { text-decoration: none; color: inherit; }
     font-weight: 600;
     cursor: pointer;
     transition: background 0.2s;
+    text-shadow: none;
 }
-
 
 /* ===== SHARE MODAL ===== */
 .share-modal-overlay {
