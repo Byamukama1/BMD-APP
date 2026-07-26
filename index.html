@@ -1,421 +1,123 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>Buhweju Must Develop – BMD</title>
 
+    <!-- ===== OPEN GRAPH META TAGS (Updated dynamically via Header Script) ===== -->
+    <meta id="ogTitle" property="og:title" content="Buhweju Must Develop (BMD)" />
+    <meta id="ogDesc" property="og:description" content="Eiraka ryabantu baburijo. – People's Voice" />
+    <meta id="ogImage" property="og:image" content="https://res.cloudinary.com/dp81zzxlh/image/upload/v1/bmd-og-default.jpg" />
+    <meta property="og:url" content="https://bmd-app-1aec8.web.app/" />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Buhweju Must Develop" />
 
-<!-- ===== FIREBASE SDK ===== -->
-<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-storage-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-messaging-compat.js"></script>
+    <!-- ===== FIREBASE SDK ===== -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-storage-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-messaging-compat.js"></script>
 
+    <!-- ===== HEADER SCRIPT: DYNAMIC POST PREVIEW + FCM ===== -->
+    <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyC-PINF2AJcETYIMINiCfT0gSxLxw70vSE",
+            authDomain: "bmd-app-1aec8.firebaseapp.com",
+            projectId: "bmd-app-1aec8",
+            storageBucket: "bmd-app-1aec8.firebasestorage.app",
+            messagingSenderId: "722780031230",
+            appId: "1:722780031230:web:cd19a98e24e4d9d80dfdaf",
+            measurementId: "G-WPEG8SQSW7"
+        };
 
-<!-- ===== HEADER SCRIPT: DYNAMIC POST PREVIEW + FCM ===== -->
-<script>
-
-const firebaseConfig = {
-    apiKey: "AIzaSyC-PINF2AJcETYIMINiCfT0gSxLxw70vSE",
-    authDomain: "bmd-app-1aec8.firebaseapp.com",
-    projectId: "bmd-app-1aec8",
-    storageBucket: "bmd-app-1aec8.firebasestorage.app",
-    messagingSenderId: "722780031230",
-    appId: "1:722780031230:web:cd19a98e24e4d9d80dfdaf",
-    measurementId: "G-WPEG8SQSW7"
-};
-
-
-if (!firebase.apps.length) {
-    firebase.initializeApp(firebaseConfig);
-}
-<!-- ===== FIREBASE SDK ===== -->
-<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-storage-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-messaging-compat.js"></script>
-
-
-<!-- ===== HEADER SCRIPT: DYNAMIC POST PREVIEW + FCM ===== -->
-<script>
-
-const firebaseConfig = {
-    apiKey: "AIzaSyC-PINF2AJcETYIMINiCfT0gSxLxw70vSE",
-    authDomain: "bmd-app-1aec8.firebaseapp.com",
-    projectId: "bmd-app-1aec8",
-    storageBucket: "bmd-app-1aec8.firebasestorage.app",
-    messagingSenderId: "722780031230",
-    appId: "1:722780031230:web:cd19a98e24e4d9d80dfdaf",
-    measurementId: "G-WPEG8SQSW7"
-};
-
-
-if (!firebase.apps.length) {
-    firebase.initializeApp(firebaseConfig);
-}
-
-
-// ================= FIREBASE CLOUD MESSAGING =================
-
-if ('serviceWorker' in navigator && firebase.messaging) {
-
-    const messaging = firebase.messaging();
-
-    navigator.serviceWorker.register('/firebase-messaging-sw.js')
-
-    .then((registration)=>{
-
-        console.log(
-            "Firebase Service Worker registered:",
-            registration
-        );
-
-        return messaging.requestPermission();
-
-    })
-
-    .then(()=>{
-
-        console.log(
-            "Notification permission granted"
-        );
-
-
-        return messaging.getToken({
-
-            vapidKey:
-            "BE3D5sIL5umpsfzIPKcIxn8yNToSCR5v8r_pRwZivm6W-fvlv2zjxcGzrDKoTwcSPqUBfJ14xQLrsEfns58pdD8"
-
-        });
-
-    })
-
-    .then((token)=>{
-
-
-        if(!token){
-
-            console.log(
-                "No FCM token available"
-            );
-
-            return;
-
+        if (!firebase.apps.length) {
+            firebase.initializeApp(firebaseConfig);
         }
 
-
-        console.log(
-            "FCM Token:",
-            token
-        );
-
-
-        const db =
-        firebase.firestore();
-
-
-        return db.collection(
-            "notificationTokens"
-        )
-        .doc(token)
-        .set({
-
-            token: token,
-
-            createdAt:
-            firebase.firestore.FieldValue.serverTimestamp(),
-
-            userAgent:
-            navigator.userAgent
-
-        });
-
-
-    })
-
-    .then(()=>{
-
-        console.log(
-            "FCM token saved successfully"
-        );
-
-    })
-
-    .catch((error)=>{
-
-        console.error(
-            "FCM Error:",
-            error
-        );
-
-    });
-
-}
-
-<script>
-
-const urlParams =
-new URLSearchParams(window.location.search);
-
-
-const targetPostId =
-urlParams.get('post') || urlParams.get('id');
-
-
-
-if(targetPostId){
-
-
-    const dbHead =
-    firebase.firestore();
-
-
-    dbHead.collection('posts')
-    .doc(targetPostId)
-    .get()
-
-    .then((doc)=>{
-
-
-        if(doc.exists){
-
-
-            const postData =
-            doc.data();
-
-
-
-            if(postData.title){
-
-                document.title =
-                postData.title + " – BMD";
-
-            }
-
-
-
-            const ogTitle =
-            document.getElementById('ogTitle');
-
-
-            const ogDesc =
-            document.getElementById('ogDesc');
-
-
-            const ogImage =
-            document.getElementById('ogImage');
-
-
-
-            if(postData.title){
-
-                ogTitle.setAttribute(
-                    "content",
-                    postData.title
-                );
-
-            }
-
-
-
-            if(postData.preview || postData.content){
-
-
-                let description =
-                postData.preview ||
-                postData.content
-                .replace(/<[^>]*>?/gm,'')
-                .substring(0,160);
-
-
-                ogDesc.setAttribute(
-                    "content",
-                    description
-                );
-
-            }
-
-
-
-            if(postData.imageUrl){
-
-                ogImage.setAttribute(
-                    "content",
-                    postData.imageUrl
-                );
-
-            }
-
-            else if(postData.authorPhoto){
-
-                ogImage.setAttribute(
-                    "content",
-                    postData.authorPhoto
-                );
-
-            }
-
-            else{
-
-                ogImage.setAttribute(
-                    "content",
-                    "https://res.cloudinary.com/dp81zzxlh/image/upload/v1/bmd-og-default.jpg"
-                );
-
-            }
-
-
+        // ================= FIREBASE CLOUD MESSAGING =================
+        if ('serviceWorker' in navigator && firebase.messaging) {
+            const messaging = firebase.messaging();
+
+            navigator.serviceWorker.register('/firebase-messaging-sw.js')
+                .then((registration) => {
+                    console.log("Firebase Service Worker registered:", registration);
+                    return messaging.requestPermission();
+                })
+                .then(() => {
+                    console.log("Notification permission granted");
+                    return messaging.getToken({
+                        vapidKey: "BE3D5sIL5umpsfzIPKcIxn8yNToSCR5v8r_pRwZivm6W-fvlv2zjxcGzrDKoTwcSPqUBfJ14xQLrsEfns58pd8D"
+                    });
+                })
+                .then((token) => {
+                    if (!token) {
+                        console.log("No FCM token available");
+                        return;
+                    }
+                    console.log("FCM Token:", token);
+                    const db = firebase.firestore();
+                    return db.collection("notificationTokens")
+                        .doc(token)
+                        .set({
+                            token: token,
+                            createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                            userAgent: navigator.userAgent
+                        });
+                })
+                .then(() => {
+                    console.log("FCM token saved successfully");
+                })
+                .catch((error) => {
+                    console.error("FCM Error:", error);
+                });
         }
 
+        // ================= DYNAMIC OG PREVIEW =================
+        const urlParams = new URLSearchParams(window.location.search);
+        const targetPostId = urlParams.get('post') || urlParams.get('id');
 
-    })
+        if (targetPostId) {
+            const dbHead = firebase.firestore();
+            dbHead.collection('posts').doc(targetPostId).get()
+                .then((doc) => {
+                    if (doc.exists) {
+                        const postData = doc.data();
 
-    .catch((error)=>{
+                        if (postData.title) {
+                            document.title = postData.title + " – BMD";
+                        }
 
-        console.error(
-            "OG Preview Error:",
-            error
-        );
+                        const ogTitle = document.getElementById('ogTitle');
+                        const ogDesc = document.getElementById('ogDesc');
+                        const ogImage = document.getElementById('ogImage');
 
-    });
+                        if (postData.title) {
+                            ogTitle.setAttribute("content", postData.title);
+                        }
 
+                        if (postData.preview || postData.content) {
+                            let description = postData.preview ||
+                                postData.content.replace(/<[^>]*>?/gm, '').substring(0, 160);
+                            ogDesc.setAttribute("content", description);
+                        }
 
-}
-
-
-</script>
-
-<script>
-const urlParams =
-new URLSearchParams(window.location.search);
-
-
-const targetPostId =
-urlParams.get('post') || urlParams.get('id');
-
-
-
-if(targetPostId){
-
-
-    const dbHead =
-    firebase.firestore();
-
-
-    dbHead.collection('posts')
-    .doc(targetPostId)
-    .get()
-
-    .then((doc)=>{
-
-
-        if(doc.exists){
-
-
-            const postData =
-            doc.data();
-
-
-
-            if(postData.title){
-
-                document.title =
-                postData.title + " – BMD";
-
-            }
-
-
-
-            const ogTitle =
-            document.getElementById('ogTitle');
-
-
-            const ogDesc =
-            document.getElementById('ogDesc');
-
-
-            const ogImage =
-            document.getElementById('ogImage');
-
-
-
-            if(postData.title){
-
-                ogTitle.setAttribute(
-                    "content",
-                    postData.title
-                );
-
-            }
-
-
-
-            if(postData.preview || postData.content){
-
-
-                let description =
-                postData.preview ||
-                postData.content
-                .replace(/<[^>]*>?/gm,'')
-                .substring(0,160);
-
-
-                ogDesc.setAttribute(
-                    "content",
-                    description
-                );
-
-            }
-
-
-
-            if(postData.imageUrl){
-
-                ogImage.setAttribute(
-                    "content",
-                    postData.imageUrl
-                );
-
-            }
-
-            else if(postData.authorPhoto){
-
-                ogImage.setAttribute(
-                    "content",
-                    postData.authorPhoto
-                );
-
-            }
-
-            else{
-
-                ogImage.setAttribute(
-                    "content",
-                    "https://res.cloudinary.com/dp81zzxlh/image/upload/v1/bmd-og-default.jpg"
-                );
-
-            }
-
-
+                        if (postData.imageUrl) {
+                            ogImage.setAttribute("content", postData.imageUrl);
+                        } else if (postData.authorPhoto) {
+                            ogImage.setAttribute("content", postData.authorPhoto);
+                        } else {
+                            ogImage.setAttribute("content", "https://res.cloudinary.com/dp81zzxlh/image/upload/v1/bmd-og-default.jpg");
+                        }
+                    }
+                })
+                .catch((error) => {
+                    console.error("OG Preview Error:", error);
+                });
         }
+    </script>
 
-
-    })
-
-    .catch((error)=>{
-
-        console.error(
-            "OG Preview Error:",
-            error
-        );
-
-    });
-
-
-}
-
-
-</script>
     <!-- ===== FONTS & ICONS ===== -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Lora:ital,wght@0,500;0,600;0,700;1,400&family=Playfair+Display:wght@700;800&display=swap" rel="stylesheet" />
@@ -429,7 +131,7 @@ if(targetPostId){
         }
 
         :root {
-            --header-bg: #111827; /* Modern dark charcoal background */
+            --header-bg: #111827;
             --header-text: #ffffff;
             --accent-gold: #d4a743;
             --accent-gold-hover: #f0d080;
