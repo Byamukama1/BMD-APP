@@ -12,6 +12,8 @@
     </script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js">
     </script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-messaging-compat.js">
+    </script>
 
     <!-- ===== FONTS & ICONS ===== -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
@@ -284,7 +286,7 @@
             background: #ffffff;
             border-radius: var(--bmd-radius);
             box-shadow: var(--bmd-shadow);
-            padding: 20px 18px 24px;
+            padding: 24px 20px 28px;
             border: 1px solid rgba(0, 0, 0, 0.04);
             margin-top: 12px;
         }
@@ -341,24 +343,47 @@
 
         .profile-info .display-name {
             font-family: 'Playfair Display', serif;
-            font-size: 1.2rem;
+            font-size: 1.3rem;
             font-weight: 700;
             color: var(--bmd-primary);
             margin-bottom: 2px;
         }
 
         .profile-info .display-phone {
-            font-size: 0.85rem;
-            color: #666;
+            font-size: 0.9rem;
+            color: #555;
         }
 
         .profile-info .display-email {
-            font-size: 0.75rem;
+            font-size: 0.8rem;
             color: #999;
         }
 
+        .profile-stats {
+            display: flex;
+            gap: 24px;
+            padding: 16px 0;
+            border-top: 1px solid #eee;
+            border-bottom: 1px solid #eee;
+            margin-bottom: 16px;
+        }
+
+        .profile-stats .stat-item {
+            text-align: center;
+        }
+
+        .profile-stats .stat-item .stat-number {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--bmd-primary);
+        }
+
+        .profile-stats .stat-item .stat-label {
+            font-size: 0.7rem;
+            color: #888;
+        }
+
         .profile-actions {
-            margin-top: 16px;
             display: flex;
             flex-direction: column;
             gap: 10px;
@@ -396,7 +421,7 @@
 
         .profile-actions .action-btn .badge {
             margin-left: auto;
-            font-size: 0.7rem;
+            font-size: 0.65rem;
             color: #999;
             background: #e8e0d4;
             padding: 2px 10px;
@@ -513,7 +538,8 @@
             opacity: 0.6;
             cursor: not-allowed;
         }
-           /* ===== BOTTOM NAV ===== */
+
+        /* ===== BOTTOM NAV ===== */
         .bottom-nav {
             position: fixed;
             bottom: 0;
@@ -641,7 +667,7 @@
                 height: 64px;
             }
             .profile-info .display-name {
-                font-size: 1rem;
+                font-size: 1.1rem;
             }
             .profile-actions .action-btn {
                 padding: 12px 14px;
@@ -658,6 +684,12 @@
                 height: 40px;
                 font-size: 1.6rem;
                 margin-top: -12px;
+            }
+            .profile-stats {
+                gap: 16px;
+            }
+            .profile-stats .stat-item .stat-number {
+                font-size: 1rem;
             }
         }
 
@@ -781,50 +813,7 @@
         firebase.initializeApp(firebaseConfig);
         const db = firebase.firestore();
         const auth = firebase.auth();
-
-
-// ===== FIREBASE CLOUD MESSAGING =====
-const messaging = firebase.messaging();
-
-if ('serviceWorker' in navigator) {
-
-    navigator.serviceWorker.register('/firebase-messaging-sw.js')
-    .then((registration) => {
-
-        console.log("Firebase Service Worker registered:", registration);
-
-        return messaging.requestPermission();
-
-    })
-    .then(() => {
-
-        console.log("Notification permission granted");
-
-        return messaging.getToken({
-            vapidKey: "BE3D5sIL5umpsfzIPKcIxn8yNToSCR5v8r_pRwZivm6W-fvlv2zjxcGzrDKoTwcSPqUBfJ14xQLrsEfns58pdD8"
-        });
-
-    })
-    .then((token) => {
-
-        console.log("FCM Token:", token);
-
-        // Next step: Save token to Firestore
-
-    })
-    .catch((error) => {
-
-        console.error("Firebase Messaging Error:", error);
-
-    });
-
-}
-      // ================================================================
-        //  CLOUDINARY CONFIG (unsigned)
-        // ================================================================
-        const CLOUD_NAME = 'dp81zzxlh';
-        const UPLOAD_PRESET = 'Unsigned upload';
-        const CLOUDINARY_URL = `https://api.cloudinary.com/v1_1/${CLOUD_NAME}/upload`;
+        const messaging = firebase.messaging();
 
         // ================================================================
         //  DOM REFS
@@ -834,7 +823,8 @@ if ('serviceWorker' in navigator) {
         const toast = document.getElementById('toast');
 
         let currentUser = null;
-        let userData = null; // from Firestore
+        let userData = null;
+        let userPostCount = 0;
 
         // ================================================================
         //  TOAST
@@ -846,6 +836,47 @@ if ('serviceWorker' in navigator) {
             toast.classList.add('show');
             clearTimeout(toastTimer);
             toastTimer = setTimeout(() => toast.classList.remove('show'), duration);
+        }
+
+        // ================================================================
+        //  FCM TOKEN SAVING
+        // ================================================================
+        function setupFCM() {
+            if (!('serviceWorker' in navigator)) return;
+
+            navigator.serviceWorker.register('/firebase-messaging-sw.js')
+                .then((registration) => {
+                    console.log("Firebase Service Worker registered:", registration);
+                    return messaging.requestPermission();
+                })
+                .then(() => {
+                    console.log("Notification permission granted");
+                    return messaging.getToken({
+                        vapidKey: "BE3D5sIL5umpsfzIPKcIxn8yNToSCR5v8r_pRwZivm6W-fvlv2zjxcGzrDKoTwcSPqUBfJ14xQLrsEfns58pd8D"
+                    });
+                })
+                .then((token) => {
+                    if (!token) {
+                        console.log("No FCM token available");
+                        return;
+                    }
+                    console.log("FCM Token:", token);
+                    // Save token to Firestore
+                    return db.collection("notificationTokens")
+                        .doc(token)
+                        .set({
+                            token: token,
+                            userId: currentUser ? currentUser.uid : null,
+                            createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                            userAgent: navigator.userAgent
+                        }, { merge: true });
+                })
+                .then(() => {
+                    console.log("FCM token saved successfully");
+                })
+                .catch((error) => {
+                    console.error("FCM Error:", error);
+                });
         }
 
         // ================================================================
@@ -874,7 +905,6 @@ if ('serviceWorker' in navigator) {
                 </div>
             `;
 
-            // Attach events
             document.getElementById('loginForm').addEventListener('submit', handleLogin);
             document.getElementById('goToRegister').addEventListener('click', () => {
                 window.location.href = 'register.html';
@@ -896,7 +926,6 @@ if ('serviceWorker' in navigator) {
                 return;
             }
 
-            // Convert phone to email: replace non-digits, append @bmd.app
             const phoneDigits = phone.replace(/\D/g, '');
             if (phoneDigits.length < 6) {
                 errorEl.textContent = 'Please enter a valid phone number.';
@@ -910,7 +939,6 @@ if ('serviceWorker' in navigator) {
 
             try {
                 await auth.signInWithEmailAndPassword(email, password);
-                // Auth state listener will handle redirect
             } catch (err) {
                 errorEl.textContent = err.message;
                 btn.disabled = false;
@@ -942,55 +970,70 @@ if ('serviceWorker' in navigator) {
                         </div>
                     </div>
 
+                    <div class="profile-stats">
+                        <div class="stat-item">
+                            <div class="stat-number">${userPostCount}</div>
+                            <div class="stat-label">Posts</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-number">${data?.likesReceived || 0}</div>
+                            <div class="stat-label">Likes Received</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-number">${data?.memberSince ? new Date(data.memberSince.seconds * 1000).toLocaleDateString() : 'N/A'}</div>
+                            <div class="stat-label">Member Since</div>
+                        </div>
+                    </div>
+
                     <div class="profile-actions">
                         <button class="action-btn" id="editProfileBtn">
-                            <i class="fas fa-user-edit"></i> Edit my registration details
+                            <i class="fas fa-user-edit"></i> Edit Profile
                         </button>
-                        <button class="action-btn" id="editPostsBtn">
-                            <i class="fas fa-edit"></i> Edit my posts
-                            <span class="badge">Coming soon</span>
+                        <button class="action-btn" id="myPostsBtn">
+                            <i class="fas fa-newspaper"></i> My Posts
+                            <span class="badge">${userPostCount}</span>
+                        </button>
+                        <button class="action-btn" id="notificationBtn">
+                            <i class="fas fa-bell"></i> Notification Settings
                         </button>
                         <button class="action-btn" id="aboutBmdBtn">
-                            <i class="fas fa-info-circle"></i> What's Buhweju Must Develop
-                        </button>
-                        <button class="action-btn" id="downloadAppBtn">
-                            <i class="fas fa-download"></i> Download BMD App
-                            <span class="badge">APK</span>
+                            <i class="fas fa-info-circle"></i> About BMD
                         </button>
                         <button class="action-btn" id="contactBtn">
-                            <i class="fas fa-headset"></i> Contact BMD officials
+                            <i class="fas fa-headset"></i> Contact Support
                         </button>
-                        <!-- Additional buttons as needed -->
                     </div>
                 </div>
             `;
 
-            // Attach events
             document.getElementById('avatarUploadBtn').addEventListener('click', triggerAvatarUpload);
             document.getElementById('editProfileBtn').addEventListener('click', openEditProfileModal);
-            document.getElementById('editPostsBtn').addEventListener('click', () => {
-                showToast('📝 Edit my posts feature coming soon!');
+            document.getElementById('myPostsBtn').addEventListener('click', () => {
+                window.location.href = 'index.html?author=' + user.uid;
+            });
+            document.getElementById('notificationBtn').addEventListener('click', () => {
+                showToast('🔔 Notification settings coming soon.');
             });
             document.getElementById('aboutBmdBtn').addEventListener('click', () => {
                 showToast('📖 Buhweju Must Develop: Empowering the people of Buhweju through technology and community voice.');
             });
-            document.getElementById('downloadAppBtn').addEventListener('click', () => {
-                showToast('📲 App download link will be available soon.');
-            });
             document.getElementById('contactBtn').addEventListener('click', () => {
-                showToast('📧 Contact officials: info@bmd.ug or +256 700 123 456');
+                showToast('📧 Contact: info@bmd.ug or +256 700 123 456');
             });
 
-            // Show sign out button
             signOutBtn.style.display = 'block';
         }
 
         // ================================================================
-        //  AVATAR UPLOAD (click on avatar)
+        //  AVATAR UPLOAD
         // ================================================================
         let fileInput = null;
 
         function triggerAvatarUpload() {
+            if (!currentUser) {
+                showToast('Please sign in first.');
+                return;
+            }
             if (!fileInput) {
                 fileInput = document.createElement('input');
                 fileInput.type = 'file';
@@ -1014,12 +1057,11 @@ if ('serviceWorker' in navigator) {
             btn.style.opacity = '0.6';
 
             try {
-                // Upload to Cloudinary
                 const formData = new FormData();
                 formData.append('file', file);
-                formData.append('upload_preset', UPLOAD_PRESET);
+                formData.append('upload_preset', 'Unsigned upload');
 
-                const response = await fetch(CLOUDINARY_URL, {
+                const response = await fetch('https://api.cloudinary.com/v1_1/dp81zzxlh/upload', {
                     method: 'POST',
                     body: formData
                 });
@@ -1032,16 +1074,13 @@ if ('serviceWorker' in navigator) {
                 const data = await response.json();
                 const photoURL = data.secure_url;
 
-                // Update Firestore user profile
                 await db.collection('users').doc(currentUser.uid).set({
                     photoURL: photoURL,
                     updatedAt: firebase.firestore.FieldValue.serverTimestamp()
                 }, { merge: true });
 
-                // Update auth profile photo (optional)
                 await currentUser.updateProfile({ photoURL: photoURL });
 
-                // Update UI
                 document.getElementById('profileImg').src = photoURL;
                 showToast('✅ Profile picture updated!');
             } catch (err) {
@@ -1051,8 +1090,9 @@ if ('serviceWorker' in navigator) {
                 btn.style.opacity = '1';
                 fileInput.value = '';
             }
-      }
-              // ================================================================
+        }
+
+        // ================================================================
         //  EDIT PROFILE MODAL
         // ================================================================
         function openEditProfileModal() {
@@ -1064,13 +1104,12 @@ if ('serviceWorker' in navigator) {
             const currentName = userData.displayName || currentUser.displayName || '';
             const currentPhone = userData.phone || '';
 
-            // Create modal overlay
             const overlay = document.createElement('div');
             overlay.className = 'edit-overlay active';
             overlay.innerHTML = `
                 <div class="edit-modal">
                     <div class="modal-title">
-                        Edit Registration Details
+                        Edit Profile
                         <button class="close-modal" id="closeEditModal"><i class="fas fa-times"></i></button>
                     </div>
                     <form id="editProfileForm">
@@ -1090,10 +1129,7 @@ if ('serviceWorker' in navigator) {
 
             document.body.appendChild(overlay);
 
-            overlay.querySelector('#closeEditModal').addEventListener('click', () => {
-                overlay.remove();
-            });
-
+            overlay.querySelector('#closeEditModal').addEventListener('click', () => overlay.remove());
             overlay.addEventListener('click', (e) => {
                 if (e.target === overlay) overlay.remove();
             });
@@ -1113,21 +1149,17 @@ if ('serviceWorker' in navigator) {
                 btn.innerHTML = 'Saving…';
 
                 try {
-                    // Update Firestore
                     await db.collection('users').doc(currentUser.uid).set({
                         displayName: name,
                         phone: phone,
                         updatedAt: firebase.firestore.FieldValue.serverTimestamp()
                     }, { merge: true });
 
-                    // Update auth displayName
                     await currentUser.updateProfile({ displayName: name });
 
-                    // Update local state
                     userData.displayName = name;
                     userData.phone = phone;
 
-                    // Re-render profile
                     renderProfile(currentUser, userData);
                     showToast('✅ Profile updated successfully!');
                     overlay.remove();
@@ -1156,31 +1188,46 @@ if ('serviceWorker' in navigator) {
             currentUser = user;
 
             if (!user) {
-                // Not logged in
                 signOutBtn.style.display = 'none';
                 renderLogin();
                 return;
             }
 
-            // Logged in: fetch user data from Firestore
             signOutBtn.style.display = 'block';
 
             try {
+                // Check if user exists in Firestore
                 const doc = await db.collection('users').doc(user.uid).get();
-                if (doc.exists) {
-                    userData = doc.data();
-                } else {
-                    // Create default profile
-                    const defaultData = {
-                        displayName: user.displayName || 'BMD User',
-                        phone: '',
-                        photoURL: user.photoURL || 'https://res.cloudinary.com/dp81zzxlh/image/upload/v1/default-avatar.png',
-                        createdAt: firebase.firestore.FieldValue.serverTimestamp()
-                    };
-                    await db.collection('users').doc(user.uid).set(defaultData);
-                    userData = defaultData;
+
+                if (!doc.exists) {
+                    // User is registered in Auth but not in Firestore - redirect to register
+                    showToast('📝 Please complete your registration.', 2000);
+                    setTimeout(() => {
+                        window.location.href = 'register.html';
+                    }, 1500);
+                    return;
                 }
+
+                userData = doc.data();
+
+                // Get user's post count
+                const postsSnap = await db.collection('posts')
+                    .where('authorId', '==', user.uid)
+                    .get();
+                userPostCount = postsSnap.size;
+
+                // Get total likes received
+                let totalLikes = 0;
+                postsSnap.forEach(post => {
+                    totalLikes += post.data().likes || 0;
+                });
+                userData.likesReceived = totalLikes;
+
                 renderProfile(user, userData);
+
+                // Setup FCM after user is authenticated
+                setupFCM();
+
             } catch (err) {
                 console.error('Error fetching user data:', err);
                 showToast('Error loading profile. Please refresh.');
@@ -1195,14 +1242,13 @@ if ('serviceWorker' in navigator) {
             try {
                 await auth.signOut();
                 showToast('Signed out successfully.');
-                // Auth listener will re-render
             } catch (err) {
                 showToast('Error signing out: ' + err.message);
             }
         });
 
         // ================================================================
-        //  NAVIGATION (bottom bar)
+        //  NAVIGATION
         // ================================================================
         document.querySelectorAll('.bottom-nav .nav-item').forEach(item => {
             item.addEventListener('click', () => {
@@ -1224,7 +1270,6 @@ if ('serviceWorker' in navigator) {
                         window.location.href = 'post.html';
                         break;
                     case 'account':
-                        // Already here
                         break;
                     default:
                         break;
@@ -1243,8 +1288,6 @@ if ('serviceWorker' in navigator) {
         //  INIT
         // ================================================================
         console.log('👤 BMD Account page loaded.');
-        console.log('☁️ Cloudinary preset:', UPLOAD_PRESET);
-        console.log('📁 User data stored in Firestore "users" collection.');
     </script>
 
 </body>
