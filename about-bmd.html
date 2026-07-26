@@ -1,0 +1,605 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>About BMD – Buhweju Must Develop</title>
+
+    <!-- ===== FIREBASE SDK ===== -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js">
+    </script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js">
+    </script>
+
+    <!-- ===== FONTS & ICONS ===== -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Lora:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet" />
+
+    <!-- ===== EXTERNAL STYLES ===== -->
+    <link rel="stylesheet" href="index-style.css" />
+
+    <style>
+        /* ===== ABOUT BMD SPECIFIC STYLES ===== */
+        .about-container {
+            max-width: 720px;
+            margin: 0 auto;
+            padding: 8px 16px 20px;
+        }
+
+        .about-card {
+            background: #ffffff;
+            border-radius: var(--radius-lg, 18px);
+            box-shadow: var(--shadow-sm, 0 2px 8px rgba(0,0,0,0.05));
+            border: 1px solid var(--border-color, #e5e7eb);
+            padding: 24px 20px 28px;
+            margin-top: 12px;
+        }
+
+        .about-hero {
+            text-align: center;
+            padding: 20px 0 24px;
+            border-bottom: 2px solid var(--accent-gold, #d4a743);
+            margin-bottom: 24px;
+        }
+
+        .about-hero .logo-large {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid var(--accent-gold, #d4a743);
+            margin-bottom: 16px;
+        }
+
+        .about-hero h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.8rem;
+            font-weight: 800;
+            color: var(--text-primary, #1f2937);
+            letter-spacing: 0.5px;
+        }
+
+        .about-hero .tagline {
+            font-family: 'Lora', serif;
+            font-size: 1rem;
+            color: var(--accent-gold, #d4a743);
+            font-style: italic;
+            margin-top: 4px;
+        }
+
+        .about-hero .slogan {
+            font-family: 'Lora', serif;
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--text-primary, #1f2937);
+            margin-top: 8px;
+            padding: 8px 16px;
+            background: #f8f5ee;
+            border-radius: var(--radius-md, 12px);
+            display: inline-block;
+        }
+
+        .about-section {
+            margin-bottom: 28px;
+        }
+
+        .about-section .section-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--text-primary, #1f2937);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 12px;
+            padding-bottom: 8px;
+            border-bottom: 2px solid #f3f4f6;
+        }
+
+        .about-section .section-title i {
+            color: var(--accent-gold, #d4a743);
+        }
+
+        .about-section .section-content {
+            font-size: 0.95rem;
+            line-height: 1.8;
+            color: #374151;
+        }
+
+        .about-section .section-content p {
+            margin-bottom: 12px;
+        }
+
+        .about-section .section-content .highlight {
+            color: var(--accent-gold, #d4a743);
+            font-weight: 600;
+        }
+
+        .about-section .section-content blockquote {
+            border-left: 4px solid var(--accent-gold, #d4a743);
+            padding-left: 16px;
+            margin: 16px 0;
+            font-style: italic;
+            color: #555;
+            font-size: 1rem;
+        }
+
+        .about-section .section-content .declaration-box {
+            background: #f8f5ee;
+            border-radius: var(--radius-md, 12px);
+            padding: 16px 20px;
+            margin: 16px 0;
+            border-left: 4px solid var(--accent-gold, #d4a743);
+        }
+
+        .about-section .section-content .declaration-box strong {
+            color: var(--text-primary, #1f2937);
+        }
+
+        .belief-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin: 12px 0;
+        }
+
+        .belief-item {
+            background: #f8f5ee;
+            border-radius: var(--radius-md, 12px);
+            padding: 16px;
+            text-align: center;
+            border: 1px solid #f0ebe4;
+        }
+
+        .belief-item i {
+            font-size: 1.5rem;
+            color: var(--accent-gold, #d4a743);
+            margin-bottom: 6px;
+            display: block;
+        }
+
+        .belief-item .belief-text {
+            font-size: 0.85rem;
+            line-height: 1.5;
+            color: #374151;
+        }
+
+        .call-box {
+            background: linear-gradient(145deg, #1a3c2a, #0f261b);
+            color: #fff;
+            border-radius: var(--radius-lg, 18px);
+            padding: 24px 20px;
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .call-box h3 {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.4rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: var(--accent-gold, #d4a743);
+        }
+
+        .call-box p {
+            font-size: 0.95rem;
+            line-height: 1.7;
+            opacity: 0.95;
+            margin-bottom: 12px;
+        }
+
+        .call-box .btn-join {
+            display: inline-block;
+            padding: 12px 32px;
+            background: var(--accent-gold, #d4a743);
+            color: #111827;
+            border-radius: var(--radius-md, 12px);
+            font-weight: 700;
+            text-decoration: none;
+            font-family: inherit;
+            transition: all 0.25s;
+            box-shadow: 0 4px 16px rgba(212, 167, 67, 0.3);
+        }
+
+        .call-box .btn-join:hover {
+            background: var(--accent-gold-hover, #f0d080);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 24px rgba(212, 167, 67, 0.4);
+        }
+
+        .slogan-large {
+            text-align: center;
+            padding: 20px 0 10px;
+            font-family: 'Lora', serif;
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: var(--text-primary, #1f2937);
+        }
+
+        .slogan-large .gold {
+            color: var(--accent-gold, #d4a743);
+        }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 480px) {
+            .about-container {
+                padding: 6px 10px 12px;
+            }
+            .about-card {
+                padding: 16px 14px 20px;
+            }
+            .about-hero h1 {
+                font-size: 1.4rem;
+            }
+            .about-hero .logo-large {
+                width: 80px;
+                height: 80px;
+            }
+            .about-section .section-title {
+                font-size: 1.1rem;
+            }
+            .about-section .section-content {
+                font-size: 0.88rem;
+            }
+            .belief-grid {
+                grid-template-columns: 1fr;
+            }
+            .call-box h3 {
+                font-size: 1.2rem;
+            }
+            .slogan-large {
+                font-size: 1.1rem;
+            }
+            .about-hero .slogan {
+                font-size: 0.95rem;
+                padding: 6px 12px;
+            }
+        }
+
+        @media (min-width: 768px) {
+            .about-container {
+                padding: 12px 24px 30px;
+            }
+            .about-card {
+                padding: 32px 28px 36px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ===== HEADER (white, centered - same as index) ===== -->
+    <header class="app-header">
+        <div class="header-center">
+            <img src="https://res.cloudinary.com/dp81zzxlh/image/upload/v1784978097/vhaafrigchmqnqbhehft.jpg" alt="BMD Logo" class="header-logo" />
+            <div class="brand-info">
+                <h1>BUHWEJU MUST DEVELOP</h1>
+                <span class="sub">Eiraka ryabantu baburijo.</span>
+            </div>
+        </div>
+        <div class="header-right">
+            <button class="header-action-btn" id="backBtn" aria-label="Go back">
+                <i class="fas fa-arrow-left"></i>
+            </button>
+            <a href="account.html" id="userProfileLink">
+                <div class="user-profile-avatar" id="headerAvatar">
+                    <i class="fas fa-user"></i>
+                </div>
+            </a>
+        </div>
+    </header>
+
+    <!-- ===== MOVING AD ===== -->
+    <div class="marquee-ad">
+        <div class="marquee-track">
+            <span><i class="fas fa-bullhorn"></i> App designed by Dr Byamukama Mentor, expert in ICT.</span>
+            <span><i class="fas fa-bullhorn"></i> App designed by Dr Byamukama Mentor, expert in ICT.</span>
+            <span><i class="fas fa-bullhorn"></i> App designed by Dr Byamukama Mentor, expert in ICT.</span>
+        </div>
+    </div>
+
+    <!-- ===== MAIN ===== -->
+    <main class="about-container">
+        <div class="about-card">
+
+            <!-- ===== HERO ===== -->
+            <div class="about-hero">
+                <img src="https://res.cloudinary.com/dp81zzxlh/image/upload/v1784978097/vhaafrigchmqnqbhehft.jpg" alt="BMD Logo" class="logo-large" />
+                <h1>BUHWEJU MUST DEVELOP</h1>
+                <div class="tagline"><i class="fas fa-quote-left"></i> Eiraka ryabantu baburijo. <i class="fas fa-quote-right"></i></div>
+                <div class="slogan">Twegyereire. We have had enough.</div>
+            </div>
+
+            <!-- ===== SECTION 1: WHAT IS BMD ===== -->
+            <div class="about-section">
+                <div class="section-title">
+                    <i class="fas fa-question-circle"></i> What is BMD?
+                </div>
+                <div class="section-content">
+                    <p><strong>Buhweju Must Develop – BMD</strong> is not a political party. It is not a campaign vehicle. It is not a temporary movement that will disappear after an election.</p>
+                    <p>BMD is a <strong>declaration</strong>. A declaration by the ordinary people of Buhweju that we have had enough. Enough of being ignored. Enough of being taken for granted. Enough of being given hoes and basins and salt while our children go hungry and our mothers die in childbirth.</p>
+                    <p>BMD is <strong>our voice</strong>. The voice of the commoner. The voice of the farmer. The voice of the youth with no job. The voice of the mother with no clinic. The voice of the child with no school.</p>
+                    <p><strong>BMD is our answer.</strong></p>
+                </div>
+            </div>
+
+            <!-- ===== SECTION 2: WHY BMD EXISTS ===== -->
+            <div class="about-section">
+                <div class="section-title">
+                    <i class="fas fa-fist-raised"></i> Why BMD Exists
+                </div>
+                <div class="section-content">
+                    <p>For years, we trusted others. We sent them to Parliament. We gave them our votes. We gave them our hope. We believed they would fight for us. We believed they would remember us. We believed they would bring development.</p>
+                    <p><strong>But they forgot us.</strong></p>
+                    <p>They went to Kampala. They sat in Parliament. They drove in cars. They built houses. They became rich. <strong>And they forgot where they came from.</strong></p>
+                    <p>They came back to us only when elections were near. They came with hoes. They came with basins. They came with salt. They came with promises they never kept.</p>
+                    <div class="declaration-box">
+                        <p><strong>They told us they were working. But we did not see the work.</strong></p>
+                        <p><strong>They told us they were fighting for us. But we did not see the fight.</strong></p>
+                        <p><strong>They told us they had done so much. But we did not see the change.</strong></p>
+                        <p><strong>And we finally lost hope in them.</strong></p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ===== SECTION 3: OUR DECLARATION ===== -->
+            <div class="about-section">
+                <div class="section-title">
+                    <i class="fas fa-bullhorn"></i> Our Declaration
+                </div>
+                <div class="section-content">
+                    <div class="declaration-box" style="border-left-color: #1a3c2a;">
+                        <p><strong>We, the ordinary people of Buhweju, have decided. We will no longer send others to speak for us. We will go ourselves.</strong></p>
+                        <p>We will not wait for someone else to solve our problems. <strong>We will solve them ourselves.</strong></p>
+                        <p>We will not wait for someone else to build our roads. <strong>We will build them ourselves.</strong></p>
+                        <p>We will not wait for someone else to educate our children. <strong>We will educate them ourselves.</strong></p>
+                    </div>
+                    <p>We are not asking for handouts. We are asking for a chance. A chance to lead. A chance to serve. A chance to change our own lives.</p>
+                    <p>We are not looking for a savior. We are looking for each other. We are looking for ordinary people who are willing to stand up, speak out, and fight for a better Buhweju.</p>
+                    <p><strong>We are looking for ourselves.</strong></p>
+                </div>
+            </div>
+
+            <!-- ===== SECTION 4: WHAT WE BELIEVE ===== -->
+            <div class="about-section">
+                <div class="section-title">
+                    <i class="fas fa-hand-holding-heart"></i> What We Believe
+                </div>
+                <div class="section-content">
+                    <div class="belief-grid">
+                        <div class="belief-item">
+                            <i class="fas fa-users"></i>
+                            <div class="belief-text"><strong>Ordinary people know their problems better than any outsider.</strong> We have lived here. We have walked these roads. We have missed these meals. We have felt this pain. We need someone to listen, to act, and to stand with us.</div>
+                        </div>
+                        <div class="belief-item">
+                            <i class="fas fa-scale-balanced"></i>
+                            <div class="belief-text"><strong>Leadership is not about money. It is about the weight of the pain you are fighting for.</strong> We have seen leaders who came with money. They built things. They gave things. But they did not build a future. They did not give hope. They did not change our lives.</div>
+                        </div>
+                        <div class="belief-item">
+                            <i class="fas fa-eye"></i>
+                            <div class="belief-text"><strong>A poor person with a vision is more powerful than a rich person with a title.</strong> A commoner with courage can do what the wealthy with comfort cannot.</div>
+                        </div>
+                        <div class="belief-item">
+                            <i class="fas fa-flag"></i>
+                            <div class="belief-text"><strong>The future of Buhweju belongs to us.</strong> Not to outsiders. Not to hired workers. Not to those who come only when elections are near. The future belongs to those who live here, who suffer here, who dream here. <strong>We are those people. And we are ready.</strong></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ===== SECTION 5: OUR MISSION ===== -->
+            <div class="about-section">
+                <div class="section-title">
+                    <i class="fas fa-bullseye"></i> Our Mission
+                </div>
+                <div class="section-content">
+                    <p>To unite the ordinary people of Buhweju. To organize our voices. To build our power. To take our rightful place in the decisions that affect our lives.</p>
+                    <div class="declaration-box" style="border-left-color: #1a3c2a;">
+                        <p><strong>We will not wait for permission.</strong></p>
+                        <p><strong>We will not wait for someone else to act.</strong></p>
+                        <p><strong>We will not wait for the right moment. The right moment is now.</strong></p>
+                    </div>
+                    <p>We will build schools. We will build roads. We will build clinics. We will build systems that work for ordinary people. We will build a Buhweju that works for everyone.</p>
+                    <p><strong>Not through handouts. Through systems.</strong></p>
+                    <p><strong>Not through promises. Through action.</strong></p>
+                    <p><strong>Not through waiting. Through leading.</strong></p>
+                </div>
+            </div>
+
+            <!-- ===== SECTION 6: OUR PROMISE ===== -->
+            <div class="about-section">
+                <div class="section-title">
+                    <i class="fas fa-handshake"></i> Our Promise
+                </div>
+                <div class="section-content">
+                    <p>We promise to never forget where we came from. We promise to always listen to the people. We promise to always fight for the commoner. We promise to never become like those we are replacing.</p>
+                    <p>We promise to leave the door open. So that every ordinary person who comes after us can also walk through.</p>
+                    <p><strong>We promise to build a Buhweju that ordinary people can be proud of.</strong></p>
+                </div>
+            </div>
+
+            <!-- ===== SECTION 7: OUR CALL ===== -->
+            <div class="about-section">
+                <div class="section-title">
+                    <i class="fas fa-phone-volume"></i> Our Call
+                </div>
+                <div class="section-content">
+                    <p><strong>BMD is not just for me. It is for you. It is for all of us.</strong></p>
+                    <div class="call-box" style="background: linear-gradient(145deg, #1a3c2a, #0f261b);">
+                        <p style="color:#fff;">
+                            <i class="fas fa-hand-point-right" style="color:var(--accent-gold);"></i> If you are tired of being ignored, <strong style="color:var(--accent-gold);">join us.</strong><br />
+                            <i class="fas fa-hand-point-right" style="color:var(--accent-gold);"></i> If you are tired of being taken for granted, <strong style="color:var(--accent-gold);">join us.</strong><br />
+                            <i class="fas fa-hand-point-right" style="color:var(--accent-gold);"></i> If you are tired of watching your children suffer while leaders eat, <strong style="color:var(--accent-gold);">join us.</strong><br />
+                            <i class="fas fa-hand-point-right" style="color:var(--accent-gold);"></i> If you believe in a better Buhweju, <strong style="color:var(--accent-gold);">join us.</strong>
+                        </p>
+                    </div>
+                    <p><strong>Together, we will not fail. Together, we will not retreat. Together, we will not stop until Buhweju is free.</strong></p>
+                </div>
+            </div>
+
+            <!-- ===== SECTION 8: OUR VOICE ===== -->
+            <div class="about-section">
+                <div class="section-title">
+                    <i class="fas fa-microphone-alt"></i> Our Voice
+                </div>
+                <div class="section-content">
+                    <p>We are ordinary people. We are not rich. We are not powerful. We are not connected.</p>
+                    <p><strong>But we are many. We are united. We are determined. And we are ready.</strong></p>
+                    <p><strong style="font-size:1.1rem; color:var(--accent-gold);">We are Buhweju Must Develop. And we are coming.</strong></p>
+                </div>
+            </div>
+
+            <!-- ===== SLOGAN ===== -->
+            <div class="slogan-large">
+                <span class="gold">Twegyereire.</span> Buhweju Must Develop.
+            </div>
+
+            <!-- ===== CALL TO ACTION ===== -->
+            <div class="call-box">
+                <h3><i class="fas fa-hand-holding-heart"></i> Join the Movement</h3>
+                <p>BMD is not just for me. It is for you. It is for all of us. Together, we will not fail. Together, we will not retreat. Together, we will not stop until Buhweju is free.</p>
+                <a href="register.html" class="btn-join">
+                    <i class="fas fa-user-plus"></i> Join BMD Today
+                </a>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- ===== BOTTOM NAV (same as index) ===== -->
+    <nav class="bottom-nav">
+        <button class="nav-item" data-tab="home" id="navHome">
+            <i class="fas fa-home"></i>
+            <span>Home</span>
+        </button>
+        <button class="nav-item" data-tab="register" id="navRegister">
+            <i class="fas fa-user-plus"></i>
+            <span>Register</span>
+        </button>
+        <button class="nav-item post-btn" data-tab="post" id="navPost">
+            <i class="fas fa-plus"></i>
+            <span style="margin-top:2px;">Post</span>
+        </button>
+        <button class="nav-item" data-tab="activities" id="navActivities">
+            <i class="fas fa-calendar-alt"></i>
+            <span>Activities</span>
+        </button>
+        <button class="nav-item" data-tab="account" id="navAccount">
+            <i class="fas fa-user-circle"></i>
+            <span>Account</span>
+        </button>
+    </nav>
+
+    <!-- ===== TOAST ===== -->
+    <div class="toast" id="toast"></div>
+
+    <!-- ============================================================ -->
+    <!-- ===== FIREBASE + APP LOGIC ===== -->
+    <!-- ============================================================ -->
+    <script>
+        // ================================================================
+        //  FIREBASE CONFIG
+        // ================================================================
+        const firebaseConfig = {
+            apiKey: "AIzaSyC-PINF2AJcETYIMINiCfT0gSxLxw70vSE",
+            authDomain: "bmd-app-1aec8.firebaseapp.com",
+            projectId: "bmd-app-1aec8",
+            storageBucket: "bmd-app-1aec8.firebasestorage.app",
+            messagingSenderId: "722780031230",
+            appId: "1:722780031230:web:cd19a98e24e4d9d80dfdaf",
+            measurementId: "G-WPEG8SQSW7"
+        };
+
+        if (!firebase.apps.length) {
+            firebase.initializeApp(firebaseConfig);
+        }
+        const auth = firebase.auth();
+
+        // ================================================================
+        //  DOM REFS
+        // ================================================================
+        const headerAvatar = document.getElementById('headerAvatar');
+        const toast = document.getElementById('toast');
+
+        // ================================================================
+        //  TOAST
+        // ================================================================
+        let toastTimer = null;
+
+        function showToast(msg, duration = 2800) {
+            toast.textContent = msg;
+            toast.classList.add('show');
+            clearTimeout(toastTimer);
+            toastTimer = setTimeout(() => toast.classList.remove('show'), duration);
+        }
+
+        // ================================================================
+        //  AUTH STATE LISTENER
+        // ================================================================
+        auth.onAuthStateChanged(async (user) => {
+            if (user) {
+                try {
+                    const db = firebase.firestore();
+                    const userDoc = await db.collection('users').doc(user.uid).get();
+                    if (userDoc.exists && userDoc.data().photoURL) {
+                        headerAvatar.innerHTML = `<img src="${userDoc.data().photoURL}" style="width:100%;height:100%;object-fit:cover;" />`;
+                    } else if (user.photoURL) {
+                        headerAvatar.innerHTML = `<img src="${user.photoURL}" style="width:100%;height:100%;object-fit:cover;" />`;
+                    }
+                } catch (e) {
+                    console.error("Error fetching user profile:", e);
+                }
+            }
+        });
+
+        // ================================================================
+        //  NAVIGATION
+        // ================================================================
+        document.querySelectorAll('.bottom-nav .nav-item').forEach(item => {
+            item.addEventListener('click', () => {
+                const tab = item.dataset.tab;
+                document.querySelectorAll('.bottom-nav .nav-item').forEach(n => n.classList.remove('active'));
+                item.classList.add('active');
+
+                switch (tab) {
+                    case 'home':
+                        window.location.href = 'index.html';
+                        break;
+                    case 'register':
+                        window.location.href = 'register.html';
+                        break;
+                    case 'activities':
+                        showToast('📅 Activities page coming soon!');
+                        break;
+                    case 'post':
+                        window.location.href = 'post.html';
+                        break;
+                    case 'account':
+                        window.location.href = 'account.html';
+                        break;
+                    default:
+                        break;
+                }
+            });
+        });
+
+        // ================================================================
+        //  BACK BUTTON
+        // ================================================================
+        document.getElementById('backBtn').addEventListener('click', () => {
+            window.location.href = 'account.html';
+        });
+
+        // Header avatar click -> account
+        headerAvatar.addEventListener('click', () => {
+            window.location.href = 'account.html';
+        });
+
+        // ================================================================
+        //  INIT
+        // ================================================================
+        console.log('📖 BMD About page loaded.');
+    </script>
+
+</body>
+</html>
