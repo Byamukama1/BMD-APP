@@ -35,6 +35,22 @@
             firebase.initializeApp(firebaseConfig);
         }
 
+
+
+// ===== FIREBASE CLOUD MESSAGING =====
+const messaging = firebase.messaging();
+
+if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('/firebase-messaging-sw.js')
+    .then((registration) => {
+        console.log("Firebase Service Worker registered:", registration);
+    })
+    .catch((error) => {
+        console.error("Service Worker registration failed:", error);
+    });
+}
+
+
         // Parse ?post= or ?id= query param from shared link on load
         const urlParams = new URLSearchParams(window.location.search);
         const targetPostId = urlParams.get('post') || urlParams.get('id');
