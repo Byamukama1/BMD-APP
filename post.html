@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -172,18 +171,41 @@
             padding: 8px 16px 20px;
         }
 
-        .page-title {
-            font-family: 'Playfair Display', serif;
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: var(--bmd-primary);
-            margin-bottom: 16px;
+        /* ===== WIZARD STEP INDICATOR ===== */
+        .step-indicators {
             display: flex;
-            align-items: center;
-            gap: 10px;
+            justify-content: center;
+            gap: 8px;
+            margin-bottom: 20px;
         }
-        .page-title i {
-            color: var(--bmd-gold);
+
+        .step-dot {
+            width: 40px;
+            height: 4px;
+            border-radius: 4px;
+            background: #ddd;
+            transition: background 0.3s;
+        }
+
+        .step-dot.active {
+            background: var(--bmd-gold);
+        }
+
+        .step-dot.done {
+            background: var(--bmd-primary);
+        }
+
+        .step-label {
+            text-align: center;
+            font-size: 0.7rem;
+            color: #999;
+            margin-top: 4px;
+            font-weight: 500;
+        }
+
+        .step-label .current-step {
+            color: var(--bmd-primary);
+            font-weight: 700;
         }
 
         /* ===== FORM CARD ===== */
@@ -192,9 +214,31 @@
             border-radius: var(--bmd-radius);
             box-shadow: var(--bmd-shadow);
             overflow: hidden;
-            padding: 20px 18px 24px;
+            padding: 24px 20px 28px;
             border: 1px solid rgba(0, 0, 0, 0.04);
             margin-bottom: 20px;
+            transition: all 0.3s;
+        }
+
+        .form-card .step-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--bmd-primary);
+            margin-bottom: 4px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .form-card .step-title i {
+            color: var(--bmd-gold);
+        }
+
+        .form-card .step-desc {
+            font-size: 0.85rem;
+            color: #888;
+            margin-bottom: 18px;
         }
 
         .form-label {
@@ -209,6 +253,27 @@
         .form-label i {
             color: var(--bmd-gold);
             width: 18px;
+        }
+
+        /* ===== STEP CONTENT ===== */
+        .step-content {
+            display: none;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .step-content.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         /* ===== TITLE ===== */
@@ -260,12 +325,12 @@
 
         /* ===== MEDIA UPLOAD SECTION ===== */
         .media-section {
-            margin-top: 16px;
+            margin-top: 8px;
         }
 
         .media-grid {
             display: grid;
-            grid-template-columns: 1fr 1fr;
+            grid-template-columns: 1fr 1fr 1fr;
             gap: 10px;
             margin-top: 8px;
         }
@@ -275,7 +340,7 @@
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            padding: 14px 8px;
+            padding: 18px 8px;
             border: 2px dashed #d5cdc0;
             border-radius: var(--bmd-radius-sm);
             background: #fcfcf9;
@@ -286,7 +351,8 @@
             font-weight: 500;
             color: #666;
             gap: 4px;
-            min-height: 72px;
+            min-height: 80px;
+            position: relative;
         }
 
         .media-btn:active {
@@ -303,7 +369,7 @@
         }
 
         .media-btn .badge {
-            font-size: 0.6rem;
+            font-size: 0.55rem;
             color: #999;
         }
 
@@ -314,7 +380,7 @@
         }
 
         .media-btn .file-name {
-            font-size: 0.6rem;
+            font-size: 0.55rem;
             color: var(--bmd-primary);
             max-width: 100%;
             overflow: hidden;
@@ -336,9 +402,33 @@
             opacity: 0.6;
         }
 
+        .media-btn .upload-status {
+            font-size: 0.55rem;
+            color: var(--bmd-gold);
+            font-weight: 600;
+        }
+
+        .media-btn .upload-status.uploading {
+            color: #f39c12;
+            animation: pulse-text 1s infinite;
+        }
+
+        .media-btn .upload-status.done {
+            color: #27ae60;
+        }
+
+        @keyframes pulse-text {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .media-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
         /* Audio record specific */
         .audio-record-wrapper {
-            grid-column: 1 / -1;
             display: flex;
             flex-wrap: wrap;
             align-items: center;
@@ -347,7 +437,7 @@
             background: #f8f5ee;
             border-radius: var(--bmd-radius-sm);
             border: 2px dashed #d5cdc0;
-            margin-top: 4px;
+            margin-top: 8px;
         }
 
         .audio-record-wrapper .record-btn {
@@ -521,9 +611,17 @@
             border-color: var(--bmd-gold);
         }
 
+        .toolbar-hint {
+            font-size: 0.65rem;
+            color: #bbb;
+            margin-left: auto;
+            padding-right: 4px;
+            font-style: italic;
+        }
+
         /* ===== RICH TEXT EDITOR ===== */
         .rich-editor {
-            min-height: 220px;
+            min-height: 180px;
             padding: 14px 16px;
             border: 2px solid #e8e0d4;
             border-radius: 0 0 var(--bmd-radius-sm) var(--bmd-radius-sm);
@@ -534,7 +632,7 @@
             outline: none;
             transition: border-color 0.25s, box-shadow 0.25s;
             overflow-y: auto;
-            max-height: 500px;
+            max-height: 400px;
             font-family: 'Inter', sans-serif;
         }
 
@@ -570,53 +668,133 @@
             margin: 6px 0;
         }
 
-         /* ===== SUBMIT ===== */
-        .submit-area {
-            margin-top: 18px;
+        /* ===== STEP NAVIGATION BUTTONS ===== */
+        .step-nav {
             display: flex;
-            flex-direction: column;
-            gap: 10px;
+            justify-content: space-between;
+            margin-top: 20px;
+            gap: 12px;
         }
 
-        .submit-btn {
+        .step-nav .btn-prev,
+        .step-nav .btn-next {
+            padding: 12px 24px;
+            border: none;
+            border-radius: var(--bmd-radius-sm);
+            font-weight: 600;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-family: inherit;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .step-nav .btn-prev {
+            background: #e8e0d4;
+            color: #555;
+        }
+
+        .step-nav .btn-prev:active {
+            transform: scale(0.96);
+        }
+
+        .step-nav .btn-next {
+            background: var(--bmd-primary);
+            color: #fff;
+            margin-left: auto;
+        }
+
+        .step-nav .btn-next:active {
+            transform: scale(0.96);
+        }
+
+        .step-nav .btn-next:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .step-nav .btn-submit {
             background: linear-gradient(145deg, var(--bmd-primary), var(--bmd-primary-light));
             color: #fff;
+            padding: 12px 32px;
             border: none;
-            padding: 16px 24px;
             border-radius: var(--bmd-radius-sm);
-            font-size: 1.05rem;
             font-weight: 700;
+            font-size: 1rem;
             font-family: 'Playfair Display', serif;
-            letter-spacing: 0.5px;
             cursor: pointer;
             transition: all 0.25s;
             box-shadow: 0 4px 16px rgba(26, 60, 42, 0.25);
             display: flex;
             align-items: center;
-            justify-content: center;
             gap: 12px;
+            margin-left: auto;
         }
 
-        .submit-btn:active {
+        .step-nav .btn-submit:active {
             transform: scale(0.97);
-            box-shadow: 0 2px 8px rgba(26, 60, 42, 0.15);
         }
 
-        .submit-btn:disabled {
+        .step-nav .btn-submit:disabled {
             opacity: 0.6;
             cursor: not-allowed;
-            transform: none;
         }
 
-        .submit-btn i {
+        .step-nav .btn-submit i {
             font-size: 1.1rem;
         }
 
+        /* ===== MEDIA PREVIEW ===== */
+        .media-preview-thumb {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 6px;
+            padding: 6px 10px;
+            background: #f0ebe4;
+            border-radius: var(--bmd-radius-sm);
+            font-size: 0.75rem;
+            color: #555;
+        }
+
+        .media-preview-thumb img {
+            width: 40px;
+            height: 40px;
+            object-fit: cover;
+            border-radius: 6px;
+            background: #ddd;
+        }
+
+        .media-preview-thumb .file-info {
+            flex: 1;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .media-preview-thumb .file-info i {
+            color: var(--bmd-gold);
+            margin-right: 4px;
+        }
+
+        .media-preview-thumb .remove-media {
+            color: #e74c3c;
+            cursor: pointer;
+            background: none;
+            border: none;
+            font-size: 0.9rem;
+            padding: 0 4px;
+        }
+
+        /* ===== SUBMIT STATUS ===== */
         .submit-status {
             font-size: 0.8rem;
             color: #888;
             text-align: center;
-            padding: 4px 0;
+            padding: 8px 0;
+            margin-top: 8px;
         }
 
         .submit-status.error {
@@ -624,6 +802,28 @@
         }
         .submit-status.success {
             color: #27ae60;
+        }
+
+        /* ===== HIDDEN FILE INPUTS ===== */
+        .hidden-input {
+            display: none;
+        }
+
+        /* ===== SPINNER ===== */
+        .spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: #fff;
+            animation: spin 0.8s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
         }
 
         /* ===== BOTTOM NAV ===== */
@@ -747,7 +947,7 @@
                 padding: 6px 10px 12px;
             }
             .form-card {
-                padding: 14px 12px 18px;
+                padding: 16px 12px 20px;
             }
             .media-grid {
                 grid-template-columns: 1fr 1fr;
@@ -777,12 +977,12 @@
                 height: 26px;
             }
             .rich-editor {
-                min-height: 160px;
+                min-height: 140px;
                 padding: 10px 12px;
                 font-size: 0.85rem;
             }
-            .page-title {
-                font-size: 1.2rem;
+            .form-card .step-title {
+                font-size: 1.1rem;
             }
             .title-wrapper input {
                 font-size: 0.95rem;
@@ -805,6 +1005,16 @@
                 font-size: 1.6rem;
                 margin-top: -12px;
             }
+            .step-nav .btn-prev,
+            .step-nav .btn-next,
+            .step-nav .btn-submit {
+                padding: 10px 16px;
+                font-size: 0.8rem;
+            }
+            .step-dot {
+                width: 30px;
+                height: 3px;
+            }
         }
 
         @media (min-width: 768px) {
@@ -812,7 +1022,7 @@
                 padding: 12px 24px 30px;
             }
             .rich-editor {
-                min-height: 280px;
+                min-height: 220px;
             }
         }
 
@@ -826,79 +1036,6 @@
         ::-webkit-scrollbar-thumb {
             background: var(--bmd-primary-light);
             border-radius: 10px;
-        }
-
-        /* ===== HIDDEN FILE INPUTS ===== */
-        .hidden-input {
-            display: none;
-        }
-
-        /* ===== MEDIA PREVIEW IMAGE ===== */
-        .media-preview-thumb {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            margin-top: 6px;
-            padding: 6px 10px;
-            background: #f0ebe4;
-            border-radius: var(--bmd-radius-sm);
-            font-size: 0.75rem;
-            color: #555;
-        }
-
-        .media-preview-thumb img {
-            width: 40px;
-            height: 40px;
-            object-fit: cover;
-            border-radius: 6px;
-            background: #ddd;
-        }
-
-        .media-preview-thumb .file-info {
-            flex: 1;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-        }
-
-        .media-preview-thumb .file-info i {
-            color: var(--bmd-gold);
-            margin-right: 4px;
-        }
-
-        .media-preview-thumb .remove-media {
-            color: #e74c3c;
-            cursor: pointer;
-            background: none;
-            border: none;
-            font-size: 0.9rem;
-            padding: 0 4px;
-        }
-
-        /* ===== SPINNER ===== */
-        .spinner {
-            display: inline-block;
-            width: 20px;
-            height: 20px;
-            border: 3px solid rgba(255, 255, 255, 0.3);
-            border-radius: 50%;
-            border-top-color: #fff;
-            animation: spin 0.8s ease-in-out infinite;
-        }
-
-        @keyframes spin {
-            to {
-                transform: rotate(360deg);
-            }
-        }
-
-        /* ===== EMPTY STATE FOR TOOLBAR ===== */
-        .toolbar-hint {
-            font-size: 0.65rem;
-            color: #bbb;
-            margin-left: auto;
-            padding-right: 4px;
-            font-style: italic;
         }
     </style>
 </head>
@@ -929,86 +1066,107 @@
     <!-- ===== MAIN ===== -->
     <main class="post-container">
 
-        <div class="page-title">
-            <i class="fas fa-feather-alt"></i> Create New Post
+        <!-- ===== STEP INDICATORS ===== -->
+        <div class="step-label">
+            Step <span class="current-step" id="currentStepLabel">1</span> of <span id="totalStepsLabel">4</span>
+        </div>
+        <div class="step-indicators" id="stepIndicators">
+            <div class="step-dot active" data-step="1"></div>
+            <div class="step-dot" data-step="2"></div>
+            <div class="step-dot" data-step="3"></div>
+            <div class="step-dot" data-step="4"></div>
         </div>
 
         <div class="form-card">
 
-            <!-- ===== TITLE ===== -->
-            <div class="title-wrapper">
-                <label class="form-label" for="postTitle">
-                    <i class="fas fa-heading"></i> Title <span style="font-weight:400;color:#999;font-size:0.7rem;">(max 25 words)</span>
-                </label>
-                <input type="text" id="postTitle" placeholder="What's the headline?" maxlength="200" autocomplete="off" />
-                <div class="word-counter">
-                    <span class="count" id="wordCount">0</span> / 25
+            <!-- ===== STEP 1: TITLE ===== -->
+            <div class="step-content active" data-step="1">
+                <div class="step-title">
+                    <i class="fas fa-heading"></i> What's the headline?
+                </div>
+                <div class="step-desc">Give your post a clear, catchy title. <strong>Max 25 words.</strong></div>
+
+                <div class="title-wrapper">
+                    <input type="text" id="postTitle" placeholder="e.g. Buhweju Community Celebrates New Health Center" maxlength="200" autocomplete="off" />
+                    <div class="word-counter">
+                        <span class="count" id="wordCount">0</span> / 25
+                    </div>
                 </div>
             </div>
 
-            <!-- ===== MEDIA UPLOAD ===== -->
-            <div class="media-section">
-                <label class="form-label"><i class="fas fa-photo-video"></i> Media</label>
-                <div class="media-grid">
+            <!-- ===== STEP 2: MEDIA ===== -->
+            <div class="step-content" data-step="2">
+                <div class="step-title">
+                    <i class="fas fa-photo-video"></i> Add Media (Optional)
+                </div>
+                <div class="step-desc">Upload an image, video, or audio to make your post more engaging. You can skip this step.</div>
 
-                    <!-- Image -->
-                    <button class="media-btn" id="imageBtn">
-                        <i class="fas fa-image"></i>
-                        <span>Upload Image</span>
-                        <span class="badge">JPG, PNG, WEBP</span>
-                        <span class="file-name" id="imageFileName"></span>
-                        <button class="remove-file" id="removeImage" style="display:none;">✕ Remove</button>
-                    </button>
-                    <input type="file" id="imageInput" class="hidden-input" accept="image/*" />
+                <div class="media-section">
+                    <div class="media-grid">
+                        <!-- Image -->
+                        <button class="media-btn" id="imageBtn">
+                            <i class="fas fa-image"></i>
+                            <span>Upload Image</span>
+                            <span class="badge">JPG, PNG, WEBP</span>
+                            <span class="file-name" id="imageFileName"></span>
+                            <span class="upload-status" id="imageStatus"></span>
+                            <button class="remove-file" id="removeImage" style="display:none;">✕ Remove</button>
+                        </button>
+                        <input type="file" id="imageInput" class="hidden-input" accept="image/*" />
 
-                    <!-- Video -->
-                    <button class="media-btn" id="videoBtn">
-                        <i class="fas fa-video"></i>
-                        <span>Upload Video</span>
-                        <span class="badge">MP4, MOV, AVI</span>
-                        <span class="file-name" id="videoFileName"></span>
-                        <button class="remove-file" id="removeVideo" style="display:none;">✕ Remove</button>
-                    </button>
-                    <input type="file" id="videoInput" class="hidden-input" accept="video/*" />
+                        <!-- Video -->
+                        <button class="media-btn" id="videoBtn">
+                            <i class="fas fa-video"></i>
+                            <span>Upload Video</span>
+                            <span class="badge">MP4, MOV, AVI</span>
+                            <span class="file-name" id="videoFileName"></span>
+                            <span class="upload-status" id="videoStatus"></span>
+                            <button class="remove-file" id="removeVideo" style="display:none;">✕ Remove</button>
+                        </button>
+                        <input type="file" id="videoInput" class="hidden-input" accept="video/*" />
 
-                    <!-- Audio (upload) -->
-                    <button class="media-btn" id="audioUploadBtn">
-                        <i class="fas fa-music"></i>
-                        <span>Upload Audio</span>
-                        <span class="badge">MP3, WAV, M4A</span>
-                        <span class="file-name" id="audioFileName"></span>
-                        <button class="remove-file" id="removeAudio" style="display:none;">✕ Remove</button>
-                    </button>
-                    <input type="file" id="audioInput" class="hidden-input" accept="audio/*" />
+                        <!-- Audio (upload) -->
+                        <button class="media-btn" id="audioUploadBtn">
+                            <i class="fas fa-music"></i>
+                            <span>Upload Audio</span>
+                            <span class="badge">MP3, WAV, M4A</span>
+                            <span class="file-name" id="audioFileName"></span>
+                            <span class="upload-status" id="audioStatus"></span>
+                            <button class="remove-file" id="removeAudio" style="display:none;">✕ Remove</button>
+                        </button>
+                        <input type="file" id="audioInput" class="hidden-input" accept="audio/*" />
+                    </div>
 
                     <!-- Audio record -->
-                    <button class="media-btn" id="audioRecordBtn">
+                    <button class="media-btn" id="audioRecordBtn" style="margin-top:8px; width:100%;">
                         <i class="fas fa-microphone"></i>
                         <span>Record Audio</span>
                         <span class="badge">🎙️ Live recording</span>
                     </button>
-                </div>
 
-                <!-- Audio recording UI -->
-                <div class="audio-record-wrapper" id="audioRecordWrapper" style="display:none;">
-                    <button class="record-btn" id="recordToggleBtn">
-                        <i class="fas fa-circle"></i> Start Recording
-                    </button>
-                    <span class="recording-timer" id="recordingTimer">00:00</span>
-                    <span class="status-text" id="recordStatus">Ready</span>
-                    <div class="audio-preview" id="recordedAudioPreview"></div>
-                    <button class="remove-file" id="removeRecordedAudio" style="display:none;background:none;border:none;color:#e74c3c;cursor:pointer;font-size:0.8rem;">
-                        ✕ Remove
-                    </button>
-                </div>
+                    <div class="audio-record-wrapper" id="audioRecordWrapper" style="display:none; margin-top:8px;">
+                        <button class="record-btn" id="recordToggleBtn">
+                            <i class="fas fa-circle"></i> Start Recording
+                        </button>
+                        <span class="recording-timer" id="recordingTimer">00:00</span>
+                        <span class="status-text" id="recordStatus">Ready</span>
+                        <div class="audio-preview" id="recordedAudioPreview"></div>
+                        <button class="remove-file" id="removeRecordedAudio" style="display:none;background:none;border:none;color:#e74c3c;cursor:pointer;font-size:0.8rem;">
+                            ✕ Remove
+                        </button>
+                    </div>
 
-                <!-- Media preview area -->
-                <div id="mediaPreviewContainer" style="margin-top:8px;"></div>
+                    <!-- Media preview area -->
+                    <div id="mediaPreviewContainer" style="margin-top:8px;"></div>
+                </div>
             </div>
 
-            <!-- ===== TOOLBAR ===== -->
-            <div style="margin-top:16px;">
-                <label class="form-label"><i class="fas fa-pencil-alt"></i> Content</label>
+            <!-- ===== STEP 3: CONTENT ===== -->
+            <div class="step-content" data-step="3">
+                <div class="step-title">
+                    <i class="fas fa-pencil-alt"></i> Write Your Story
+                </div>
+                <div class="step-desc">Share the full details. Use the toolbar to format your text.</div>
 
                 <div class="editor-toolbar" id="editorToolbar">
                     <div class="tool-group">
@@ -1043,50 +1201,75 @@
                     <span class="toolbar-hint">Select text to style</span>
                 </div>
 
-                <!-- ===== RICH EDITOR ===== -->
                 <div class="rich-editor" id="richEditor" contenteditable="true" role="textbox" aria-multiline="true"></div>
             </div>
 
-            <!-- ===== SUBMIT ===== -->
-            <div class="submit-area">
-                <button class="submit-btn" id="submitPostBtn">
+            <!-- ===== STEP 4: REVIEW & PUBLISH ===== -->
+            <div class="step-content" data-step="4">
+                <div class="step-title">
+                    <i class="fas fa-check-circle"></i> Review & Publish
+                </div>
+                <div class="step-desc">Check everything looks good, then publish your post to the community.</div>
+
+                <div style="background:#f8f5ee; border-radius:var(--bmd-radius-sm); padding:16px; margin-bottom:16px;">
+                    <div style="font-size:0.75rem; color:#888; margin-bottom:4px;">Title</div>
+                    <div id="reviewTitle" style="font-weight:600; font-size:1.05rem; color:var(--bmd-primary);">—</div>
+                </div>
+
+                <div style="background:#f8f5ee; border-radius:var(--bmd-radius-sm); padding:16px; margin-bottom:16px;">
+                    <div style="font-size:0.75rem; color:#888; margin-bottom:4px;">Media</div>
+                    <div id="reviewMedia" style="color:#666;">No media attached</div>
+                </div>
+
+                <div style="background:#f8f5ee; border-radius:var(--bmd-radius-sm); padding:16px; margin-bottom:16px;">
+                    <div style="font-size:0.75rem; color:#888; margin-bottom:4px;">Content Preview</div>
+                    <div id="reviewContent" style="color:#666; max-height:100px; overflow:hidden; font-size:0.85rem;">—</div>
+                </div>
+
+                <div class="submit-status" id="submitStatus"></div>
+            </div>
+
+            <!-- ===== STEP NAVIGATION ===== -->
+            <div class="step-nav">
+                <button class="btn-prev" id="prevStep" style="display:none;">
+                    <i class="fas fa-arrow-left"></i> Back
+                </button>
+                <button class="btn-next" id="nextStep">
+                    Next <i class="fas fa-arrow-right"></i>
+                </button>
+                <button class="btn-submit" id="submitPostBtn" style="display:none;">
                     <i class="fas fa-paper-plane"></i> Publish Post
                 </button>
-                <div class="submit-status" id="submitStatus"></div>
             </div>
 
         </div>
 
     </main>
+
     <!-- ===== BOTTOM NAVIGATION ===== -->
-<nav class="bottom-nav" id="bottomNav">
+    <nav class="bottom-nav" id="bottomNav">
+        <a href="index.html" class="nav-item" id="navHome">
+            <i class="fas fa-home"></i>
+            <span class="label">Home</span>
+        </a>
+        <a href="register.html" class="nav-item" id="navRegister">
+            <i class="fas fa-user-plus"></i>
+            <span class="label">Register</span>
+        </a>
+        <a href="post.html" class="nav-item post-btn active" id="navPost">
+            <i class="fas fa-plus"></i>
+            <span class="label">Post</span>
+        </a>
+        <a href="activities.html" class="nav-item" id="navActivities">
+            <i class="fas fa-calendar-alt"></i>
+            <span class="label">Activities</span>
+        </a>
+        <a href="account.html" class="nav-item" id="navAccount">
+            <i class="fas fa-user-circle"></i>
+            <span class="label">Account</span>
+        </a>
+    </nav>
 
-    <a href="index.html" class="nav-item active" id="navHome">
-        <i class="fas fa-home"></i>
-        <span class="label">Home</span>
-    </a>
-
-    <a href="register.html" class="nav-item" id="navRegister">
-        <i class="fas fa-user-plus"></i>
-        <span class="label">Register</span>
-    </a>
-
-    <a href="post.html" class="nav-item post-btn" id="navPost">
-        <i class="fas fa-plus"></i>
-        <span class="label">Post</span>
-    </a>
-
-    <a href="activities.html" class="nav-item" id="navActivities">
-        <i class="fas fa-calendar-alt"></i>
-        <span class="label">Activities</span>
-    </a>
-
-    <a href="account.html" class="nav-item" id="navAccount">
-        <i class="fas fa-user-circle"></i>
-        <span class="label">Account</span>
-    </a>
-
-</nav>
     <!-- ===== TOAST ===== -->
     <div class="toast" id="toast"></div>
 
@@ -1111,15 +1294,12 @@
         const db = firebase.firestore();
         const auth = firebase.auth();
 
-
-      // ================================================================
-    // ================================================================
-        //  CLOUDINARY — UPDATED WITH YOUR CREDENTIALS
+        // ================================================================
+        //  CLOUDINARY
         // ================================================================
         const CLOUD_NAME = 'dp81zzxlh';
-        const UPLOAD_PRESET = 'Unsigned upload';  // <-- changed to match your preset name
+        const UPLOAD_PRESET = 'Unsigned upload';
         const CLOUDINARY_URL = `https://api.cloudinary.com/v1_1/${CLOUD_NAME}/upload`;
-        
 
         // ================================================================
         //  DOM REFS
@@ -1130,6 +1310,21 @@
         const submitBtn = document.getElementById('submitPostBtn');
         const submitStatus = document.getElementById('submitStatus');
         const toast = document.getElementById('toast');
+
+        // Step navigation
+        const steps = document.querySelectorAll('.step-content');
+        const dots = document.querySelectorAll('.step-dot');
+        const prevBtn = document.getElementById('prevStep');
+        const nextBtn = document.getElementById('nextStep');
+        const currentStepLabel = document.getElementById('currentStepLabel');
+        const totalStepsLabel = document.getElementById('totalStepsLabel');
+        const reviewTitle = document.getElementById('reviewTitle');
+        const reviewMedia = document.getElementById('reviewMedia');
+        const reviewContent = document.getElementById('reviewContent');
+
+        let currentStep = 1;
+        const totalSteps = steps.length;
+        totalStepsLabel.textContent = totalSteps;
 
         // Media
         const imageInput = document.getElementById('imageInput');
@@ -1142,6 +1337,9 @@
         const imageFileName = document.getElementById('imageFileName');
         const videoFileName = document.getElementById('videoFileName');
         const audioFileName = document.getElementById('audioFileName');
+        const imageStatus = document.getElementById('imageStatus');
+        const videoStatus = document.getElementById('videoStatus');
+        const audioStatus = document.getElementById('audioStatus');
         const removeImage = document.getElementById('removeImage');
         const removeVideo = document.getElementById('removeVideo');
         const removeAudio = document.getElementById('removeAudio');
@@ -1170,6 +1368,9 @@
         let uploadedAudioUrl = null;
         let recordedAudioUrl = null;
         let recordedAudioBlob = null;
+        let isImageUploading = false;
+        let isVideoUploading = false;
+        let isAudioUploading = false;
 
         // Audio recording state
         let mediaRecorder = null;
@@ -1177,6 +1378,7 @@
         let isRecording = false;
         let recordingStartTime = null;
         let recordingTimerInterval = null;
+        let audioStream = null;
 
         // ================================================================
         //  TOAST
@@ -1197,12 +1399,150 @@
             currentUser = user;
             if (!user) {
                 showToast('Please sign in to create a post.', 3000);
-                // Auto sign-in with Google for demo
                 const provider = new firebase.auth.GoogleAuthProvider();
                 auth.signInWithPopup(provider)
                     .then(() => showToast('✅ Signed in successfully!'))
                     .catch(() => showToast('⚠️ Please sign in to post.'));
             }
+        });
+
+        // ================================================================
+        //  STEP NAVIGATION
+        // ================================================================
+        function goToStep(step) {
+            if (step < 1 || step > totalSteps) return;
+
+            // Validate current step before moving forward
+            if (step > currentStep) {
+                if (!validateStep(currentStep)) {
+                    return;
+                }
+            }
+
+            currentStep = step;
+            updateStepUI();
+        }
+
+        function validateStep(step) {
+            if (step === 1) {
+                const title = titleInput.value.trim();
+                if (!title) {
+                    showToast('⚠️ Please enter a title for your post.', 2000);
+                    titleInput.focus();
+                    return false;
+                }
+                const wordCountVal = title.split(/\s+/).filter(w => w.length > 0).length;
+                if (wordCountVal > 25) {
+                    showToast('⚠️ Title exceeds 25 words.', 2000);
+                    return false;
+                }
+                return true;
+            }
+            if (step === 2) {
+                // Check if any media is still uploading
+                if (isImageUploading || isVideoUploading || isAudioUploading) {
+                    showToast('⏳ Please wait for media to finish uploading.', 2000);
+                    return false;
+                }
+                return true;
+            }
+            if (step === 3) {
+                const content = richEditor.innerHTML.trim();
+                if (!content || content === '<br>' || content === '<div><br></div>') {
+                    showToast('⚠️ Please write some content for your post.', 2000);
+                    richEditor.focus();
+                    return false;
+                }
+                return true;
+            }
+            return true;
+        }
+
+        function updateStepUI() {
+            // Update content
+            steps.forEach((el, index) => {
+                el.classList.toggle('active', index + 1 === currentStep);
+            });
+
+            // Update dots
+            dots.forEach((dot, index) => {
+                const stepNum = index + 1;
+                dot.classList.toggle('active', stepNum === currentStep);
+                dot.classList.toggle('done', stepNum < currentStep);
+            });
+
+            // Update label
+            currentStepLabel.textContent = currentStep;
+
+            // Update buttons
+            prevBtn.style.display = currentStep === 1 ? 'none' : 'flex';
+            nextBtn.style.display = currentStep === totalSteps ? 'none' : 'flex';
+            submitBtn.style.display = currentStep === totalSteps ? 'flex' : 'none';
+
+            // Update review content when reaching step 4
+            if (currentStep === 4) {
+                updateReview();
+            }
+
+            // Scroll to top of form
+            document.querySelector('.form-card').scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+
+        function updateReview() {
+            const title = titleInput.value.trim() || '—';
+            reviewTitle.textContent = title;
+
+            const hasMedia = uploadedImageUrl || uploadedVideoUrl || uploadedAudioUrl || recordedAudioUrl;
+            if (hasMedia) {
+                let mediaList = [];
+                if (uploadedImageUrl) mediaList.push('📷 Image');
+                if (uploadedVideoUrl) mediaList.push('🎬 Video');
+                if (uploadedAudioUrl) mediaList.push('🎵 Audio');
+                if (recordedAudioUrl) mediaList.push('🎙️ Recorded Audio');
+                reviewMedia.textContent = mediaList.join(', ');
+            } else {
+                reviewMedia.textContent = 'No media attached';
+            }
+
+            const content = richEditor.innerHTML.trim();
+            const tempDiv = document.createElement('div');
+            tempDiv.innerHTML = content;
+            const text = tempDiv.textContent || '';
+            reviewContent.textContent = text.substring(0, 150) + (text.length > 150 ? '…' : '');
+        }
+
+        // ================================================================
+        //  STEP NAVIGATION EVENTS
+        // ================================================================
+        prevBtn.addEventListener('click', () => {
+            if (currentStep > 1) {
+                // Reset upload statuses when going back from step 2
+                if (currentStep === 2) {
+                    // Allow going back even if uploading
+                }
+                goToStep(currentStep - 1);
+            }
+        });
+
+        nextBtn.addEventListener('click', () => {
+            if (currentStep < totalSteps) {
+                goToStep(currentStep + 1);
+            }
+        });
+
+        // Allow clicking on dots to navigate (only to previous steps)
+        dots.forEach((dot, index) => {
+            dot.addEventListener('click', () => {
+                const step = index + 1;
+                if (step < currentStep) {
+                    goToStep(step);
+                } else if (step === currentStep) {
+                    // Same step, do nothing
+                } else {
+                    // Can't skip forward via dots
+                    showToast('Please complete each step in order.', 1500);
+                }
+            });
         });
 
         // ================================================================
@@ -1215,7 +1555,6 @@
             wordCount.textContent = count;
             wordCount.className = 'count' + (count > 20 ? ' warning' : '') + (count > 25 ? ' danger' : '');
             if (count > 25) {
-                // Trim to 25 words
                 const trimmed = words.slice(0, 25).join(' ');
                 titleInput.value = trimmed;
                 wordCount.textContent = 25;
@@ -1226,24 +1565,40 @@
         // ================================================================
         //  MEDIA UPLOAD – Image
         // ================================================================
-        imageBtn.addEventListener('click', () => imageInput.click());
+        imageBtn.addEventListener('click', () => {
+            if (!isImageUploading) imageInput.click();
+        });
 
         imageInput.addEventListener('change', async (e) => {
             const file = e.target.files[0];
             if (!file) return;
+
+            imageBtn.disabled = true;
+            isImageUploading = true;
+            imageStatus.textContent = '⏳ Uploading...';
+            imageStatus.className = 'upload-status uploading';
+
             imageFileName.textContent = file.name;
             imageFileName.style.display = 'block';
-            removeImage.style.display = 'inline';
+            removeImage.style.display = 'none';
 
             try {
                 const url = await uploadToCloudinary(file, 'image');
                 uploadedImageUrl = url;
                 imageBtn.classList.add('has-file');
+                imageStatus.textContent = '✅ Uploaded';
+                imageStatus.className = 'upload-status done';
+                removeImage.style.display = 'inline';
                 showToast('✅ Image uploaded successfully!');
                 updateMediaPreview();
             } catch (err) {
+                imageStatus.textContent = '❌ Failed';
+                imageStatus.className = 'upload-status';
                 showToast('❌ Image upload failed: ' + err.message);
                 console.error(err);
+            } finally {
+                isImageUploading = false;
+                imageBtn.disabled = false;
             }
         });
 
@@ -1252,6 +1607,8 @@
             uploadedImageUrl = null;
             imageFileName.textContent = '';
             imageFileName.style.display = 'none';
+            imageStatus.textContent = '';
+            imageStatus.className = 'upload-status';
             removeImage.style.display = 'none';
             imageBtn.classList.remove('has-file');
             imageInput.value = '';
@@ -1261,24 +1618,40 @@
         // ================================================================
         //  MEDIA UPLOAD – Video
         // ================================================================
-        videoBtn.addEventListener('click', () => videoInput.click());
+        videoBtn.addEventListener('click', () => {
+            if (!isVideoUploading) videoInput.click();
+        });
 
         videoInput.addEventListener('change', async (e) => {
             const file = e.target.files[0];
             if (!file) return;
+
+            videoBtn.disabled = true;
+            isVideoUploading = true;
+            videoStatus.textContent = '⏳ Uploading...';
+            videoStatus.className = 'upload-status uploading';
+
             videoFileName.textContent = file.name;
             videoFileName.style.display = 'block';
-            removeVideo.style.display = 'inline';
+            removeVideo.style.display = 'none';
 
             try {
                 const url = await uploadToCloudinary(file, 'video');
                 uploadedVideoUrl = url;
                 videoBtn.classList.add('has-file');
+                videoStatus.textContent = '✅ Uploaded';
+                videoStatus.className = 'upload-status done';
+                removeVideo.style.display = 'inline';
                 showToast('✅ Video uploaded successfully!');
                 updateMediaPreview();
             } catch (err) {
+                videoStatus.textContent = '❌ Failed';
+                videoStatus.className = 'upload-status';
                 showToast('❌ Video upload failed: ' + err.message);
                 console.error(err);
+            } finally {
+                isVideoUploading = false;
+                videoBtn.disabled = false;
             }
         });
 
@@ -1287,6 +1660,8 @@
             uploadedVideoUrl = null;
             videoFileName.textContent = '';
             videoFileName.style.display = 'none';
+            videoStatus.textContent = '';
+            videoStatus.className = 'upload-status';
             removeVideo.style.display = 'none';
             videoBtn.classList.remove('has-file');
             videoInput.value = '';
@@ -1296,24 +1671,40 @@
         // ================================================================
         //  MEDIA UPLOAD – Audio (file)
         // ================================================================
-        audioUploadBtn.addEventListener('click', () => audioInput.click());
+        audioUploadBtn.addEventListener('click', () => {
+            if (!isAudioUploading) audioInput.click();
+        });
 
         audioInput.addEventListener('change', async (e) => {
             const file = e.target.files[0];
             if (!file) return;
+
+            audioUploadBtn.disabled = true;
+            isAudioUploading = true;
+            audioStatus.textContent = '⏳ Uploading...';
+            audioStatus.className = 'upload-status uploading';
+
             audioFileName.textContent = file.name;
             audioFileName.style.display = 'block';
-            removeAudio.style.display = 'inline';
+            removeAudio.style.display = 'none';
 
             try {
-                const url = await uploadToCloudinary(file, 'video'); // audio under video resource
+                const url = await uploadToCloudinary(file, 'video');
                 uploadedAudioUrl = url;
                 audioUploadBtn.classList.add('has-file');
+                audioStatus.textContent = '✅ Uploaded';
+                audioStatus.className = 'upload-status done';
+                removeAudio.style.display = 'inline';
                 showToast('✅ Audio uploaded successfully!');
                 updateMediaPreview();
             } catch (err) {
+                audioStatus.textContent = '❌ Failed';
+                audioStatus.className = 'upload-status';
                 showToast('❌ Audio upload failed: ' + err.message);
                 console.error(err);
+            } finally {
+                isAudioUploading = false;
+                audioUploadBtn.disabled = false;
             }
         });
 
@@ -1322,6 +1713,8 @@
             uploadedAudioUrl = null;
             audioFileName.textContent = '';
             audioFileName.style.display = 'none';
+            audioStatus.textContent = '';
+            audioStatus.className = 'upload-status';
             removeAudio.style.display = 'none';
             audioUploadBtn.classList.remove('has-file');
             audioInput.value = '';
@@ -1395,7 +1788,6 @@
 
             mediaPreviewContainer.innerHTML = html;
 
-            // Attach remove events
             mediaPreviewContainer.querySelectorAll('.remove-media').forEach(btn => {
                 btn.addEventListener('click', (e) => {
                     e.stopPropagation();
@@ -1404,6 +1796,8 @@
                         uploadedImageUrl = null;
                         imageFileName.textContent = '';
                         imageFileName.style.display = 'none';
+                        imageStatus.textContent = '';
+                        imageStatus.className = 'upload-status';
                         removeImage.style.display = 'none';
                         imageBtn.classList.remove('has-file');
                         imageInput.value = '';
@@ -1411,6 +1805,8 @@
                         uploadedVideoUrl = null;
                         videoFileName.textContent = '';
                         videoFileName.style.display = 'none';
+                        videoStatus.textContent = '';
+                        videoStatus.className = 'upload-status';
                         removeVideo.style.display = 'none';
                         videoBtn.classList.remove('has-file');
                         videoInput.value = '';
@@ -1418,6 +1814,8 @@
                         uploadedAudioUrl = null;
                         audioFileName.textContent = '';
                         audioFileName.style.display = 'none';
+                        audioStatus.textContent = '';
+                        audioStatus.className = 'upload-status';
                         removeAudio.style.display = 'none';
                         audioUploadBtn.classList.remove('has-file');
                         audioInput.value = '';
@@ -1433,15 +1831,12 @@
             });
         }
 
-              // ================================================================
+        // ================================================================
         //  AUDIO RECORDING
         // ================================================================
-        let audioStream = null;
-
         audioRecordBtn.addEventListener('click', () => {
             audioRecordWrapper.style.display = 'flex';
             audioRecordBtn.style.display = 'none';
-            // Request permission
             if (!audioStream) {
                 navigator.mediaDevices.getUserMedia({ audio: true })
                     .then(stream => {
@@ -1487,19 +1882,18 @@
                 recordedAudioUrl = url;
                 recordedAudioPreview.innerHTML = `<audio controls src="${url}"></audio>`;
                 removeRecordedAudio.style.display = 'inline';
-                recordStatus.textContent = 'Recording saved. Uploading…';
+                recordStatus.textContent = 'Uploading...';
 
-                // Upload to Cloudinary
                 const file = new File([audioBlob], 'recording.webm', { type: 'audio/webm' });
                 uploadToCloudinary(file, 'video')
                     .then(cloudUrl => {
                         recordedAudioUrl = cloudUrl;
-                        recordStatus.textContent = '✅ Recorded audio uploaded!';
+                        recordStatus.textContent = '✅ Uploaded';
                         showToast('✅ Audio uploaded to Cloudinary!');
                         updateMediaPreview();
                     })
                     .catch(err => {
-                        recordStatus.textContent = '❌ Upload failed: ' + err.message;
+                        recordStatus.textContent = '❌ Upload failed';
                         showToast('❌ Audio upload failed.');
                         console.error(err);
                     });
@@ -1522,7 +1916,6 @@
                 recordToggleBtn.innerHTML = '<i class="fas fa-circle"></i> Start Recording';
                 recordToggleBtn.classList.remove('recording');
                 clearInterval(recordingTimerInterval);
-                // Don't reset status yet — wait for upload
             }
         }
 
@@ -1548,16 +1941,14 @@
         // ================================================================
         //  RICH EDITOR TOOLBAR
         // ================================================================
-        // Execute command
         toolbarButtons.forEach(btn => {
             btn.addEventListener('mousedown', (e) => {
-                e.preventDefault(); // prevent blur
+                e.preventDefault();
                 const cmd = btn.dataset.cmd;
                 if (cmd === 'undo' || cmd === 'redo') {
                     document.execCommand(cmd);
                     return;
                 }
-                // For color commands, use the picker values
                 if (cmd === 'foreColor') {
                     document.execCommand('foreColor', false, fontColorPicker.value);
                     return;
@@ -1575,7 +1966,6 @@
             });
         });
 
-        // Color pickers
         fontColorPicker.addEventListener('input', () => {
             document.execCommand('foreColor', false, fontColorPicker.value);
             richEditor.focus();
@@ -1591,13 +1981,11 @@
             richEditor.focus();
         });
 
-        // Update toolbar state on selection change
         document.addEventListener('selectionchange', () => {
             const selection = window.getSelection();
             if (!selection || selection.isCollapsed || !richEditor.contains(selection.anchorNode)) {
                 return;
             }
-            // Update button active states
             toolbarButtons.forEach(btn => {
                 const cmd = btn.dataset.cmd;
                 if (['undo', 'redo', 'foreColor', 'hiliteColor', 'fontName'].includes(cmd)) return;
@@ -1608,7 +1996,6 @@
             });
         });
 
-        // Keyboard shortcuts
         document.addEventListener('keydown', (e) => {
             if (e.ctrlKey || e.metaKey) {
                 if (e.key === 'b') { e.preventDefault();
@@ -1634,41 +2021,44 @@
             // Validate
             if (!title) {
                 showToast('⚠️ Please enter a title.', 2000);
-                titleInput.focus();
+                goToStep(1);
                 return;
             }
             const wordCountVal = title.split(/\s+/).filter(w => w.length > 0).length;
             if (wordCountVal > 25) {
                 showToast('⚠️ Title exceeds 25 words.', 2000);
+                goToStep(1);
                 return;
             }
 
             if (!content || content === '<br>' || content === '<div><br></div>') {
                 showToast('⚠️ Please write some content.', 2000);
-                richEditor.focus();
+                goToStep(3);
                 return;
             }
 
-            // Check auth
             if (!currentUser) {
                 showToast('⚠️ Please sign in first.', 2000);
                 return;
             }
 
-            // Collect media URLs
+            // Check if media is still uploading
+            if (isImageUploading || isVideoUploading || isAudioUploading) {
+                showToast('⏳ Please wait for media to finish uploading.', 2000);
+                return;
+            }
+
             const mediaUrls = {
                 image: uploadedImageUrl || null,
                 video: uploadedVideoUrl || null,
                 audio: uploadedAudioUrl || recordedAudioUrl || null
             };
 
-            // Generate preview (strip HTML, first 150 chars)
             const tempDiv = document.createElement('div');
             tempDiv.innerHTML = content;
             const textContent = tempDiv.textContent || '';
             const preview = textContent.slice(0, 150) + (textContent.length > 150 ? '…' : '');
 
-            // Build post object
             const postData = {
                 title: title,
                 content: content,
@@ -1684,7 +2074,6 @@
                 updatedAt: firebase.firestore.FieldValue.serverTimestamp()
             };
 
-            // Disable button
             submitBtn.disabled = true;
             submitBtn.innerHTML = '<span class="spinner"></span> Publishing…';
             submitStatus.textContent = '';
@@ -1708,6 +2097,12 @@
                 imageFileName.textContent = '';
                 videoFileName.textContent = '';
                 audioFileName.textContent = '';
+                imageStatus.textContent = '';
+                imageStatus.className = 'upload-status';
+                videoStatus.textContent = '';
+                videoStatus.className = 'upload-status';
+                audioStatus.textContent = '';
+                audioStatus.className = 'upload-status';
                 removeImage.style.display = 'none';
                 removeVideo.style.display = 'none';
                 removeAudio.style.display = 'none';
@@ -1729,8 +2124,8 @@
                 mediaPreviewContainer.innerHTML = '';
                 recordingTimer.textContent = '00:00';
                 clearInterval(recordingTimerInterval);
+                goToStep(1);
 
-                // Redirect to home after 2s
                 setTimeout(() => {
                     window.location.href = 'index.html';
                 }, 2000);
@@ -1766,7 +2161,6 @@
                         showToast('📅 Activities page coming soon!');
                         break;
                     case 'post':
-                        // Already here
                         break;
                     case 'account':
                         if (currentUser) {
@@ -1783,7 +2177,8 @@
                 }
             });
         });
-              // ================================================================
+
+        // ================================================================
         //  BACK BUTTON
         // ================================================================
         document.getElementById('backBtn').addEventListener('click', () => {
@@ -1791,7 +2186,7 @@
         });
 
         // ================================================================
-        //  INIT – check if user is signed in
+        //  INIT
         // ================================================================
         setTimeout(() => {
             if (!currentUser) {
@@ -1799,11 +2194,12 @@
             }
         }, 800);
 
-        console.log('📝 BMD Create Post page loaded.');
+        // Set initial step
+        goToStep(1);
+
+        console.log('📝 BMD Create Post page loaded with step-by-step wizard.');
         console.log('🎨 Designed with BMD colors by Dr Byamukama Mentor.');
-        console.log('📁 Posts are saved to Firestore "posts" collection.');
     </script>
 
 </body>
 </html>
-    
