@@ -1,3 +1,8 @@
+/* ================================================================
+   INDEX-STYLE.CSS - BMD APP
+   Complete Styles for Buhweju Must Develop
+   ================================================================ */
+
 /* ===== RESET & ROOT VARS ===== */
 * {
     margin: 0;
@@ -10,6 +15,7 @@
     --header-text: #111827;
     --accent-gold: #d4a743;
     --accent-gold-hover: #f0d080;
+    --accent-gold-dark: #b8922e;
     --page-bg: #f8f9fa;
     --card-bg: #ffffff;
     --text-primary: #1f2937;
@@ -37,7 +43,9 @@ body {
 
 a { text-decoration: none; color: inherit; }
 
-/* ===== NOTIFICATION BANNER ===== */
+/* ================================================================
+   NOTIFICATION BANNER
+   ================================================================ */
 .notification-banner {
     position: fixed;
     bottom: 80px;
@@ -99,7 +107,9 @@ a { text-decoration: none; color: inherit; }
     to { opacity:1; transform: translateX(-50%) translateY(0); }
 }
 
-/* ===== PRELOADER ===== */
+/* ================================================================
+   PRELOADER
+   ================================================================ */
 #pagePreloader {
     position: fixed;
     inset: 0;
@@ -142,7 +152,9 @@ a { text-decoration: none; color: inherit; }
     50% { transform: scale(1.06); }
 }
 
-/* ===== HEADER (white, centered) ===== */
+/* ================================================================
+   HEADER (white, centered)
+   ================================================================ */
 .app-header {
     position: fixed;
     top: 0; left: 0; right: 0;
@@ -237,7 +249,9 @@ a { text-decoration: none; color: inherit; }
     overflow: hidden;
 }
 
-/* ===== MOVING AD ===== */
+/* ================================================================
+   MOVING AD (MARQUEE)
+   ================================================================ */
 .marquee-ad {
     position: fixed;
     top: var(--header-height);
@@ -274,14 +288,18 @@ a { text-decoration: none; color: inherit; }
     100% { transform: translateX(-50%); }
 }
 
-/* ===== FEED ===== */
+/* ================================================================
+   FEED
+   ================================================================ */
 .feed {
     max-width: 620px;
     margin: 0 auto;
     padding: 12px 12px 24px;
 }
 
-/* ===== POST CARD ===== */
+/* ================================================================
+   POST CARD
+   ================================================================ */
 .post-card {
     background: var(--card-bg);
     border-radius: var(--radius-lg);
@@ -377,13 +395,18 @@ a { text-decoration: none; color: inherit; }
     overflow: hidden;
 }
 
+/* ================================================================
+   POST ACTIONS (FIXED - Read More button visible)
+   ================================================================ */
 .post-actions {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 10px 16px;
+    padding: 12px 16px;
     border-top: 1px solid #f3f4f6;
     background: #fafafa;
+    flex-wrap: wrap;
+    gap: 8px;
 }
 
 .actions-left {
@@ -415,23 +438,38 @@ a { text-decoration: none; color: inherit; }
 
 .btn-action.share-btn { color: #16a34a; }
 
+/* READ MORE BUTTON - VISIBLE AND STYLISH */
 .btn-read-more {
     background: var(--accent-gold);
     color: #111827;
     border: none;
-    padding: 6px 14px;
+    padding: 8px 18px;
     border-radius: 20px;
-    font-size: 0.75rem;
-    font-weight: 600;
+    font-size: 0.78rem;
+    font-weight: 700;
     cursor: pointer;
-    transition: all 0.2s ease;
+    transition: all 0.25s ease;
+    font-family: inherit;
+    box-shadow: 0 2px 10px rgba(212, 167, 67, 0.25);
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    letter-spacing: 0.2px;
 }
 
 .btn-read-more:hover {
-    background: var(--accent-gold-hover);
+    background: var(--accent-gold-dark);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 16px rgba(212, 167, 67, 0.35);
 }
 
-/* ===== SHARE MODAL ===== */
+.btn-read-more:active {
+    transform: scale(0.95);
+}
+
+/* ================================================================
+   SHARE MODAL
+   ================================================================ */
 .share-modal-overlay {
     position: fixed;
     inset: 0;
@@ -506,7 +544,9 @@ a { text-decoration: none; color: inherit; }
 .bg-tt { background: #000000; }
 .bg-copy { background: #6B7280; }
 
-/* ===== FULL POST MODAL ===== */
+/* ================================================================
+   FULL POST MODAL
+   ================================================================ */
 .full-post-overlay {
     position: fixed;
     inset: 0;
@@ -587,7 +627,9 @@ a { text-decoration: none; color: inherit; }
     margin-bottom: 14px;
 }
 
-/* ===== SEARCH OVERLAY ===== */
+/* ================================================================
+   SEARCH OVERLAY
+   ================================================================ */
 .search-overlay {
     position: fixed;
     inset: 0;
@@ -619,6 +661,11 @@ a { text-decoration: none; color: inherit; }
     outline: none;
 }
 
+.search-box input:focus {
+    border-color: var(--accent-gold);
+    box-shadow: 0 0 0 3px rgba(212, 167, 67, 0.15);
+}
+
 .search-results {
     margin-top: 12px;
     max-height: 50vh;
@@ -631,7 +678,13 @@ a { text-decoration: none; color: inherit; }
     cursor: pointer;
 }
 
-/* ===== BOTTOM NAV ===== */
+.search-item:hover {
+    background: #f8f5ee;
+}
+
+/* ================================================================
+   BOTTOM NAV
+   ================================================================ */
 .bottom-nav {
     position: fixed;
     bottom: 0; left: 0; right: 0;
@@ -658,6 +711,7 @@ a { text-decoration: none; color: inherit; }
     background: none;
     border: none;
     font-family: inherit;
+    transition: color 0.2s;
 }
 
 .nav-item i { font-size: 1.25rem; }
@@ -677,7 +731,9 @@ a { text-decoration: none; color: inherit; }
     box-shadow: 0 4px 12px rgba(0,0,0,0.25);
 }
 
-/* ===== TOAST ===== */
+/* ================================================================
+   TOAST
+   ================================================================ */
 .toast {
     position: fixed;
     bottom: 80px;
@@ -698,7 +754,9 @@ a { text-decoration: none; color: inherit; }
     transform: translateX(-50%) translateY(0);
 }
 
-/* ===== SKELETON ===== */
+/* ================================================================
+   SKELETON LOADING
+   ================================================================ */
 .skeleton {
     background: #e8e0d4;
     border-radius: var(--radius-lg);
@@ -725,6 +783,9 @@ a { text-decoration: none; color: inherit; }
     50% { opacity: 1; }
 }
 
+/* ================================================================
+   EMPTY STATE
+   ================================================================ */
 .empty-state {
     text-align: center;
     padding: 60px 20px;
@@ -744,7 +805,9 @@ a { text-decoration: none; color: inherit; }
     color: #999;
 }
 
-/* ===== RESPONSIVE ===== */
+/* ================================================================
+   RESPONSIVE
+   ================================================================ */
 @media (max-width: 480px) {
     .app-header .brand-text .main { font-size: 0.85rem; }
     .header-logo { width: 36px; height: 36px; }
@@ -761,6 +824,13 @@ a { text-decoration: none; color: inherit; }
         width: 95%;
     }
     .preloader-logo { width: 100px; height: 100px; }
+    .btn-read-more {
+        padding: 6px 14px;
+        font-size: 0.7rem;
+    }
+    .post-actions {
+        padding: 10px 12px;
+    }
 }
 
 @media (min-width: 768px) {
@@ -768,6 +838,10 @@ a { text-decoration: none; color: inherit; }
     .post-card .card-media img { max-height: 400px; }
 }
 
+/* ================================================================
+   SCROLLBAR
+   ================================================================ */
 ::-webkit-scrollbar { width: 4px; }
 ::-webkit-scrollbar-track { background: #f0ebe4; }
 ::-webkit-scrollbar-thumb { background: #888; border-radius: 10px; }
+::-webkit-scrollbar-thumb:hover { background: #666; }
