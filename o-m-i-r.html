@@ -79,9 +79,13 @@
 
         .member-card .member-body {
             padding: 16px;
+        }
+
+        .member-card .member-top {
             display: flex;
             align-items: center;
             gap: 16px;
+            margin-bottom: 12px;
         }
 
         .member-card .member-avatar {
@@ -118,33 +122,46 @@
             margin-bottom: 2px;
         }
 
-        .member-card .member-details {
-            font-size: 0.8rem;
-            color: #666;
-            line-height: 1.4;
+        .member-card .member-details-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4px 16px;
+            font-size: 0.78rem;
+            color: #555;
+            margin-top: 4px;
         }
 
-        .member-card .member-details .detail-item {
+        .member-card .member-details-grid .detail-item {
             display: flex;
             align-items: center;
-            gap: 4px;
+            gap: 6px;
         }
 
-        .member-card .member-details .detail-item i {
-            width: 16px;
+        .member-card .member-details-grid .detail-item i {
+            width: 14px;
             color: var(--accent-gold, #d4a743);
             font-size: 0.7rem;
+        }
+
+        .member-card .member-details-grid .detail-item .label {
+            color: #999;
+            font-weight: 500;
         }
 
         .member-card .member-badge {
             display: inline-block;
             font-size: 0.6rem;
             font-weight: 600;
-            padding: 2px 10px;
+            padding: 3px 12px;
             border-radius: 12px;
             background: #e8f5e9;
             color: #2e7d32;
-            margin-top: 4px;
+            margin-top: 6px;
+        }
+
+        .member-card .member-badge.other {
+            background: #e3f2fd;
+            color: #1565c0;
         }
 
         .member-card .member-actions {
@@ -328,8 +345,7 @@
             .page-header .title {
                 font-size: 1rem;
             }
-            .member-card .member-body {
-                padding: 12px;
+            .member-card .member-top {
                 flex-direction: column;
                 text-align: center;
             }
@@ -337,10 +353,11 @@
                 width: 70px;
                 height: 70px;
             }
-            .member-card .member-details {
+            .member-card .member-details-grid {
+                grid-template-columns: 1fr;
                 text-align: center;
             }
-            .member-card .member-details .detail-item {
+            .member-card .member-details-grid .detail-item {
                 justify-content: center;
             }
             .member-card .member-actions {
@@ -638,8 +655,22 @@
                 const parish = member.parish || 'N/A';
                 const subcounty = member.subcounty || 'N/A';
                 const district = member.district || 'N/A';
+                const dob = member.dob || '';
+                const education = member.education || '';
+                const role = member.role || '';
                 const photoURL = member.photoURL || null;
                 const dateStr = member.createdAt ? member.createdAt.toLocaleDateString() : '';
+
+                // Format education label
+                const educationLabels = {
+                    'none': 'No formal education',
+                    'primary': 'Primary',
+                    'secondary': 'Secondary',
+                    'tertiary': 'Tertiary / College',
+                    'university': 'University',
+                    'postgraduate': 'Postgraduate'
+                };
+                const educationLabel = educationLabels[education] || education || 'N/A';
 
                 let avatarHtml = '';
                 if (photoURL) {
@@ -655,15 +686,20 @@
                 html += `
                     <div class="member-card" data-id="${member.id}">
                         <div class="member-body">
-                            ${avatarHtml}
-                            <div class="member-info">
-                                <div class="member-name">${escapeHtml(displayName)}</div>
-                                <div class="member-details">
-                                    <div class="detail-item"><i class="fas fa-phone"></i> ${escapeHtml(phone)}</div>
-                                    <div class="detail-item"><i class="fas fa-map-marker-alt"></i> ${escapeHtml(village)}, ${escapeHtml(parish)}, ${escapeHtml(subcounty)}, ${escapeHtml(district)}</div>
-                                    ${dateStr ? `<div class="detail-item"><i class="far fa-calendar-alt"></i> Registered: ${dateStr}</div>` : ''}
+                            <div class="member-top">
+                                ${avatarHtml}
+                                <div class="member-info">
+                                    <div class="member-name">${escapeHtml(displayName)}</div>
+                                    <div class="member-details-grid">
+                                        <div class="detail-item"><i class="fas fa-phone"></i> ${escapeHtml(phone)}</div>
+                                        <div class="detail-item"><i class="fas fa-map-marker-alt"></i> ${escapeHtml(village)}, ${escapeHtml(parish)}</div>
+                                        ${dob ? `<div class="detail-item"><i class="fas fa-calendar-alt"></i> <span class="label">DOB:</span> ${escapeHtml(dob)}</div>` : ''}
+                                        ${education ? `<div class="detail-item"><i class="fas fa-graduation-cap"></i> <span class="label">Education:</span> ${escapeHtml(educationLabel)}</div>` : ''}
+                                        ${role ? `<div class="detail-item"><i class="fas fa-user-tag"></i> <span class="label">Role:</span> ${escapeHtml(role)}</div>` : ''}
+                                        <div class="detail-item"><i class="fas fa-calendar-check"></i> <span class="label">Registered:</span> ${dateStr}</div>
+                                    </div>
+                                    <span class="member-badge other"><i class="fas fa-check-circle"></i> Registered by you</span>
                                 </div>
-                                <span class="member-badge"><i class="fas fa-check-circle"></i> Registered by you</span>
                             </div>
                         </div>
                         <div class="member-actions">
@@ -688,18 +724,33 @@
         //  VIEW MEMBER
         // ================================================================
         function viewMember(memberId) {
-            // You can create a member profile page or show a modal
             const member = allMembers.find(m => m.id === memberId);
             if (member) {
+                const educationLabels = {
+                    'none': 'No formal education',
+                    'primary': 'Primary',
+                    'secondary': 'Secondary',
+                    'tertiary': 'Tertiary / College',
+                    'university': 'University',
+                    'postgraduate': 'Postgraduate'
+                };
+                const educationLabel = educationLabels[member.education] || member.education || 'N/A';
+
                 const msg = encodeURIComponent(
-                    `Member Details:\n` +
-                    `Name: ${member.displayName}\n` +
-                    `Phone: ${member.phone}\n` +
-                    `Village: ${member.village}\n` +
-                    `Parish: ${member.parish}\n` +
-                    `Subcounty: ${member.subcounty}\n` +
-                    `District: ${member.district}\n` +
-                    `Registered: ${member.createdAt ? member.createdAt.toLocaleDateString() : 'N/A'}`
+                    `📋 MEMBER DETAILS\n` +
+                    `━━━━━━━━━━━━━━━━━━━━━\n` +
+                    `👤 Name: ${member.displayName}\n` +
+                    `📱 Phone: ${member.phone}\n` +
+                    `📍 Village: ${member.village || 'N/A'}\n` +
+                    `📍 Parish: ${member.parish || 'N/A'}\n` +
+                    `📍 Subcounty: ${member.subcounty || 'N/A'}\n` +
+                    `📍 District: ${member.district || 'N/A'}\n` +
+                    `🎂 DOB: ${member.dob || 'N/A'}\n` +
+                    `🎓 Education: ${educationLabel}\n` +
+                    `👔 Role: ${member.role || 'N/A'}\n` +
+                    `📅 Registered: ${member.createdAt ? member.createdAt.toLocaleDateString() : 'N/A'}\n` +
+                    `━━━━━━━━━━━━━━━━━━━━━\n` +
+                    `Registered by: ${member.registeredByName || 'You'}`
                 );
                 window.open(`https://wa.me/256761828694?text=${msg}`, '_blank');
             }
@@ -709,7 +760,6 @@
         //  EDIT MEMBER
         // ================================================================
         function editMember(memberId) {
-            // Redirect to register page with edit mode
             window.location.href = 'register.html?edit=' + memberId;
         }
 
@@ -733,7 +783,6 @@
             btn.innerHTML = '<span class="spinner"></span> Removing…';
 
             try {
-                // Update the user document to remove the registeredBy field
                 await db.collection('users').doc(deleteMemberId).update({
                     registeredBy: null,
                     registeredByName: null
@@ -745,7 +794,6 @@
                 deleteMemberId = null;
                 btn.disabled = false;
                 btn.innerHTML = 'Remove';
-                // Reload members (snapshot will update automatically)
             } catch (err) {
                 console.error('Remove error:', err);
                 showToast('❌ Failed to remove member: ' + err.message);
