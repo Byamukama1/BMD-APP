@@ -1,5 +1,5 @@
 // ================================================================
-//  BMD APP - MAIN APPLICATION LOGIC
+//  BMD APP - MAIN APPLICATION LOGIC (FIXED FOR FCM v10+)
 // ================================================================
 
 const db = firebase.firestore();
@@ -45,7 +45,7 @@ function showToast(msg, duration = 2500) {
 }
 
 // ================================================================
-//  NOTIFICATION PERMISSION (with correct service worker path)
+//  NOTIFICATION PERMISSION (FIXED FOR FCM v10+)
 // ================================================================
 let notificationRequested = false;
 
@@ -60,18 +60,22 @@ async function requestNotificationPermission() {
     }
 
     try {
-        // CORRECT PATH for GitHub Pages subfolder
+        // Step 1: Register service worker
         const swPath = '/BMD-APP/firebase-messaging-sw.js';
         const registration = await navigator.serviceWorker.register(swPath);
         console.log('Service Worker registered:', registration);
 
-        const permission = await messaging.requestPermission();
+        // Step 2: Request permission using Notification API (browser native)
+        const permission = await Notification.requestPermission();
+        console.log('Notification permission:', permission);
+
         if (permission !== 'granted') {
             showToast('Permission denied. You can enable it later.');
             notifBanner.classList.remove('show');
             return;
         }
 
+        // Step 3: Get FCM token using the registration
         const token = await messaging.getToken({
             serviceWorkerRegistration: registration,
             vapidKey: "BE3D5sIL5umpsfzIPKcIxn8yNToSCR5v8r_pRwZivm6W-fvlv2zjxcGzrDKoTwcSPqUBfJ14xQLrsEfns58pd8D"
@@ -85,6 +89,7 @@ async function requestNotificationPermission() {
 
         console.log('FCM Token:', token);
 
+        // Step 4: Save token to Firestore
         await db.collection('notificationTokens')
             .doc(token)
             .set({
@@ -480,4 +485,4 @@ setTimeout(() => {
     }
 }, 600);
 
-console.log('🚀 BMD App loaded with white header, larger preloader, and split files.');
+console.log('🚀 BMD App loaded with FCM v10+ notification fix.');
