@@ -778,17 +778,24 @@
                 </div>
             `;
 
+            // ===== BUTTON EVENT LISTENERS =====
             document.getElementById('avatarUploadBtn').addEventListener('click', triggerAvatarUpload);
             document.getElementById('editProfileBtn').addEventListener('click', openEditProfileModal);
+            
+            // ✅ MY POSTS - links to my-posts.html
             document.getElementById('myPostsBtn').addEventListener('click', () => {
                 window.location.href = 'my-posts.html';
             });
+            
+            // ✅ OTHER MEMBERS I REGISTERED - links to o-m-i-r.html
             document.getElementById('otherMembersBtn').addEventListener('click', () => {
                 window.location.href = 'o-m-i-r.html';
             });
+            
             document.getElementById('aboutBmdBtn').addEventListener('click', () => {
                 window.location.href = 'about-bmd.html';
             });
+            
             document.getElementById('contactBtn').addEventListener('click', () => {
                 const message = encodeURIComponent('Hello BMD Support, I need assistance with my account.');
                 window.open(`https://wa.me/256761828694?text=${message}`, '_blank');
@@ -1041,7 +1048,8 @@
         // ================================================================
         //  INIT
         // ================================================================
-        console.log('👤 BMD Account page loaded with updated features.');
+        console.log('👤 BMD Account page loaded.');
+        console.log('📌 Buttons linked to: my-posts.html, o-m-i-r.html, about-bmd.html');
     </script>
 
 </body>
