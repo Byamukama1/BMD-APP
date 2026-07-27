@@ -266,8 +266,8 @@ function renderPosts(posts) {
         postsWrapper.innerHTML = `
             <div class="empty-state">
                 <i class="fas fa-newspaper"></i>
-                <h3>No posts yet</h3>
-                <p>Be the first to share your voice!</p>
+                <h3>Bad network connection</h3>
+                <p>Check your network,WiFi,data or hotspot</p>
             </div>`;
         return;
     }
