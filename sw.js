@@ -1,5 +1,5 @@
 // sw.js - BMD App Service Worker
-const CACHE_NAME = 'bmd-cache-v2';
+const CACHE_NAME = 'bmd-cache-v4';
 const urlsToCache = [
   '/BMD-APP/',
   '/BMD-APP/index.html',
@@ -13,6 +13,9 @@ const urlsToCache = [
   '/BMD-APP/o-m-i-r.html',
   '/BMD-APP/about-bmd.html',
   '/BMD-APP/firebase-messaging-sw.js',
+  '/BMD-APP/launchericon-192x192.png',
+  '/BMD-APP/Screenshot 2026-07-27 223306.png',
+  '/BMD-APP/Screenshot 2026-07-27 223558.png',
   'https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js',
   'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js',
   'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js',
@@ -20,7 +23,7 @@ const urlsToCache = [
   'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css'
 ];
 
-// Install event - cache assets
+// Install event
 self.addEventListener('install', event => {
   console.log('[sw.js] Installing Service Worker...');
   event.waitUntil(
@@ -36,7 +39,7 @@ self.addEventListener('install', event => {
   );
 });
 
-// Activate event - clean old caches
+// Activate event
 self.addEventListener('activate', event => {
   console.log('[sw.js] Activating Service Worker...');
   event.waitUntil(
@@ -57,10 +60,14 @@ self.addEventListener('activate', event => {
   );
 });
 
-// Fetch event - serve from cache if available
+// Fetch event
 self.addEventListener('fetch', event => {
-  // Skip cross-origin requests (like Cloudinary images)
   if (event.request.url.startsWith('https://res.cloudinary.com/')) {
+    event.respondWith(fetch(event.request));
+    return;
+  }
+
+  if (event.request.method !== 'GET') {
     event.respondWith(fetch(event.request));
     return;
   }
@@ -69,17 +76,13 @@ self.addEventListener('fetch', event => {
     caches.match(event.request)
       .then(response => {
         if (response) {
-          // Return cached response
           return response;
         }
-        // If not in cache, fetch from network
         return fetch(event.request)
           .then(response => {
-            // Don't cache non-success responses
             if (!response || response.status !== 200) {
               return response;
             }
-            // Clone and cache the response
             const responseToCache = response.clone();
             caches.open(CACHE_NAME)
               .then(cache => {
@@ -88,8 +91,6 @@ self.addEventListener('fetch', event => {
             return response;
           })
           .catch(() => {
-            // If offline, return a fallback (if needed)
-            // For now, just return the error
             return new Response('Offline - Please check your connection', {
               status: 503,
               statusText: 'Service Unavailable'
@@ -99,7 +100,7 @@ self.addEventListener('fetch', event => {
   );
 });
 
-// Handle push notifications
+// Push notifications
 self.addEventListener('push', event => {
   console.log('[sw.js] Push notification received:', event);
   
@@ -110,7 +111,8 @@ self.addEventListener('push', event => {
   let notificationData = {
     title: 'BMD Update',
     body: 'New content available',
-    icon: 'https://res.cloudinary.com/dp81zzxlh/image/upload/v1784978097/vhaafrigchmqnqbhehft.jpg'
+    icon: '/BMD-APP/launchericon-192x192.png',
+    badge: '/BMD-APP/launchericon-192x192.png'
   };
 
   if (event.data) {
@@ -120,11 +122,12 @@ self.addEventListener('push', event => {
         notificationData = {
           title: data.notification.title || notificationData.title,
           body: data.notification.body || notificationData.body,
-          icon: data.notification.icon || notificationData.icon
+          icon: data.notification.icon || notificationData.icon,
+          badge: data.notification.badge || notificationData.badge
         };
       }
     } catch (e) {
-      // Use default
+      console.log('Push data parse error:', e);
     }
   }
 
@@ -132,6 +135,7 @@ self.addEventListener('push', event => {
     self.registration.showNotification(notificationData.title, {
       body: notificationData.body,
       icon: notificationData.icon,
+      badge: notificationData.badge,
       tag: 'bmd-notification',
       data: {
         url: 'https://byamukama1.github.io/BMD-APP/'
@@ -140,10 +144,9 @@ self.addEventListener('push', event => {
   );
 });
 
-// Handle notification clicks
+// Notification click
 self.addEventListener('notificationclick', event => {
   console.log('[sw.js] Notification clicked:', event);
-  
   event.notification.close();
 
   const urlToOpen = event.notification.data?.url || 'https://byamukama1.github.io/BMD-APP/';
@@ -154,13 +157,11 @@ self.addEventListener('notificationclick', event => {
       includeUncontrolled: true
     })
     .then(windowClients => {
-      // Check if there's already a window/tab open
       for (let client of windowClients) {
         if (client.url === urlToOpen && 'focus' in client) {
           return client.focus();
         }
       }
-      // If not, open a new one
       if (clients.openWindow) {
         return clients.openWindow(urlToOpen);
       }
