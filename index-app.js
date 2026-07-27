@@ -45,6 +45,43 @@ function showToast(msg, duration = 2500) {
 }
 
 // ================================================================
+//  LIKE REWARD NOTIFICATION
+// ================================================================
+let likeNotificationTimer = null;
+
+function showLikeRewardNotification(postId) {
+    // Find the post to check current likes
+    const post = allPosts.find(p => p.id === postId);
+    if (!post) return;
+
+    const likes = post.likes || 0;
+    const rewardAmount = 10000; // UGX
+    const targetLikes = 1000;
+
+    // Show notification with current progress
+    const message = `❤️ You liked this post! Keep going!\n\n` +
+        `📊 Current likes: ${likes}\n` +
+        `🎯 Target: ${targetLikes} likes\n` +
+        `💰 Reward: ${rewardAmount.toLocaleString()} UGX for reaching ${targetLikes} likes!\n\n` +
+        `📢 Keep posting and sharing your posts to increase visibility of our BMD app!`;
+
+    // Show the notification as a toast for 5 seconds
+    showToast(message, 5000);
+
+    // Also show a more prominent notification if likes are near target
+    if (likes >= targetLikes) {
+        setTimeout(() => {
+            showToast(`🎉 CONGRATULATIONS! Your post reached ${targetLikes} likes! You earned ${rewardAmount.toLocaleString()} UGX! 🎉`, 8000);
+        }, 3000);
+    } else if (likes >= targetLikes * 0.8) {
+        setTimeout(() => {
+            const remaining = targetLikes - likes;
+            showToast(`🔥 Your post is almost there! Only ${remaining} more likes to reach ${targetLikes}! Keep sharing!`, 5000);
+        }, 3000);
+    }
+}
+
+// ================================================================
 //  NOTIFICATION PERMISSION (FIXED FOR FCM v10+)
 // ================================================================
 let notificationRequested = false;
@@ -286,6 +323,27 @@ function renderPosts(posts) {
     });
 
     postsWrapper.innerHTML = html;
+
+    // ===== Click anywhere on post card to open full post =====
+    document.querySelectorAll('.post-card').forEach(card => {
+        card.addEventListener('click', function(e) {
+            // Ignore clicks on buttons, audio, video, or inside post-actions
+            if (e.target.closest('.post-actions') || 
+                e.target.closest('.media-player') ||
+                e.target.tagName === 'BUTTON' || 
+                e.target.tagName === 'AUDIO' || 
+                e.target.tagName === 'VIDEO' || 
+                e.target.tagName === 'SOURCE' ||
+                e.target.closest('.btn-action') ||
+                e.target.closest('.btn-read-more')) {
+                return;
+            }
+            const postId = this.dataset.id;
+            if (postId) {
+                openFullPost(postId);
+            }
+        });
+    });
 }
 
 // ================================================================
@@ -311,6 +369,9 @@ async function toggleLike(postId) {
         } else {
             likedPosts.add(postId);
             await db.collection('likes').add({ userId: currentUser.uid, postId: postId });
+            
+            // ===== SHOW LIKE REWARD NOTIFICATION =====
+            showLikeRewardNotification(postId);
         }
         post.likes = newCount;
         renderPosts(allPosts);
@@ -337,17 +398,66 @@ function openFullPost(postId) {
         contentDisplay = rawContent.split('\n').filter(p => p.trim() !== '').map(p => `<p>${escapeHtml(p)}</p>`).join('');
     }
 
+    // Calculate like progress for reward
+    const likes = post.likes || 0;
+    const targetLikes = 1000;
+    const progress = Math.min((likes / targetLikes) * 100, 100);
+    const rewardAmount = 10000;
+
     fullPostBody.innerHTML = `
         <div class="full-post-author"><i class="fas fa-user-circle"></i> ${escapeHtml(post.authorName || 'Anonymous')}</div>
         <h1 class="full-post-title">${escapeHtml(post.title || '')}</h1>
         <div class="full-post-date">${post.createdAt ? post.createdAt.toLocaleString() : ''}</div>
+        
+        <!-- Reward Progress Bar -->
+        <div style="background:#f0ebe4; border-radius:10px; padding:10px 14px; margin:8px 0 12px;">
+            <div style="display:flex; justify-content:space-between; font-size:0.7rem; color:#666; margin-bottom:4px;">
+                <span><i class="fas fa-heart" style="color:#e74c3c;"></i> ${likes} likes</span>
+                <span>🎯 ${targetLikes} target</span>
+                <span>💰 ${rewardAmount.toLocaleString()} UGX</span>
+            </div>
+            <div style="width:100%; height:6px; background:#e5e7eb; border-radius:4px; overflow:hidden;">
+                <div style="width:${progress}%; height:100%; background:linear-gradient(90deg, var(--accent-gold, #d4a743), #e74c3c); border-radius:4px; transition:width 0.5s;"></div>
+            </div>
+            <div style="font-size:0.6rem; color:#999; margin-top:4px; text-align:center;">
+                ${likes >= targetLikes ? '🎉 Target reached! You earned ' + rewardAmount.toLocaleString() + ' UGX!' : `${targetLikes - likes} more likes to earn ${rewardAmount.toLocaleString()} UGX`}
+            </div>
+        </div>
+        
         ${mediaHtml}
         <div class="full-post-body">${contentDisplay}</div>
+        
+        <div class="full-actions">
+            <button class="action-btn like-btn ${likedPosts.has(post.id) ? 'liked' : ''}" data-postid="${post.id}" style="display:flex;align-items:center;gap:4px;font-size:0.9rem;background:none;border:none;cursor:pointer;font-family:inherit;padding:4px 10px;border-radius:20px;">
+                <i class="${likedPosts.has(post.id) ? 'fas' : 'far'} fa-heart"></i> <span class="count">${likes}</span>
+            </button>
+            <button class="action-btn share-btn" data-postid="${post.id}" style="display:flex;align-items:center;gap:4px;font-size:0.9rem;background:none;border:none;cursor:pointer;font-family:inherit;padding:4px 10px;border-radius:20px;color:#25D366;">
+                <i class="fas fa-share-alt"></i> Share
+            </button>
+            <button style="margin-left:auto;background:none;border:none;color:#888;cursor:pointer;font-size:0.8rem;" id="fullPostCloseBtn2"><i class="fas fa-times"></i> Close</button>
+        </div>
     `;
+
     fullPostOverlay.classList.add('active');
+    document.body.style.overflow = 'hidden';
+
+    fullPostBody.querySelector('.like-btn')?.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const pid = e.currentTarget.dataset.postid;
+        toggleLike(pid);
+        setTimeout(() => openFullPost(pid), 300);
+    });
+    fullPostBody.querySelector('.share-btn')?.addEventListener('click', (e) => {
+        e.stopPropagation();
+        openShareModal(post.id);
+    });
+    fullPostBody.querySelector('#fullPostCloseBtn2')?.addEventListener('click', closeFullPost);
 }
 
-document.getElementById('fullPostClose').onclick = () => fullPostOverlay.classList.remove('active');
+function closeFullPost() {
+    fullPostOverlay.classList.remove('active');
+    document.body.style.overflow = '';
+}
 
 // ================================================================
 //  SHARE
@@ -451,7 +561,7 @@ document.querySelectorAll('.bottom-nav .nav-item').forEach(item => {
         switch (tab) {
             case 'home': window.scrollTo({ top: 0, behavior: 'smooth' }); break;
             case 'register': window.location.href = 'register.html'; break;
-            case 'activities': showToast('📅 Activities page coming soon!'); break;
+            case 'activities': window.location.href = 'activities.html'; break;
             case 'post': window.location.href = 'post.html'; break;
             case 'account': window.location.href = 'account.html'; break;
             default: break;
@@ -485,4 +595,4 @@ setTimeout(() => {
     }
 }, 600);
 
-console.log('🚀 BMD App loaded with FCM v10+ notification fix.');
+console.log('🚀 BMD App loaded with FCM v10+ notification fix and like rewards.');
