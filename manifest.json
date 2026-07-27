@@ -1,0 +1,23 @@
+{
+  "name": "Buhweju Must Develop",
+  "short_name": "BMD",
+  "description": "Buhweju Must Develop - People's Voice",
+  "start_url": "https://byamukama1.github.io/BMD-APP/",
+  "scope": "/BMD-APP/",
+  "display": "standalone",
+  "background_color": "#111827",
+  "theme_color": "#d4a743",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "https://res.cloudinary.com/dp81zzxlh/image/upload/v1784978097/vhaafrigchmqnqbhehft.jpg",
+      "sizes": "192x192",
+      "type": "image/jpeg"
+    },
+    {
+      "src": "https://res.cloudinary.com/dp81zzxlh/image/upload/v1784978097/vhaafrigchmqnqbhehft.jpg",
+      "sizes": "512x512",
+      "type": "image/jpeg"
+    }
+  ]
+}
