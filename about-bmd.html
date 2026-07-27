@@ -19,7 +19,6 @@
     <link rel="stylesheet" href="index-style.css" />
 
     <style>
-        /* ===== ABOUT BMD SPECIFIC STYLES ===== */
         .about-container {
             max-width: 720px;
             margin: 0 auto;
@@ -124,6 +123,18 @@
             font-size: 1rem;
         }
 
+        .about-section .section-content .definition-box {
+            background: linear-gradient(145deg, #f8f5ee, #f0ebe4);
+            border-radius: var(--radius-md, 12px);
+            padding: 20px 24px;
+            margin: 16px 0;
+            border-left: 4px solid var(--accent-gold, #d4a743);
+        }
+
+        .about-section .section-content .definition-box p {
+            margin-bottom: 8px;
+        }
+
         .about-section .section-content .declaration-box {
             background: #f8f5ee;
             border-radius: var(--radius-md, 12px);
@@ -220,7 +231,32 @@
             color: var(--accent-gold, #d4a743);
         }
 
-        /* ===== RESPONSIVE ===== */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            margin: 16px 0;
+        }
+
+        .stat-item {
+            background: #f8f5ee;
+            border-radius: var(--radius-md, 12px);
+            padding: 16px 12px;
+            text-align: center;
+        }
+
+        .stat-item .stat-number {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--accent-gold, #d4a743);
+        }
+
+        .stat-item .stat-label {
+            font-size: 0.7rem;
+            color: #888;
+            margin-top: 2px;
+        }
+
         @media (max-width: 480px) {
             .about-container {
                 padding: 6px 10px 12px;
@@ -254,6 +290,9 @@
                 font-size: 0.95rem;
                 padding: 6px 12px;
             }
+            .stats-grid {
+                grid-template-columns: 1fr 1fr;
+            }
         }
 
         @media (min-width: 768px) {
@@ -268,7 +307,7 @@
 </head>
 <body>
 
-    <!-- ===== HEADER (white, centered - same as index) ===== -->
+    <!-- ===== HEADER ===== -->
     <header class="app-header">
         <div class="header-center">
             <img src="https://res.cloudinary.com/dp81zzxlh/image/upload/v1784978097/vhaafrigchmqnqbhehft.jpg" alt="BMD Logo" class="header-logo" />
@@ -306,61 +345,90 @@
             <div class="about-hero">
                 <img src="https://res.cloudinary.com/dp81zzxlh/image/upload/v1784978097/vhaafrigchmqnqbhehft.jpg" alt="BMD Logo" class="logo-large" />
                 <h1>BUHWEJU MUST DEVELOP</h1>
-                <div class="tagline"><i class="fas fa-quote-left"></i> Eiraka ryabantu baburijo. <i class="fas fa-quote-right"></i></div>
-                <div class="slogan">Twegyereire. We have had enough.</div>
+                <div class="tagline"><i class="fas fa-quote-left"></i> A Collective Voice of the People <i class="fas fa-quote-right"></i></div>
+                <div class="slogan">"Fixing our district by ourselves"</div>
             </div>
 
-            <!-- ===== SECTION 1: WHAT IS BMD ===== -->
+            <!-- ===== OFFICIAL DEFINITION ===== -->
             <div class="about-section">
                 <div class="section-title">
-                    <i class="fas fa-question-circle"></i> What is BMD?
+                    <i class="fas fa-book-open"></i> Official Definition of BMD
                 </div>
                 <div class="section-content">
-                    <p><strong>Buhweju Must Develop – BMD</strong> is not a political party. It is not a campaign vehicle. It is not a temporary movement that will disappear after an election.</p>
-                    <p>BMD is a <strong>declaration</strong>. A declaration by the ordinary people of Buhweju that we have had enough. Enough of being ignored. Enough of being taken for granted. Enough of being given hoes and basins and salt while our children go hungry and our mothers die in childbirth.</p>
-                    <p>BMD is <strong>our voice</strong>. The voice of the commoner. The voice of the farmer. The voice of the youth with no job. The voice of the mother with no clinic. The voice of the child with no school.</p>
-                    <p><strong>BMD is our answer.</strong></p>
+                    <div class="definition-box">
+                        <p style="font-size:1.05rem; font-weight:600; color:var(--text-primary);">
+                            <strong>Buhweju Must Develop (BMD)</strong>
+                        </p>
+                        <p><strong>BMD is a community-centered movement that represents the collective voice, aspirations, and determination of the people of Buhweju District to achieve unity, accountability, and sustainable development.</strong></p>
+                        <p>The term <strong>"Buhweju Must Develop"</strong> is not just a name, but a <strong>declaration of purpose and commitment</strong>. It reflects the strong belief that Buhweju District has the potential to grow, transform, and improve in all aspects of life, including education, health, infrastructure, agriculture, governance, and economic development.</p>
+                        <p>The word <strong>"Must"</strong> emphasizes urgency, responsibility, and determination, showing that development is not optional but necessary for the wellbeing of the people.</p>
+                        <p>BMD stands for a platform where citizens come together to express their concerns, share ideas, and actively participate in shaping the future of their communities. It is a movement rooted in civic awareness, unity, and the belief that every citizen has a role to play in development regardless of age, gender, occupation, or social status.</p>
+                        <p style="margin-top:12px; padding-top:12px; border-top:1px solid #e0d8cc;">
+                            <strong>BMD is the People's Voice</strong> — giving ordinary citizens an opportunity to be heard in matters affecting their lives. It promotes dialogue between communities and leaders, encourages accountability in leadership, and supports peaceful and constructive engagement in development processes.
+                        </p>
+                    </div>
                 </div>
             </div>
 
-            <!-- ===== SECTION 2: WHY BMD EXISTS ===== -->
+            <!-- ===== WHAT BMD STANDS FOR ===== -->
             <div class="about-section">
                 <div class="section-title">
-                    <i class="fas fa-fist-raised"></i> Why BMD Exists
+                    <i class="fas fa-flag"></i> What BMD Stands For
                 </div>
                 <div class="section-content">
-                    <p>For years, we trusted others. We sent them to Parliament. We gave them our votes. We gave them our hope. We believed they would fight for us. We believed they would remember us. We believed they would bring development.</p>
-                    <p><strong>But they forgot us.</strong></p>
-                    <p>They went to Kampala. They sat in Parliament. They drove in cars. They built houses. They became rich. <strong>And they forgot where they came from.</strong></p>
-                    <p>They came back to us only when elections were near. They came with hoes. They came with basins. They came with salt. They came with promises they never kept.</p>
+                    <div class="stats-grid">
+                        <div class="stat-item">
+                            <div class="stat-number">Unity</div>
+                            <div class="stat-label">Bringing communities together</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-number">Accountability</div>
+                            <div class="stat-label">Leaders answerable to the people</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-number">Development</div>
+                            <div class="stat-label">Sustainable progress for all</div>
+                        </div>
+                    </div>
+                    <p>BMD is built on principles of <strong>inclusiveness, transparency, and collective responsibility</strong>. It seeks to empower citizens especially youth, women, farmers, and students to understand their rights, participate in decision-making, and contribute meaningfully to the development of Buhweju District.</p>
                     <div class="declaration-box">
-                        <p><strong>They told us they were working. But we did not see the work.</strong></p>
-                        <p><strong>They told us they were fighting for us. But we did not see the fight.</strong></p>
-                        <p><strong>They told us they had done so much. But we did not see the change.</strong></p>
-                        <p><strong>And we finally lost hope in them.</strong></p>
+                        <p><strong>BMD is both a vision and a call to action.</strong> It is a reminder that the future of Buhweju depends on the unity, participation, and commitment of its people working together to build a better and more prosperous district.</p>
                     </div>
                 </div>
             </div>
 
-            <!-- ===== SECTION 3: OUR DECLARATION ===== -->
+            <!-- ===== THE PEOPLE'S VOICE ===== -->
             <div class="about-section">
                 <div class="section-title">
-                    <i class="fas fa-bullhorn"></i> Our Declaration
+                    <i class="fas fa-users"></i> The People's Voice
                 </div>
                 <div class="section-content">
-                    <div class="declaration-box" style="border-left-color: #1a3c2a;">
-                        <p><strong>We, the ordinary people of Buhweju, have decided. We will no longer send others to speak for us. We will go ourselves.</strong></p>
-                        <p>We will not wait for someone else to solve our problems. <strong>We will solve them ourselves.</strong></p>
-                        <p>We will not wait for someone else to build our roads. <strong>We will build them ourselves.</strong></p>
-                        <p>We will not wait for someone else to educate our children. <strong>We will educate them ourselves.</strong></p>
+                    <p>The voice of the people is one of the strongest forces in any democratic and development-oriented society. It represents the thoughts, needs, concerns, and aspirations of ordinary citizens who are directly affected by decisions made at different levels of leadership and governance.</p>
+                    <p>In Buhweju District, the people's voice is essential in shaping development priorities, ensuring accountability, and promoting responsive leadership. When citizens speak out, organize themselves, and participate in public affairs, they help to ensure that development reflects the real needs of communities rather than assumptions made from above.</p>
+                    <div class="declaration-box">
+                        <p><strong>A silent community is often overlooked, but an engaged community becomes a powerful driver of transformation.</strong></p>
                     </div>
-                    <p>We are not asking for handouts. We are asking for a chance. A chance to lead. A chance to serve. A chance to change our own lives.</p>
-                    <p>We are not looking for a savior. We are looking for each other. We are looking for ordinary people who are willing to stand up, speak out, and fight for a better Buhweju.</p>
-                    <p><strong>We are looking for ourselves.</strong></p>
+                    <p>BMD exists to amplify this voice, organize it into meaningful civic action, and ensure that it contributes to development, accountability, and unity in Buhweju District.</p>
                 </div>
             </div>
 
-            <!-- ===== SECTION 4: WHAT WE BELIEVE ===== -->
+            <!-- ===== CONSTITUTIONAL FOUNDATION ===== -->
+            <div class="about-section">
+                <div class="section-title">
+                    <i class="fas fa-gavel"></i> Constitutional Foundation
+                </div>
+                <div class="section-content">
+                    <p>BMD operates within the legal framework of the <strong>Constitution of the Republic of Uganda (1995, as amended)</strong>, which establishes that:</p>
+                    <div class="declaration-box" style="border-left-color: #1a3c2a;">
+                        <p><strong>Article 1(1):</strong> <em>"All power belongs to the people who shall exercise their sovereignty in accordance with this Constitution."</em></p>
+                        <p><strong>Article 38(1):</strong> <em>"Every Ugandan citizen has a right to participate in the affairs of government, individually or through his or her representative or civic organizations."</em></p>
+                        <p><strong>Article 41:</strong> Citizens have the right of access to information held by the state.</p>
+                    </div>
+                    <p>These constitutional provisions confirm that citizens are not passive observers of governance but active stakeholders with legitimate authority to question, participate, and demand accountability.</p>
+                </div>
+            </div>
+
+            <!-- ===== WHAT WE BELIEVE ===== -->
             <div class="about-section">
                 <div class="section-title">
                     <i class="fas fa-hand-holding-heart"></i> What We Believe
@@ -369,11 +437,11 @@
                     <div class="belief-grid">
                         <div class="belief-item">
                             <i class="fas fa-users"></i>
-                            <div class="belief-text"><strong>Ordinary people know their problems better than any outsider.</strong> We have lived here. We have walked these roads. We have missed these meals. We have felt this pain. We need someone to listen, to act, and to stand with us.</div>
+                            <div class="belief-text"><strong>Ordinary people know their problems better than any outsider.</strong> We need someone to listen, to act, and to stand with us.</div>
                         </div>
                         <div class="belief-item">
                             <i class="fas fa-scale-balanced"></i>
-                            <div class="belief-text"><strong>Leadership is not about money. It is about the weight of the pain you are fighting for.</strong> We have seen leaders who came with money. They built things. They gave things. But they did not build a future. They did not give hope. They did not change our lives.</div>
+                            <div class="belief-text"><strong>Leadership is not about money. It is about the weight of the pain you are fighting for.</strong></div>
                         </div>
                         <div class="belief-item">
                             <i class="fas fa-eye"></i>
@@ -381,13 +449,13 @@
                         </div>
                         <div class="belief-item">
                             <i class="fas fa-flag"></i>
-                            <div class="belief-text"><strong>The future of Buhweju belongs to us.</strong> Not to outsiders. Not to hired workers. Not to those who come only when elections are near. The future belongs to those who live here, who suffer here, who dream here. <strong>We are those people. And we are ready.</strong></div>
+                            <div class="belief-text"><strong>The future of Buhweju belongs to us.</strong> The future belongs to those who live here, who suffer here, who dream here. <strong>We are those people. And we are ready.</strong></div>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- ===== SECTION 5: OUR MISSION ===== -->
+            <!-- ===== OUR MISSION ===== -->
             <div class="about-section">
                 <div class="section-title">
                     <i class="fas fa-bullseye"></i> Our Mission
@@ -406,19 +474,7 @@
                 </div>
             </div>
 
-            <!-- ===== SECTION 6: OUR PROMISE ===== -->
-            <div class="about-section">
-                <div class="section-title">
-                    <i class="fas fa-handshake"></i> Our Promise
-                </div>
-                <div class="section-content">
-                    <p>We promise to never forget where we came from. We promise to always listen to the people. We promise to always fight for the commoner. We promise to never become like those we are replacing.</p>
-                    <p>We promise to leave the door open. So that every ordinary person who comes after us can also walk through.</p>
-                    <p><strong>We promise to build a Buhweju that ordinary people can be proud of.</strong></p>
-                </div>
-            </div>
-
-            <!-- ===== SECTION 7: OUR CALL ===== -->
+            <!-- ===== OUR CALL ===== -->
             <div class="about-section">
                 <div class="section-title">
                     <i class="fas fa-phone-volume"></i> Our Call
@@ -437,21 +493,9 @@
                 </div>
             </div>
 
-            <!-- ===== SECTION 8: OUR VOICE ===== -->
-            <div class="about-section">
-                <div class="section-title">
-                    <i class="fas fa-microphone-alt"></i> Our Voice
-                </div>
-                <div class="section-content">
-                    <p>We are ordinary people. We are not rich. We are not powerful. We are not connected.</p>
-                    <p><strong>But we are many. We are united. We are determined. And we are ready.</strong></p>
-                    <p><strong style="font-size:1.1rem; color:var(--accent-gold);">We are Buhweju Must Develop. And we are coming.</strong></p>
-                </div>
-            </div>
-
             <!-- ===== SLOGAN ===== -->
             <div class="slogan-large">
-                <span class="gold">Twegyereire.</span> Buhweju Must Develop.
+                <span class="gold">Twegyereire.</span> We have had enough. <span class="gold">Buhweju Must Develop.</span>
             </div>
 
             <!-- ===== CALL TO ACTION ===== -->
@@ -466,7 +510,7 @@
         </div>
     </main>
 
-    <!-- ===== BOTTOM NAV (same as index) ===== -->
+    <!-- ===== BOTTOM NAV ===== -->
     <nav class="bottom-nav">
         <button class="nav-item" data-tab="home" id="navHome">
             <i class="fas fa-home"></i>
@@ -497,9 +541,6 @@
     <!-- ===== FIREBASE + APP LOGIC ===== -->
     <!-- ============================================================ -->
     <script>
-        // ================================================================
-        //  FIREBASE CONFIG
-        // ================================================================
         const firebaseConfig = {
             apiKey: "AIzaSyC-PINF2AJcETYIMINiCfT0gSxLxw70vSE",
             authDomain: "bmd-app-1aec8.firebaseapp.com",
@@ -515,15 +556,9 @@
         }
         const auth = firebase.auth();
 
-        // ================================================================
-        //  DOM REFS
-        // ================================================================
         const headerAvatar = document.getElementById('headerAvatar');
         const toast = document.getElementById('toast');
 
-        // ================================================================
-        //  TOAST
-        // ================================================================
         let toastTimer = null;
 
         function showToast(msg, duration = 2800) {
@@ -533,9 +568,6 @@
             toastTimer = setTimeout(() => toast.classList.remove('show'), duration);
         }
 
-        // ================================================================
-        //  AUTH STATE LISTENER
-        // ================================================================
         auth.onAuthStateChanged(async (user) => {
             if (user) {
                 try {
@@ -552,9 +584,6 @@
             }
         });
 
-        // ================================================================
-        //  NAVIGATION
-        // ================================================================
         document.querySelectorAll('.bottom-nav .nav-item').forEach(item => {
             item.addEventListener('click', () => {
                 const tab = item.dataset.tab;
@@ -583,22 +612,15 @@
             });
         });
 
-        // ================================================================
-        //  BACK BUTTON
-        // ================================================================
         document.getElementById('backBtn').addEventListener('click', () => {
             window.location.href = 'account.html';
         });
 
-        // Header avatar click -> account
         headerAvatar.addEventListener('click', () => {
             window.location.href = 'account.html';
         });
 
-        // ================================================================
-        //  INIT
-        // ================================================================
-        console.log('📖 BMD About page loaded.');
+        console.log('📖 BMD About page loaded with professional definition.');
     </script>
 
 </body>
