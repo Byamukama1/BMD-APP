@@ -122,6 +122,23 @@
             margin-bottom: 2px;
         }
 
+        .member-card .member-name-edit {
+            width: 100%;
+            padding: 6px 10px;
+            font-family: 'Lora', serif;
+            font-size: 1.05rem;
+            font-weight: 700;
+            border: 2px solid var(--accent-gold, #d4a743);
+            border-radius: var(--radius-md, 12px);
+            outline: none;
+            background: #fcfcf9;
+            color: var(--text-primary, #1f2937);
+        }
+
+        .member-card .member-name-edit:focus {
+            box-shadow: 0 0 0 3px rgba(212, 167, 67, 0.2);
+        }
+
         .member-card .member-details-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -148,6 +165,23 @@
             font-weight: 500;
         }
 
+        .member-card .member-details-grid .detail-item .edit-input {
+            flex: 1;
+            padding: 4px 8px;
+            border: 2px solid var(--accent-gold, #d4a743);
+            border-radius: var(--radius-sm, 8px);
+            outline: none;
+            background: #fcfcf9;
+            font-size: 0.78rem;
+            font-family: 'Inter', sans-serif;
+            color: var(--text-primary, #1f2937);
+            min-width: 60px;
+        }
+
+        .member-card .member-details-grid .detail-item .edit-input:focus {
+            box-shadow: 0 0 0 3px rgba(212, 167, 67, 0.15);
+        }
+
         .member-card .member-badge {
             display: inline-block;
             font-size: 0.6rem;
@@ -162,6 +196,11 @@
         .member-card .member-badge.other {
             background: #e3f2fd;
             color: #1565c0;
+        }
+
+        .member-card .member-badge.editing-badge {
+            background: var(--accent-gold, #d4a743);
+            color: #fff;
         }
 
         .member-card .member-actions {
@@ -197,12 +236,21 @@
             font-size: 0.9rem;
         }
 
-        .member-card .member-actions .btn-action.view-btn {
-            color: #3b82f6;
-        }
-
         .member-card .member-actions .btn-action.edit-btn {
             color: var(--accent-gold, #d4a743);
+        }
+
+        .member-card .member-actions .btn-action.save-btn {
+            color: #27ae60;
+            background: #e8f5e9;
+        }
+
+        .member-card .member-actions .btn-action.save-btn:hover {
+            background: #c8e6c9;
+        }
+
+        .member-card .member-actions .btn-action.cancel-btn {
+            color: #e74c3c;
         }
 
         .member-card .member-actions .btn-action.delete-btn {
@@ -211,6 +259,26 @@
 
         .member-card .member-actions .btn-action:active {
             transform: scale(0.95);
+        }
+
+        .member-card .member-actions .btn-action:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .edit-indicator {
+            display: inline-block;
+            background: var(--accent-gold, #d4a743);
+            color: #fff;
+            font-size: 0.6rem;
+            font-weight: 700;
+            padding: 2px 10px;
+            border-radius: 12px;
+            margin-left: 8px;
+        }
+
+        .member-card.edit-mode {
+            border: 2px solid var(--accent-gold, #d4a743);
         }
 
         /* ===== EMPTY STATE ===== */
@@ -285,6 +353,7 @@
             }
             .member-card .member-details-grid .detail-item {
                 justify-content: center;
+                flex-wrap: wrap;
             }
             .member-card .member-actions {
                 padding: 10px 12px;
@@ -310,6 +379,17 @@
             border: 3px solid rgba(255, 255, 255, 0.3);
             border-radius: 50%;
             border-top-color: #fff;
+            animation: spin 0.8s ease-in-out infinite;
+            vertical-align: middle;
+        }
+
+        .spinner-small {
+            display: inline-block;
+            width: 14px;
+            height: 14px;
+            border: 2px solid rgba(39, 174, 96, 0.3);
+            border-radius: 50%;
+            border-top-color: #27ae60;
             animation: spin 0.8s ease-in-out infinite;
             vertical-align: middle;
         }
@@ -527,6 +607,7 @@
 
         let currentUser = null;
         let allMembers = [];
+        let editingMemberId = null;
 
         // ================================================================
         //  TOAST
@@ -574,7 +655,6 @@
         //  LOAD REGISTERED MEMBERS
         // ================================================================
         function loadRegisteredMembers(uid) {
-            // Query: only "other" members where registeredBy == current user
             db.collection('users')
                 .where('registeredBy', '==', uid)
                 .where('isOther', '==', true)
@@ -625,13 +705,14 @@
 
             let html = '';
             members.forEach(member => {
+                const isEditing = editingMemberId === member.id;
                 const displayName = member.displayName || 'Unknown Member';
-                const phone = member.phone || 'No phone';
-                const village = member.village || 'N/A';
-                const parish = member.parish || 'N/A';
-                const subcounty = member.subcounty || 'N/A';
-                const district = member.district || 'N/A';
-                const role = member.role || 'N/A';
+                const phone = member.phone || '';
+                const village = member.village || '';
+                const parish = member.parish || '';
+                const subcounty = member.subcounty || '';
+                const district = member.district || '';
+                const role = member.role || '';
                 const photoURL = member.photoURL || null;
                 const dateStr = member.createdAt ? member.createdAt.toLocaleDateString() : '';
                 const registeredByName = member.registeredByName || 'You';
@@ -647,37 +728,100 @@
                     `;
                 }
 
+                // Name field - editable or static
+                let nameHtml = '';
+                if (isEditing) {
+                    nameHtml = `
+                        <input type="text" class="member-name-edit" id="edit-name-${member.id}" value="${escapeHtml(displayName)}" />
+                    `;
+                } else {
+                    nameHtml = `<div class="member-name">${escapeHtml(displayName)}</div>`;
+                }
+
+                // Details grid - editable or static
+                let detailsHtml = '';
+                if (isEditing) {
+                    detailsHtml = `
+                        <div class="member-details-grid">
+                            <div class="detail-item">
+                                <i class="fas fa-phone"></i>
+                                <input type="text" class="edit-input" id="edit-phone-${member.id}" value="${escapeHtml(phone)}" placeholder="Phone" />
+                            </div>
+                            <div class="detail-item">
+                                <i class="fas fa-location-dot"></i>
+                                <input type="text" class="edit-input" id="edit-village-${member.id}" value="${escapeHtml(village)}" placeholder="Village" />
+                            </div>
+                            <div class="detail-item">
+                                <i class="fas fa-map-pin"></i>
+                                <input type="text" class="edit-input" id="edit-parish-${member.id}" value="${escapeHtml(parish)}" placeholder="Parish" />
+                            </div>
+                            <div class="detail-item">
+                                <i class="fas fa-map-pin"></i>
+                                <input type="text" class="edit-input" id="edit-subcounty-${member.id}" value="${escapeHtml(subcounty)}" placeholder="Subcounty" />
+                            </div>
+                            <div class="detail-item">
+                                <i class="fas fa-map-pin"></i>
+                                <input type="text" class="edit-input" id="edit-district-${member.id}" value="${escapeHtml(district)}" placeholder="District" />
+                            </div>
+                            <div class="detail-item">
+                                <i class="fas fa-user-tag"></i>
+                                <input type="text" class="edit-input" id="edit-role-${member.id}" value="${escapeHtml(role)}" placeholder="Role" />
+                            </div>
+                            <div class="detail-item" style="grid-column: 1 / -1;">
+                                <i class="fas fa-calendar"></i>
+                                <span style="color:#999;">Registered: ${dateStr}</span>
+                            </div>
+                        </div>
+                    `;
+                } else {
+                    detailsHtml = `
+                        <div class="member-details-grid">
+                            <div class="detail-item"><i class="fas fa-phone"></i> ${escapeHtml(phone || 'N/A')}</div>
+                            <div class="detail-item"><i class="fas fa-location-dot"></i> ${escapeHtml(village || 'N/A')}, ${escapeHtml(parish || 'N/A')}</div>
+                            <div class="detail-item"><i class="fas fa-map-pin"></i> ${escapeHtml(subcounty || 'N/A')}, ${escapeHtml(district || 'N/A')}</div>
+                            <div class="detail-item"><i class="fas fa-user-tag"></i> ${escapeHtml(role || 'N/A')}</div>
+                            <div class="detail-item"><i class="fas fa-calendar"></i> ${dateStr}</div>
+                        </div>
+                    `;
+                }
+
+                // Badge
+                const editBadge = isEditing ? `<span class="edit-indicator"><i class="fas fa-edit"></i> Editing</span>` : '';
+
                 html += `
-                    <div class="member-card" data-id="${member.id}">
+                    <div class="member-card ${isEditing ? 'edit-mode' : ''}" data-id="${member.id}">
                         <div class="member-body">
                             <div class="member-top">
                                 ${avatarHtml}
                                 <div class="member-info">
-                                    <div class="member-name">${escapeHtml(displayName)}</div>
-                                    <div class="member-details-grid">
-                                        <div class="detail-item"><i class="fas fa-phone"></i> ${escapeHtml(phone)}</div>
-                                        <div class="detail-item"><i class="fas fa-location-dot"></i> ${escapeHtml(village)}, ${escapeHtml(parish)}</div>
-                                        <div class="detail-item"><i class="fas fa-map-pin"></i> ${escapeHtml(subcounty)}, ${escapeHtml(district)}</div>
-                                        <div class="detail-item"><i class="fas fa-user-tag"></i> ${escapeHtml(role)}</div>
-                                        <div class="detail-item"><i class="fas fa-calendar"></i> ${dateStr}</div>
+                                    ${nameHtml}
+                                    ${detailsHtml}
+                                    <div style="margin-top:6px; display:flex; gap:6px; flex-wrap:wrap;">
+                                        <span class="member-badge other">
+                                            <i class="fas fa-check-circle"></i> Registered by you
+                                        </span>
+                                        ${editBadge}
+                                        ${registeredByName ? `<span style="font-size:0.6rem; color:#999; background:#f3f4f6; padding:2px 10px; border-radius:12px;"><i class="fas fa-user-plus"></i> by ${escapeHtml(registeredByName)}</span>` : ''}
                                     </div>
-                                    <span class="member-badge other">
-                                        <i class="fas fa-check-circle"></i> Registered by you
-                                    </span>
-                                    ${registeredByName ? `<span style="font-size:0.6rem; color:#999; background:#f3f4f6; padding:2px 10px; border-radius:12px; margin-left:6px;"><i class="fas fa-user-plus"></i> by ${escapeHtml(registeredByName)}</span>` : ''}
                                 </div>
                             </div>
                         </div>
                         <div class="member-actions">
-                            <button class="btn-action view-btn" onclick="viewMember('${member.id}')">
-                                <i class="fas fa-eye"></i> View
-                            </button>
-                            <button class="btn-action edit-btn" onclick="editMember('${member.id}')">
-                                <i class="fas fa-edit"></i> Edit
-                            </button>
-                            <button class="btn-action delete-btn" onclick="removeMember('${member.id}')">
-                                <i class="fas fa-user-minus"></i> Remove
-                            </button>
+                            ${isEditing ? `
+                                <button class="btn-action save-btn" onclick="saveMember('${member.id}')">
+                                    <i class="fas fa-save"></i> Save
+                                </button>
+                                <button class="btn-action cancel-btn" onclick="cancelEdit('${member.id}')">
+                                    <i class="fas fa-times"></i> Cancel
+                                </button>
+                            ` : `
+                                <button class="btn-action edit-btn" onclick="startEdit('${member.id}')">
+                                    <i class="fas fa-edit"></i> Edit
+                                </button>
+                                <button class="btn-action delete-btn" onclick="removeMember('${member.id}')">
+                                    <i class="fas fa-user-minus"></i> Remove
+                                </button>
+                            `}
                         </div>
                     </div>
                 `;
@@ -687,34 +831,102 @@
         }
 
         // ================================================================
-        //  VIEW MEMBER
+        //  START EDIT
         // ================================================================
-        function viewMember(id) {
-            const member = allMembers.find(m => m.id === id);
-            if (!member) return;
-
-            const msg = encodeURIComponent(
-                `📋 MEMBER DETAILS\n` +
-                `━━━━━━━━━━━━━━━━━━━━━\n` +
-                `👤 Name: ${member.displayName || 'N/A'}\n` +
-                `📱 Phone: ${member.phone || 'N/A'}\n` +
-                `📍 Village: ${member.village || 'N/A'}\n` +
-                `📍 Parish: ${member.parish || 'N/A'}\n` +
-                `📍 Subcounty: ${member.subcounty || 'N/A'}\n` +
-                `📍 District: ${member.district || 'N/A'}\n` +
-                `👔 Role: ${member.role || 'N/A'}\n` +
-                `📅 Registered: ${member.createdAt ? member.createdAt.toLocaleDateString() : 'N/A'}\n` +
-                `━━━━━━━━━━━━━━━━━━━━━\n` +
-                `Registered by: ${member.registeredByName || 'You'}`
-            );
-            window.open(`https://wa.me/256761828694?text=${msg}`, '_blank');
+        function startEdit(id) {
+            editingMemberId = id;
+            renderMembers(allMembers);
+            const card = document.querySelector(`.member-card[data-id="${id}"]`);
+            if (card) {
+                card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
         }
 
         // ================================================================
-        //  EDIT MEMBER
+        //  CANCEL EDIT
         // ================================================================
-        function editMember(id) {
-            window.location.href = 'register.html?edit=' + id;
+        function cancelEdit(id) {
+            editingMemberId = null;
+            renderMembers(allMembers);
+        }
+
+        // ================================================================
+        //  SAVE MEMBER
+        // ================================================================
+        async function saveMember(id) {
+            const nameInput = document.getElementById(`edit-name-${id}`);
+            const phoneInput = document.getElementById(`edit-phone-${id}`);
+            const villageInput = document.getElementById(`edit-village-${id}`);
+            const parishInput = document.getElementById(`edit-parish-${id}`);
+            const subcountyInput = document.getElementById(`edit-subcounty-${id}`);
+            const districtInput = document.getElementById(`edit-district-${id}`);
+            const roleInput = document.getElementById(`edit-role-${id}`);
+
+            if (!nameInput) {
+                showToast('Error: Could not find edited content.', 3000);
+                return;
+            }
+
+            const newName = nameInput.value.trim();
+            const newPhone = phoneInput ? phoneInput.value.trim() : '';
+            const newVillage = villageInput ? villageInput.value.trim() : '';
+            const newParish = parishInput ? parishInput.value.trim() : '';
+            const newSubcounty = subcountyInput ? subcountyInput.value.trim() : '';
+            const newDistrict = districtInput ? districtInput.value.trim() : '';
+            const newRole = roleInput ? roleInput.value.trim() : '';
+
+            if (!newName) {
+                showToast('⚠️ Name cannot be empty.', 2000);
+                nameInput.focus();
+                return;
+            }
+
+            // Disable buttons during save
+            const saveBtn = document.querySelector('.save-btn');
+            if (saveBtn) {
+                saveBtn.disabled = true;
+                saveBtn.innerHTML = '<span class="spinner-small"></span> Saving…';
+            }
+
+            try {
+                const updateData = {
+                    displayName: newName,
+                    updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+                };
+
+                if (newPhone) updateData.phone = newPhone;
+                if (newVillage) updateData.village = newVillage;
+                if (newParish) updateData.parish = newParish;
+                if (newSubcounty) updateData.subcounty = newSubcounty;
+                if (newDistrict) updateData.district = newDistrict;
+                if (newRole) updateData.role = newRole;
+
+                await db.collection('users').doc(id).update(updateData);
+
+                // Update local data
+                const member = allMembers.find(m => m.id === id);
+                if (member) {
+                    member.displayName = newName;
+                    if (newPhone) member.phone = newPhone;
+                    if (newVillage) member.village = newVillage;
+                    if (newParish) member.parish = newParish;
+                    if (newSubcounty) member.subcounty = newSubcounty;
+                    if (newDistrict) member.district = newDistrict;
+                    if (newRole) member.role = newRole;
+                }
+
+                showToast('✅ Member updated successfully!');
+                editingMemberId = null;
+                renderMembers(allMembers);
+
+            } catch (err) {
+                console.error('Save error:', err);
+                showToast('❌ Failed to save member: ' + err.message, 3000);
+                if (saveBtn) {
+                    saveBtn.disabled = false;
+                    saveBtn.innerHTML = '<i class="fas fa-save"></i> Save';
+                }
+            }
         }
 
         // ================================================================
@@ -792,7 +1004,7 @@
         // ================================================================
         //  INIT
         // ================================================================
-        console.log('👥 BMD Other Members I Registered page loaded.');
+        console.log('👥 BMD Other Members I Registered page loaded with inline editing.');
         console.log('📌 Query: users where registeredBy == current user AND isOther == true');
     </script>
 
