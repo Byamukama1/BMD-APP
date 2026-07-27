@@ -88,6 +88,23 @@
             line-height: 1.3;
         }
 
+        .post-card .post-title-edit {
+            width: 100%;
+            padding: 8px 12px;
+            font-family: 'Lora', serif;
+            font-size: 1.1rem;
+            font-weight: 700;
+            border: 2px solid var(--accent-gold, #d4a743);
+            border-radius: var(--radius-md, 12px);
+            outline: none;
+            background: #fcfcf9;
+            color: var(--text-primary, #1f2937);
+        }
+
+        .post-card .post-title-edit:focus {
+            box-shadow: 0 0 0 3px rgba(212, 167, 67, 0.2);
+        }
+
         .post-card .post-meta {
             display: flex;
             align-items: center;
@@ -166,6 +183,25 @@
             overflow: hidden;
         }
 
+        .post-card .post-content-edit {
+            width: 100%;
+            min-height: 100px;
+            padding: 10px 12px;
+            font-size: 0.85rem;
+            line-height: 1.6;
+            border: 2px solid var(--accent-gold, #d4a743);
+            border-radius: var(--radius-md, 12px);
+            outline: none;
+            background: #fcfcf9;
+            color: var(--text-primary, #1f2937);
+            font-family: 'Inter', sans-serif;
+            resize: vertical;
+        }
+
+        .post-card .post-content-edit:focus {
+            box-shadow: 0 0 0 3px rgba(212, 167, 67, 0.2);
+        }
+
         .post-card .post-actions {
             display: flex;
             align-items: center;
@@ -204,6 +240,19 @@
             color: var(--accent-gold, #d4a743);
         }
 
+        .post-card .post-actions .btn-action.save-btn {
+            color: #27ae60;
+            background: #e8f5e9;
+        }
+
+        .post-card .post-actions .btn-action.save-btn:hover {
+            background: #c8e6c9;
+        }
+
+        .post-card .post-actions .btn-action.cancel-btn {
+            color: #e74c3c;
+        }
+
         .post-card .post-actions .btn-action.delete-btn {
             color: #e74c3c;
         }
@@ -214,6 +263,22 @@
 
         .post-card .post-actions .btn-action:active {
             transform: scale(0.95);
+        }
+
+        .post-card .post-actions .btn-action:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .edit-indicator {
+            display: inline-block;
+            background: var(--accent-gold, #d4a743);
+            color: #fff;
+            font-size: 0.6rem;
+            font-weight: 700;
+            padding: 2px 10px;
+            border-radius: 12px;
+            margin-left: 8px;
         }
 
         .empty-state {
@@ -393,6 +458,17 @@
             }
         }
 
+        .spinner-small {
+            display: inline-block;
+            width: 14px;
+            height: 14px;
+            border: 2px solid rgba(39, 174, 96, 0.3);
+            border-radius: 50%;
+            border-top-color: #27ae60;
+            animation: spin 0.8s ease-in-out infinite;
+            vertical-align: middle;
+        }
+
         .skeleton {
             background: #e8e0d4;
             border-radius: var(--radius-lg);
@@ -446,6 +522,11 @@
         .toast.show {
             opacity: 1;
             transform: translateX(-50%) translateY(0);
+        }
+
+        .edit-mode-highlight {
+            border: 2px solid var(--accent-gold, #d4a743) !important;
+            border-radius: var(--radius-lg, 18px) !important;
         }
     </style>
 </head>
@@ -583,6 +664,7 @@
         let currentUser = null;
         let deletePostId = null;
         let allPosts = [];
+        let editingPostId = null;
 
         // ================================================================
         //  TOAST
@@ -635,7 +717,7 @@
             db.collection('posts')
                 .where('authorId', '==', userId)
                 .orderBy('createdAt', 'desc')
-                .get() // Using get() instead of onSnapshot for better error handling
+                .get()
                 .then((snapshot) => {
                     console.log("Posts found:", snapshot.size);
                     const posts = [];
@@ -652,9 +734,6 @@
                 })
                 .catch((err) => {
                     console.error("Error loading posts:", err);
-                    console.error("Error code:", err.code);
-                    console.error("Error message:", err.message);
-                    
                     let errorMsg = 'Failed to load posts. ';
                     if (err.code === 'permission-denied') {
                         errorMsg += 'Permission denied. Please check Firestore rules.';
@@ -663,16 +742,12 @@
                     } else {
                         errorMsg += err.message;
                     }
-                    
                     showToast(errorMsg, 5000);
                     postsWrapper.innerHTML = `
                         <div class="empty-state">
                             <i class="fas fa-exclamation-triangle"></i>
                             <h3>Error Loading Posts</h3>
                             <p>${escapeHtml(errorMsg)}</p>
-                            <p style="font-size:0.75rem; margin-top:8px; color:#999;">
-                                Try refreshing the page or check your internet connection.
-                            </p>
                         </div>
                     `;
                 });
@@ -728,8 +803,10 @@
 
             let html = '';
             posts.forEach(post => {
+                const isEditing = editingPostId === post.id;
                 const title = post.title || 'Untitled';
                 const preview = post.preview || (post.content ? post.content.replace(/<[^>]*>?/gm, '').substring(0, 120) + '...' : '');
+                const fullContent = post.content || '';
                 const dateStr = post.createdAt ? post.createdAt.toLocaleDateString() + ' ' + post.createdAt.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : '';
                 const likeCount = post.likes || 0;
                 const mediaType = getMediaType(post);
@@ -769,28 +846,61 @@
                     mediaBadge = `<span class="media-type"><i class="fas ${getMediaIcon(mediaType)}"></i> ${getMediaLabel(mediaType)}</span>`;
                 }
 
+                // Title display - editable or static
+                let titleHtml = '';
+                if (isEditing) {
+                    titleHtml = `
+                        <input type="text" class="post-title-edit" id="edit-title-${post.id}" value="${escapeHtml(title)}" />
+                    `;
+                } else {
+                    titleHtml = `<div class="post-title">${escapeHtml(title)}</div>`;
+                }
+
+                // Content display - editable or static
+                let contentHtml = '';
+                if (isEditing) {
+                    contentHtml = `
+                        <textarea class="post-content-edit" id="edit-content-${post.id}" rows="4">${escapeHtml(fullContent)}</textarea>
+                    `;
+                } else {
+                    contentHtml = `<div class="post-preview">${escapeHtml(preview)}</div>`;
+                }
+
+                // Edit indicator
+                const editIndicator = isEditing ? `<span class="edit-indicator"><i class="fas fa-edit"></i> Editing</span>` : '';
+
                 html += `
-                    <article class="post-card" data-id="${post.id}">
+                    <article class="post-card ${isEditing ? 'edit-mode-highlight' : ''}" data-id="${post.id}">
                         <div class="card-body">
-                            <h3 class="post-title">${escapeHtml(title)}</h3>
+                            ${titleHtml}
                             <div class="post-meta">
                                 <span class="date"><i class="far fa-clock"></i> ${dateStr}</span>
                                 <span class="likes"><i class="fas fa-heart"></i> ${likeCount}</span>
                                 ${mediaBadge}
+                                ${editIndicator}
                             </div>
                             ${mediaHtml}
-                            <div class="post-preview">${escapeHtml(preview)}</div>
+                            ${contentHtml}
                         </div>
                         <div class="post-actions">
-                            <button class="btn-action view-btn" onclick="viewPost('${post.id}')">
-                                <i class="fas fa-eye"></i> View
-                            </button>
-                            <button class="btn-action edit-btn" onclick="editPost('${post.id}')">
-                                <i class="fas fa-edit"></i> Edit
-                            </button>
-                            <button class="btn-action delete-btn" onclick="confirmDelete('${post.id}')">
-                                <i class="fas fa-trash-alt"></i> Delete
-                            </button>
+                            ${isEditing ? `
+                                <button class="btn-action save-btn" onclick="savePost('${post.id}')">
+                                    <i class="fas fa-save"></i> Save
+                                </button>
+                                <button class="btn-action cancel-btn" onclick="cancelEdit('${post.id}')">
+                                    <i class="fas fa-times"></i> Cancel
+                                </button>
+                            ` : `
+                                <button class="btn-action view-btn" onclick="viewPost('${post.id}')">
+                                    <i class="fas fa-eye"></i> View
+                                </button>
+                                <button class="btn-action edit-btn" onclick="startEdit('${post.id}')">
+                                    <i class="fas fa-edit"></i> Edit
+                                </button>
+                                <button class="btn-action delete-btn" onclick="confirmDelete('${post.id}')">
+                                    <i class="fas fa-trash-alt"></i> Delete
+                                </button>
+                            `}
                         </div>
                     </article>
                 `;
@@ -800,17 +910,106 @@
         }
 
         // ================================================================
+        //  START EDIT
+        // ================================================================
+        function startEdit(postId) {
+            editingPostId = postId;
+            renderPosts(allPosts);
+            // Scroll to the editing post
+            const card = document.querySelector(`.post-card[data-id="${postId}"]`);
+            if (card) {
+                card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+        }
+
+        // ================================================================
+        //  CANCEL EDIT
+        // ================================================================
+        function cancelEdit(postId) {
+            editingPostId = null;
+            renderPosts(allPosts);
+        }
+
+        // ================================================================
+        //  SAVE POST
+        // ================================================================
+        async function savePost(postId) {
+            const titleInput = document.getElementById(`edit-title-${postId}`);
+            const contentInput = document.getElementById(`edit-content-${postId}`);
+
+            if (!titleInput || !contentInput) {
+                showToast('Error: Could not find edited content.', 3000);
+                return;
+            }
+
+            const newTitle = titleInput.value.trim();
+            const newContent = contentInput.value.trim();
+
+            if (!newTitle) {
+                showToast('⚠️ Title cannot be empty.', 2000);
+                titleInput.focus();
+                return;
+            }
+
+            if (!newContent) {
+                showToast('⚠️ Content cannot be empty.', 2000);
+                contentInput.focus();
+                return;
+            }
+
+            // Find the post in the list
+            const post = allPosts.find(p => p.id === postId);
+            if (!post) {
+                showToast('Error: Post not found.', 3000);
+                return;
+            }
+
+            // Generate new preview
+            const tempDiv = document.createElement('div');
+            tempDiv.innerHTML = newContent;
+            const textContent = tempDiv.textContent || '';
+            const newPreview = textContent.slice(0, 150) + (textContent.length > 150 ? '…' : '');
+
+            // Disable buttons during save
+            const saveBtn = document.querySelector('.save-btn');
+            const cancelBtn = document.querySelector('.cancel-btn');
+            if (saveBtn) {
+                saveBtn.disabled = true;
+                saveBtn.innerHTML = '<span class="spinner-small"></span> Saving…';
+            }
+
+            try {
+                await db.collection('posts').doc(postId).update({
+                    title: newTitle,
+                    content: newContent,
+                    preview: newPreview,
+                    updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+                });
+
+                // Update local data
+                post.title = newTitle;
+                post.content = newContent;
+                post.preview = newPreview;
+
+                showToast('✅ Post updated successfully!');
+                editingPostId = null;
+                renderPosts(allPosts);
+
+            } catch (err) {
+                console.error('Save error:', err);
+                showToast('❌ Failed to save post: ' + err.message, 3000);
+                if (saveBtn) {
+                    saveBtn.disabled = false;
+                    saveBtn.innerHTML = '<i class="fas fa-save"></i> Save';
+                }
+            }
+        }
+
+        // ================================================================
         //  VIEW POST
         // ================================================================
         function viewPost(postId) {
             window.location.href = 'index.html?post=' + postId;
-        }
-
-        // ================================================================
-        //  EDIT POST
-        // ================================================================
-        function editPost(postId) {
-            window.location.href = 'post.html?edit=' + postId;
         }
 
         // ================================================================
@@ -918,7 +1117,7 @@
             return String(str || '').replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
         }
 
-        console.log('📝 BMD My Posts page loaded.');
+        console.log('📝 BMD My Posts page loaded with inline editing.');
     </script>
 
 </body>
