@@ -560,10 +560,10 @@
             <i class="fas fa-plus"></i>
             <span style="margin-top:2px;">Post</span>
         </button>
-        <button class="nav-item" data-tab="activities" id="navActivities">
-            <i class="fas fa-calendar-alt"></i>
-            <span>Activities</span>
-        </button>
+        <a href="activities.html" class="nav-item" data-tab="activities">
+  <i class="fas fa-calendar-alt"></i>
+  <span>Activities</span>
+</a>
         <button class="nav-item" data-tab="account" id="navAccount">
             <i class="fas fa-user-circle"></i>
             <span>Account</span>
@@ -964,7 +964,7 @@
                         window.location.href = 'register.html';
                         break;
                     case 'activities':
-                        showToast('📅 Activities page coming soon!');
+                        showToast('📅 wait, loading!');
                         break;
                     case 'post':
                         window.location.href = 'post.html';
